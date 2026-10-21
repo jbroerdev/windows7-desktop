@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs proxy.test.mjs proxy-runtime.test.mjs",
+    "test": "node --test test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs",
     "build": "node scripts/build-editor.mjs"
   },
   "engines": {
@@ -33,7 +33,6 @@
     "@php-wasm/node-8-4": "^3.1.59",
     "@php-wasm/universal": "^3.1.59",
     "codemirror": "^6.0.2",
-    "fake-indexeddb": "6.2.6",
     "fflate": "^0.8.3"
   },
   "devDependencies": {

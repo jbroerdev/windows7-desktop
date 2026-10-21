@@ -269,25 +269,19 @@ Für öffentlichen Betrieb mit eigener Domain verwende einen HTTPS-Reverse-Proxy
 - [Automatische Docker-Builds und Tests](https://github.com/jbroerdev/windows7-desktop/actions)
 - [Quellen und Lizenzhinweise zu den Grafiken](public/icons/ATTRIBUTION.md)
 
-Die IndexedDB-Kompatibilität nutzt [fake-indexeddb](https://github.com/dumbmatter/fakeIndexedDB) mit einer eigenen persistenten Ablage; [Lizenz](public/proxy-runtime.LICENSE.txt).
-
 Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.org](https://mirrors.equipable.org/). Textbearbeitung nutzt CodeMirror, ZIP-Verarbeitung fflate und die PHP-Vorschau eine isolierte WebAssembly-Laufzeit.
 
 
 
 ## Desktop und Programme verwenden
 
-### Interne Apps über den Server-Proxy
+### Apps und Internetverknüpfungen
 
-Nur Administratoren sehen in einer Internetverknüpfung **„Über Server-Proxy öffnen“**. Das Häkchen aktiviert Fenster- und App-Modus. Als Ziel kannst du eine interne HTTP-/HTTPS-Adresse eintragen, die der Container erreichen kann. Die Verknüpfung öffnet dann unter **`/app/<appname>/` auf derselben Explorer-Domain**; zusätzliche Domains, DNS-Einträge oder Reverse-Proxy-Regeln sind nicht nötig. Ohne Proxy-Häkchen bleibt der bisherige direkte Aufruf unverändert.
-
-Der Zugriff folgt den normalen Dateirechten und Freigaben: Ein öffentlich freigegebener Proxy-Link macht auch den Zugriff auf diese interne App öffentlich möglich. Eine eigene Anmeldung der Ziel-App bleibt erhalten. Beim Zurücknehmen der Freigabe, Löschen der Verknüpfung oder Abmelden des zugehörigen Explorer-Benutzers endet der Zugriff. Normale Benutzer können weder den Proxy aktivieren noch sein Ziel ändern. Beim Kopieren durch normale Benutzer wird die Proxy-Einstellung entfernt und muss gegebenenfalls erneut durch einen Administrator eingerichtet werden.
-
-Die Proxy-Seite läuft isoliert vom Explorer. `localStorage` wird je angemeldetem Benutzer und Verknüpfung unter **`/Explorer/.explorer/proxy-storage/`** gespeichert, maximal 5 MB je App. `sessionStorage` bleibt je geöffnetem App-Fenster getrennt. Bei Gästen bleibt dieser Speicher auf die jeweilige Proxy-Sitzung begrenzt. Diese Speicheradapter geben Apps keinen Zugriff auf Explorer-Anmeldedaten. IndexedDB wird über einen getrennten Adapter angebunden, auch in klassischen WebWorkern. Binäre Datensätze und abgeschlossene Schreibtransaktionen werden unter demselben Host-Verzeichnis gespeichert (maximal 128 MB je App-Datenbank). Die Einbettung erhält dadurch keinen Zugriff auf die nativen Explorer-Datenbanken. Diese Kompatibilitätsschicht ersetzt keine vollständige Browser-Umgebung; insbesondere spezielle Speicher- und Worker-Funktionen einer App können weitere Anpassungen benötigen.
-
-HTTP-Anfragen, Formulare, Cookies und WebSockets werden weitergeleitet; viele Pfade in HTML, CSS, Fetch und XMLHttpRequest werden angepasst. Nicht jede Webapp lässt sich unverändert unter einem Unterpfad betreiben. Manche benötigen eine passende Basis-URL oder Anpassungen für die isolierte Einbettung.
-
-**Docker-Netzwerk:** `127.0.0.1` bezeichnet im Container den Container selbst. Für einen Dienst auf dem Docker-Host verwende eine vom Container erreichbare Host-/LAN-Adresse oder einen entsprechend eingerichteten Hostnamen. Andere Docker-Dienste lassen sich über ein gemeinsames Docker-Netzwerk und ihren Servicenamen erreichen. Die lokale Vorschau ohne Container kann dagegen `127.0.0.1` des Rechners direkt verwenden.
+Internetverknüpfungen öffnen ihre hinterlegte Adresse direkt im Browser, wahlweise in einem
+App-Fenster oder einem externen Tab. Die Adresse muss vom Gerät des Besuchers aus erreichbar sein.
+Die experimentelle Server-Proxy-Funktion wurde entfernt. Bestehende Verknüpfungen bleiben erhalten
+und verwenden wieder ihre ursprüngliche Zieladresse. Zuvor gespeicherte Proxy-App-Daten unter
+`/Explorer/.explorer/proxy-storage` werden beim Update nicht gelöscht, aber nicht mehr verwendet.
 
 ### Administratorzugriff auf Benutzerverzeichnisse
 
