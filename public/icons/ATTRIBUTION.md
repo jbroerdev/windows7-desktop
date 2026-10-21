@@ -30,3 +30,5 @@ Explorer command bar, hover/selection surfaces and details pane: `icons/aero/com
 The 16px library document, music, pictures and videos symbols use the native small variants `filesystems/16/folder-*-2` (`folder-documents2.png`, etc.) from B00merang-Artwork/Windows-7, rather than scaled user-folder images.
 
 Caption glyphs (`icons/aero/caption-*.png`) and search-vector artwork from https://github.com/khang-nd/7.css (`gui/icon`), MIT license, retained in `7CSS-LICENSE.txt`. The controls use separate glyphs and backgrounds to preserve original-size symbols and Windows 7 button proportions.
+
+Navigation sprite (`icons/aero/navigation-states.png`): https://github.com/yuvia08/rinfox_updated, `rinfox/English/chrome/images/navigation.png`, original RinFox artwork credited upstream to travis. Normal, hover/pressed and disabled states are selected from the sprite; the dark blue state is used on hover. Import with `scripts/import-navigation-sprite.mjs`.
