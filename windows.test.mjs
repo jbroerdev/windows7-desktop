@@ -5,10 +5,20 @@ import {photoLayout,zoomAt} from './public/photo-geometry.js';
 
 test('Fenster bleiben nach Verschieben und Verkleinern des Bildschirms erreichbar',()=>{
   assert.deepEqual(constrainBounds({left:-80,top:900,width:900,height:800},{width:700,height:500}),
-    {left:0,top:0,width:700,height:500});
+    {left:-80,top:469,width:700,height:500});
   assert.deepEqual(constrainBounds({left:900,top:700,width:20,height:10},{width:1000,height:700}),
-    {left:680,top:500,width:320,height:200});
+    {left:900,top:669,width:320,height:200});
   assert.equal(constrainBounds({left:20,top:30,width:500,height:400},{width:280,height:180},480,330).width,280);
+});
+
+test('Freie Fenster können hinter die Taskleiste und seitlich aus dem Bildschirm gezogen werden',()=>{
+  const viewport={width:1000,height:700};
+  const behind=constrainBounds({left:100,top:600,width:500,height:400},viewport);
+  assert.equal(behind.top,600);
+  assert.ok(behind.top+behind.height>viewport.height);
+  assert.equal(constrainBounds({...behind,left:-900},viewport).left,-404);
+  assert.equal(constrainBounds({...behind,left:2000},viewport).left,904);
+  assert.equal(constrainBounds({...behind,top:2000},viewport).top,669);
 });
 
 test('Größenänderung hält die gegenüberliegende Ecke und die Mindestgröße',()=>{

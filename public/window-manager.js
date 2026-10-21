@@ -1,7 +1,9 @@
 export function constrainBounds(bounds,viewport,minWidth=320,minHeight=200){
   const width=Math.min(viewport.width,Math.max(Math.min(minWidth,viewport.width),bounds.width));
   const height=Math.min(viewport.height,Math.max(Math.min(minHeight,viewport.height),bounds.height));
-  return {width,height,left:Math.max(0,Math.min(viewport.width-width,bounds.left)),top:Math.max(0,Math.min(viewport.height-height,bounds.top))};
+  // Keep enough of the title bar reachable while the rest can leave the desktop.
+  const visibleTitle=Math.min(96,width,viewport.width);
+  return {width,height,left:Math.max(visibleTitle-width,Math.min(viewport.width-visibleTitle,bounds.left)),top:Math.max(0,Math.min(Math.max(0,viewport.height-31),bounds.top))};
 }
 
 export function resizeBounds(start,edge,dx,dy,minWidth,minHeight){
