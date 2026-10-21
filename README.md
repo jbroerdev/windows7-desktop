@@ -351,6 +351,10 @@ Melde dich als Administrator an und wähle auf der Login-Seite **Share-Desktop b
 In diesem Modus kannst du den öffentlichen Desktop und seine Taskleiste einrichten sowie
 gemeinsame Ordner, Dateien und Verknüpfungen erstellen, bearbeiten, verschieben und löschen.
 Die gemeinsamen Dateien liegen auf dem Host unter `/Explorer/Users/share`.
+Beim ersten Start werden dieser Bereich mit seinen Standardordnern und `/Explorer/Programme`
+automatisch angelegt. Jedes neue Konto erhält sofort seine eigenen Standardordner einschließlich
+Desktop und Programme. Bei bestehenden Installationen werden fehlende Grundordner beim Start ergänzt;
+vorhandene Dateien bleiben erhalten.
 Die Änderungen gelten anschließend für alle Besucher der öffentlichen Ansicht.
 Ohne Anmeldung bleibt diese Ansicht schreibgeschützt; auch Anheftungen und Symbolpositionen
 lassen sich dann nicht verändern. Der Share-Modus verwendet die Administrator-Anmeldung,
