@@ -18,7 +18,7 @@ function program(id){const builtin=builtins.find(p=>p.id===id);if(builtin)return
 function renderPins(){desktop.setPins(pinnedIds.map(program).filter(Boolean),(e,id)=>{const p=program(id);showContext(e,[[id==='explorer'?'Öffnen':'Neue Instanz öffnen',()=>p?.launch()],...desktop.taskActions(id),pinAction(id)]);});}
 function pinAction(id){return[pinnedIds.includes(id)?'Von Taskleiste lösen':'An Taskleiste anheften',()=>{pinnedIds=pinnedIds.includes(id)?pinnedIds.filter(x=>x!==id):[...pinnedIds,id];try{localStorage.setItem(pinKey,JSON.stringify(pinnedIds));}catch{}renderPins();}];}
 function toggleStart(show){menu.hidden=!show;start.setAttribute('aria-expanded',String(show));if(show){allPrograms=false;search.value='';renderMenu();}else start.focus({preventScroll:true});}
-start.onclick=()=>toggleStart(menu.hidden);
+start.onclick=()=>toggleStart(menu.hidden);start.oncontextmenu=e=>{e.preventDefault();showContext(e,[['Windows-Explorer öffnen',()=>reopen('@home')],['Computer',()=>reopen('@computer')]]);};
 document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!menu.contains(e.target)&&!start.contains(e.target)){menu.hidden=true;start.setAttribute('aria-expanded','false');}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)toggleStart(false);});
 const menuAction=fn=>()=>{toggleStart(false);fn();};

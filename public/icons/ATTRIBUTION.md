@@ -20,3 +20,11 @@ Login background: https://github.com/TheJustRun/Dildows-7/blob/main/assets/logon
 Editor toolbar: Notepad++ official repository, PowerEditor/src/icons/standard/toolbar/*.bmp, converted to transparent PNG. Source: https://github.com/notepad-plus-plus/notepad-plus-plus . License: GNU GPL Version 3 with the clarifications and exceptions in NOTEPAD-PLUS-PLUS-LICENSE.txt. The editor's browser engine is CodeMirror (MIT); Notepad++ source code is not embedded as an application.
 
 VLC cone: https://github.com/videolan/vlc/blob/master/share/icons/128x128/vlc.png . VideoLAN VLC, see VLC-COPYING.txt (GNU GPL v2 or later). Browser playback is implemented with HTMLMediaElement; libVLC is not embedded. QA video: MDN CC0 flower sample, https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4 (temporary test asset only).
+
+Aero window decorations and toolbar: `icons/aero/` from Xalalau/Windows-7-Theme-Cinnamon (`metacity-1`, `gtk-2.0/Toolbar`), GPL-3.0. Import with `scripts/import-aero-assets.mjs`. License: `CINNAMON-LICENSE.txt`.
+
+Explorer navigation buttons, search and refresh: `icons/aero/nav-*.png` from the previously supplied B00merang-Artwork/Windows-7 icon source (`actions/25` and `actions/16`).
+
+Explorer command bar, hover/selection surfaces and details pane: `icons/aero/command-*.png`, `item-*.png`, `details-pane.png` from https://mirrors.equipable.org/ (Windows 7 interface imagery supplied as a project reference). Import: `scripts/import-explorer-surfaces.mjs`.
+
+The 16px library document, music, pictures and videos symbols use the native small variants `filesystems/16/folder-*-2` (`folder-documents2.png`, etc.) from B00merang-Artwork/Windows-7, rather than scaled user-folder images.

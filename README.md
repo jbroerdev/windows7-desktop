@@ -231,3 +231,7 @@ Die persönlichen Ordner liegen unter `/Explorer/Users/<Benutzer>/Desktop`, `Doc
 Wenn Explorer Share und Windows 7 Desktop parallel laufen, verwende **unterschiedliche Host-Datenordner und Ports**. Zwei laufende Container dürfen nicht dieselbe Datenbank bearbeiten. Für einen Umzug zuerst den alten Container stoppen, den gesamten Datenordner sichern und die Kopie mit dem neuen Projekt starten.
 
 Programme lassen sich per Rechtsklick im Startmenü, auf einer Verknüpfung oder auf dem laufenden Taskleistensymbol anheften. „Von Taskleiste lösen“ entfernt die Anheftung. Sie bleibt pro Benutzer in diesem Browser nach dem Neuladen erhalten. Ein Klick aktiviert ein laufendes Fenster; Rechtsklick → „Neue Instanz öffnen“ startet ein weiteres. Editor, Fotoanzeige, Medienplayer und eingebettete Verknüpfungen unterstützen unabhängige Fenster.
+
+Die Explorer-Pfadleiste bietet anklickbare Ordner, Unterordner-Menüs, Zurück/Vorwärts und eine Suche im aktuellen Ordner. Mit F4 in der Adressleiste oder einem Doppelklick auf ihre freie Fläche kannst du einen vorhandenen Pfad eingeben. Titelleisten, Fensterknöpfe und Rahmen verwenden Grafiken des Cinnamon-Themes; Quellen und Lizenz stehen in den Grafikhinweisen.
+
+Die klassische Menüzeile lässt sich mit Alt oder über „Organisieren“ ein- und ausblenden. „Ansicht ändern“ wechselt zwischen Symbolen und Detailspalten. Unter „Computer“ erscheint das virtuelle Laufwerk C: als eigene Laufwerkskachel.
