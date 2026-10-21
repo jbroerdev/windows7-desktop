@@ -5,7 +5,7 @@ RUN npm install --global pnpm@11.25.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
-RUN pnpm build && pnpm test && pnpm prune --prod
+RUN node scripts/fetch-wallpapers.mjs && pnpm build && pnpm test && pnpm prune --prod
 
 FROM node:24-bookworm-slim AS runtime
 WORKDIR /app
@@ -17,8 +17,9 @@ ENV NODE_ENV=production \
 RUN mkdir -p /Explorer/Users /Explorer/.explorer && chown -R node:node /Explorer
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/public ./public
-COPY --from=build --chown=node:node /app/package.json /app/server.mjs /app/backend.mjs /app/storage.mjs /app/php-worker.mjs ./
+COPY --from=build --chown=node:node /app/package.json /app/server.mjs /app/backend.mjs /app/storage.mjs /app/disk-space.mjs /app/file-operations.mjs /app/php-worker.mjs ./
 COPY --from=build --chown=node:node /app/scripts/setup-admin.mjs ./scripts/setup-admin.mjs
+COPY --from=build --chown=node:node /app/scripts/docker-smoke.mjs ./scripts/docker-smoke.mjs
 USER node
 VOLUME ["/Explorer"]
 EXPOSE 3000

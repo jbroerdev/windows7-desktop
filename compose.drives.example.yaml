@@ -1,0 +1,15 @@
+# Copy to compose.drives.yaml and replace the host paths with your disk folders.
+# Use together with compose.yaml and compose.bind.yaml, when the base is a bind mount.
+services:
+  explorer:
+    volumes:
+      - type: bind
+        source: /mnt/daten
+        target: /Explorer/D-Daten
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /mnt/archiv
+        target: /Explorer/E-Archiv
+        bind:
+          create_host_path: false

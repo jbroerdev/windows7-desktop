@@ -1,0 +1,8 @@
+// Fetch immutable originals at image-build time; runtime remains fully local.
+import{promises as fs}from'node:fs';import path from'node:path';import{createHash}from'node:crypto';
+const root=new URL('../public/wallpapers/',import.meta.url),items=JSON.parse(await fs.readFile(new URL('windows7.json',root),'utf8'));
+const revision='21970f48b8f66b4d44742cb30388c1454512d681';
+const digest=bytes=>createHash('sha256').update(bytes).digest('hex');let cursor=0,downloaded=0;
+async function worker(){while(cursor<items.length){const item=items[cursor++],target=new URL(path.basename(item.url),root);if(!/^[a-f0-9]{64}$/.test(item.sha256))throw Error('Wallpaper-Prüfsumme fehlt: '+item.name);try{const existing=await fs.readFile(target);if(digest(existing)===item.sha256)continue;}catch(error){if(error.code!=='ENOENT')throw error;}
+const source='https://raw.githubusercontent.com/bartekl1/windows-ui-assets/'+revision+'/Wallpapers/Windows%207/'+item.source.split('/').map(encodeURIComponent).join('/');let last;for(let attempt=0;attempt<3;attempt++){try{const response=await fetch(source,{signal:AbortSignal.timeout(60000)});if(!response.ok)throw Error('HTTP '+response.status);const bytes=Buffer.from(await response.arrayBuffer());if(digest(bytes)!==item.sha256)throw Error('Prüfsumme stimmt nicht');await fs.writeFile(target,bytes);last=null;downloaded++;break;}catch(error){last=error;if(attempt<2)await new Promise(r=>setTimeout(r,(attempt+1)*2000));}}if(last)throw Error(item.name+': '+last.message);}}
+await Promise.all(Array.from({length:6},worker));console.log('Windows-7-Wallpaper geprüft:',items.length,'; heruntergeladen:',downloaded);

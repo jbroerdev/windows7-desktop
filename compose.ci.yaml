@@ -1,0 +1,6 @@
+services:
+  explorer:
+    environment:
+      EXPLORER_SMOKE_TEST: "1"
+    tmpfs:
+      - /Explorer/D-Test:uid=1000,gid=1000,mode=0700

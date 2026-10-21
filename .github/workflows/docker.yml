@@ -11,16 +11,20 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
+      - name: Validate upgrade helper
+        run: bash -n scripts/upgrade-from-explorer-share.sh
       - name: Validate Compose
         run: docker compose config --quiet
       - name: Build and run integration tests
         run: docker compose build
       - name: Start container and wait for health check
-        run: docker compose up -d --wait --wait-timeout 90
+        run: docker compose -f compose.yaml -f compose.ci.yaml up -d --wait --wait-timeout 90
       - name: Check HTTP and filesystem
         run: |
           curl --fail --silent http://127.0.0.1:3000/api/session
+          curl --fail --silent http://127.0.0.1:3000/api/drives
           docker compose exec -T explorer node -e "const fs=require('node:fs');fs.accessSync('/Explorer/Users',fs.constants.W_OK);if(process.getuid()===0)process.exit(1)"
+          docker compose exec -T explorer node scripts/docker-smoke.mjs
       - name: Container logs
         if: always()
         run: docker compose logs --no-color

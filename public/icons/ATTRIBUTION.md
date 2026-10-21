@@ -32,3 +32,13 @@ The 16px library document, music, pictures and videos symbols use the native sma
 Caption glyphs (`icons/aero/caption-*.png`) and search-vector artwork from https://github.com/khang-nd/7.css (`gui/icon`), MIT license, retained in `7CSS-LICENSE.txt`. The controls use separate glyphs and backgrounds to preserve original-size symbols and Windows 7 button proportions.
 
 Navigation sprite (`icons/aero/navigation-states.png`): https://github.com/yuvia08/rinfox_updated, `rinfox/English/chrome/images/navigation.png`, original RinFox artwork credited upstream to travis. Normal, hover/pressed and disabled states are selected from the sprite; the dark blue state is used on hover. Import with `scripts/import-navigation-sprite.mjs`.
+
+Die IE7-Browseroberfläche nutzt zusätzlich `home`, `favorites`, `add-favorite`, `ie_page`, `newtab`, `search`, `help`, `settings`, `globe` und `reload-buttons` aus [RinFox Updated](https://github.com/yuvia08/rinfox_updated/tree/main/rinfox/English/chrome/images), lokal mit dem Präfix `ie-`. RinFox stammt ursprünglich von travis/travy-patty.
+
+`internet-explorer.png`: PNG-Export von `icons/IconGroup32512.ico` aus RinFox Updated, als Programmsymbol des eingebauten Browsers.
+
+Desktop-Ordnersymbol (`desktop.png`, `desktop-16.png`): Original Nummer `178.png` aus dem vom Benutzer bereitgestellten Windows-7-Icon-Pack von NhatPG.
+
+Windows-7-Hintergründe: Originaldateien aus [bartekl1/windows-ui-assets](https://github.com/bartekl1/windows-ui-assets/tree/main/Wallpapers/Windows%207), Stand `21970f48b8f66b4d44742cb30388c1454512d681`. 31 reguläre und 108 regionale Motive, Microsoft Windows artwork. JPEG-Originale bleiben unverändert; `thumb-win7-*` sind verkleinerte Galerie-Vorschauen. Import: `scripts/import-windows7-wallpapers.py`.
+
+Navigationsrahmen mit Schattierung: `navigation_frame.png` aus RinFox Updated, lokal `aero/navigation-frame.png`.

@@ -1,5 +1,9 @@
 # Windows 7 Desktop in Docker
 
+Die [README](README.md) enthält die empfohlene Installation mit Host-Ordner, den automatisierten Umstieg von Explorer Share und zusätzliche Laufwerke. Für eine bestehende Explorer-Share-Instanz mit `/Explorer`-Mount verwende den dort beschriebenen Kopier-Helfer; die unten beschriebene Migration eines alten `data`-Ordners gilt nur für frühere Speicherlayouts.
+
+Zusätzliche Platten werden über `compose.drives.yaml` nach `/Explorer/D-Name` eingebunden. Der Explorer zeigt pro Dateisystem echte Kapazitätswerte. Gelöschte Dateien bleiben zunächst im persönlichen Papierkorb auf demselben Laufwerk (`.recycle`), bis sie wiederhergestellt oder ausdrücklich endgültig gelöscht werden.
+
 ## Starten
 
 Docker mit Compose und Git auf dem Docker-Host installieren. Danach:

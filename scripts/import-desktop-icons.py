@@ -2,7 +2,7 @@
 import io,sys,zipfile
 from pathlib import Path
 from PIL import Image
-mapping={'library-documents':'005','library-music':'007','library-pictures':'006','library-videos':'008','computer':'177','drive':'109','folder':'033','folder-full':'218','home':'184','explorer':'011','notepad':'013','photo-app':'426','programs':'033','help':'073','settings':'015','network':'183','desktop':'009','documents':'041','downloads':'001','pictures':'042','music':'040','videos':'004'}
+mapping={'library-documents':'005','library-music':'007','library-pictures':'006','library-videos':'008','computer':'177','drive':'109','drive-data':'105','folder':'033','folder-full':'218','home':'184','explorer':'011','notepad':'013','photo-app':'426','programs':'033','help':'073','settings':'015','network':'183','desktop':'178','documents':'041','downloads':'001','pictures':'042','music':'040','videos':'004'}
 out=Path(__file__).resolve().parents[1]/'public'/'icons'
 with zipfile.ZipFile(sys.argv[1]) as archive:
     for label,number in mapping.items():
