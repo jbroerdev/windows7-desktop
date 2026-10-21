@@ -31,7 +31,7 @@ assert.equal((await request('/api/share-desktop-mode',{enabled:true})).status,40
 assert.equal((await request('/api/share-desktop-mode',{enabled:false},admin)).status,200);
 const session=(await(await request('/api/session')).json());const aliceId=session.userId;
 const personal=(await(await request('/api/nodes')).json()).nodes.find(n=>n.personalPrograms);assert.equal(personal.path,'/C/Users/alice/Programme');assert.ok((await stat(path.join(process.env.EXPLORER_ROOT,'Users','alice','Programme'))).isDirectory());
-await request('/api/link',{parent:personal.id,name:'Nur Alice',url:'https://example.com'});assert.ok(!(await(await request('/api/nodes',undefined,admin)).json()).nodes.some(n=>n.name==='Nur Alice'));
+await request('/api/link',{parent:personal.id,name:'Nur Alice',url:'https://example.com'});assert.ok((await(await request('/api/nodes',undefined,admin)).json()).nodes.some(n=>n.name==='Nur Alice'&&!n.writable));
 assert.equal((await request('/api/desktop',{positions:{'shell-computer':{col:3,row:2}},wallpaper:null})).status,200);assert.deepEqual((await(await request('/api/session')).json()).desktop.positions,{'shell-computer':{col:3,row:2}});assert.deepEqual((await(await request('/api/session',undefined,admin)).json()).desktop,{});
 assert.equal((await request('/api/desktop',{positions:{a:{col:-1,row:0}}})).status,400);
 assert.equal((await request('/api/desktop',{favorites:[{name:'Meine Seite',url:'https://example.org/'}]})).status,200);

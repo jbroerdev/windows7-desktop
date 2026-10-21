@@ -1,9 +1,9 @@
-# Optional: docker compose -f compose.yaml -f compose.bind.yaml up --build -d
+# Compatibility overlay for older commands; compose.yaml already uses a host bind.
 services:
   explorer:
     volumes:
       - type: bind
-        source: ${EXPLORER_PATH:-./Explorer}
+        source: ${EXPLORER_PATH:-/Explorer}
         target: /Explorer
         bind:
-          create_host_path: true
+          create_host_path: false

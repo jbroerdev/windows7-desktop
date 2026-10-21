@@ -26,7 +26,7 @@ Die Ersteinrichtung per Web ist auf Loopback beschränkt. Docker-Portweiterleitu
 
 ## Echtes Dateisystem
 
-Der Container speichert die Daten im persistenten Volume **`/Explorer`**. Die Web-Festplatte `C:` entspricht dieser Wurzel:
+Der Container bindet den echten Host-Ordner **`/Explorer`** direkt nach **`/Explorer`** ein. Es gibt keine von Docker verwalteten Volumes. Die Web-Festplatte `C:` entspricht dieser Wurzel:
 
 ```text
 /Explorer/
@@ -56,13 +56,13 @@ Neue Dateien und Ordner innerhalb vorhandener Benutzerordner werden auch währen
 
 ## Eigenen Host-Ordner einbinden
 
-Standardmäßig nutzt Compose das benannte Volume `explorer_data`. Alternativ:
+Standardmäßig nutzt Compose einen Host-Bind-Mount unter `/Explorer`. Der Ordner muss vorher existieren und UID/GID 1000:1000 gehören. Die bisherige Zusatzdatei bleibt für ältere Startbefehle kompatibel:
 
 ```sh
 docker compose -f compose.yaml -f compose.bind.yaml up --build -d
 ```
 
-Dann liegt der Inhalt auf dem Host in `./Explorer` und im Container weiterhin unter `/Explorer`. Den Pfad kann man über `EXPLORER_PATH` in einer `.env` ändern; eine Vorlage liegt in `.env.example`. Unter Linux muss dieser Ordner für UID/GID **1000:1000** beschreibbar sein, da der Container als Benutzer `node` läuft. Ein Named Volume und ein Host-Bind-Mount sind getrennte Speicherorte; ein Wechsel kopiert keine vorhandenen Daten automatisch.
+Der Inhalt liegt auf dem Host unter `/Explorer` und im Container ebenfalls unter `/Explorer`. Den Pfad kann man über `EXPLORER_PATH` in einer `.env` ändern; eine Vorlage liegt in `.env.example`. Unter Linux muss dieser Ordner für UID/GID **1000:1000** beschreibbar sein, da der Container als Benutzer `node` läuft. Ein Named Volume und ein Host-Bind-Mount sind getrennte Speicherorte; ein Wechsel kopiert keine vorhandenen Daten automatisch.
 
 ## Port und HTTPS
 
@@ -79,7 +79,7 @@ Der Port ist standardmäßig nur an `127.0.0.1:3000` gebunden. In `.env` können
 
 ## Bestehende Daten übernehmen
 
-Das Image enthält absichtlich keine lokalen Dateien, Benutzer oder Passwörter. Vor der Übernahme die alte Anwendung stoppen und den vollständigen bisherigen `data`-Ordner sichern. Dessen Inhalt gehört vor dem ersten Start in den neuen Speicher unter `/Explorer/.explorer`. Er muss für UID/GID 1000:1000 beschreibbar sein. Bei einem frischen Bind-Mount entspricht das `./Explorer/.explorer` auf dem Host.
+Das Image enthält absichtlich keine lokalen Dateien, Benutzer oder Passwörter. Vor der Übernahme die alte Anwendung stoppen und den vollständigen bisherigen `data`-Ordner sichern. Dessen Inhalt gehört vor dem ersten Start in den neuen Speicher unter `/Explorer/.explorer`. Er muss für UID/GID 1000:1000 beschreibbar sein. Bei der Standardkonfiguration entspricht das `/Explorer/.explorer` auf dem Host.
 
 Die Anwendung übernimmt die bestehenden Dateien aus `files/<ID>` bzw. aus `Explorer/Users/…` des bisherigen lokalen Datenordners in die echte Struktur unter `/Explorer/Users/…`. Ursprüngliche ID-Dateien bleiben als Sicherung erhalten. Bestehende Zieldateien werden nicht überschrieben. Die gesamte Wurzel `/Explorer` einschließlich `.explorer` zusammen sichern.
 

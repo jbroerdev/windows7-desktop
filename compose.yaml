@@ -14,11 +14,13 @@ services:
       DATA_DIR: /Explorer/.explorer
       COOKIE_SECURE: "${COOKIE_SECURE:-0}"
     volumes:
-      - explorer_data:/Explorer
+      - type: bind
+        source: ${EXPLORER_PATH:-/Explorer}
+        target: /Explorer
+        bind:
+          create_host_path: false
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     stop_grace_period: 15s
-volumes:
-  explorer_data:

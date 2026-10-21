@@ -25,7 +25,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)toggle
 const menuAction=fn=>()=>{toggleStart(false);fn();};
 function renderMenu(){
   const state=getState(),nodes=getNodes(),query=search.value.trim().toLocaleLowerCase('de');apps.replaceChildren();
-  const programs=nodes.filter(n=>n.kind==='link'&&['programs','personal-programs'].includes(n.space));
+  const programs=nodes.filter(n=>n.kind==='link'&&(n.space==='programs'||n.space==='personal-programs'&&(!n.ownerId||n.ownerId===getState().userId)));
   let items=[...builtins,...programs.map(n=>({id:'link:'+n.id,name:n.name,node:n,action:()=>openNode(n)}))];
   if(query)items=[...items,...nodes.filter(n=>!n.system&&n.space!=='programs'&&n.name.toLocaleLowerCase('de').includes(query)).map(n=>({name:n.name,node:n,action:()=>n.kind==='folder'?reopen(n.id):openNode(n)}))].filter(n=>n.name.toLocaleLowerCase('de').includes(query));
   if(allPrograms)items.sort((a,b)=>a.name.localeCompare(b.name,'de'));

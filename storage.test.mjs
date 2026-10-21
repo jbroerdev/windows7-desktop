@@ -62,7 +62,7 @@ assert.equal(imported.path,'/C/Users/alice/Documents/Vom%20Host/Unterordner/Noti
 assert.equal(imported.shared,false);assert.equal(imported.effectiveShared,false);
 assert.equal((await fetch(origin+'/download/'+imported.id)).status,404);
 assert.equal(await(await fetch(origin+'/download/'+imported.id,{headers:{cookie}})).text(),'Host-Inhalt');
-assert.ok(!(await(await fetch(origin+'/api/nodes',{headers:{cookie:adminCookie}})).json()).nodes.some(n=>n.id===imported.id));
+assert.ok((await(await fetch(origin+'/api/nodes',{headers:{cookie:adminCookie}})).json()).nodes.some(n=>n.id===imported.id&&!n.writable));
 await api('/api/share',{id:discovered.find(n=>n.name==='Vom Host').id,shared:true});
 await writeFile(path.join(hostFolder,'Später.txt'),'Nachträglich');
 await writeFile(path.join(hostFolder,'Notiz.txt'),'Aktualisierter Host-Inhalt');

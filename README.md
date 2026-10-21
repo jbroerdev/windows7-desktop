@@ -14,10 +14,10 @@ Der Umstieg übernimmt Konten, Passwörter, Freigaben und Dateien aus einer best
 docker ps --format 'table {{.Names}}\t{{.Ports}}'
 git clone https://github.com/jbroerdev/windows7-desktop.git
 cd windows7-desktop
-sudo bash scripts/upgrade-from-explorer-share.sh ALTER-CONTAINER /Explorer-Desktop 3000
+sudo bash scripts/upgrade-from-explorer-share.sh ALTER-CONTAINER /Explorer 3000
 ```
 
-Ersetze `ALTER-CONTAINER` durch den Namen aus der ersten Ausgabe. `/Explorer-Desktop` muss neu oder leer sein. `3000` ist der gewünschte Port. Verwende einen frischen Projektordner ohne `.env`. Bei HTTPS muss dein Reverse-Proxy anschließend auf diesen Port zeigen. Du meldest dich mit deinen bisherigen Zugangsdaten an; lege kein neues erstes Administratorkonto an.
+Ersetze `ALTER-CONTAINER` durch den Namen aus der ersten Ausgabe. `/Explorer` muss neu oder leer sein. Falls die alte Instanz diesen Host-Ordner bereits verwendet, wähle für die sichere Kopie zunächst einen anderen Zielordner; der Helfer überschreibt keine vorhandenen Daten. `3000` ist der gewünschte Port. Verwende einen frischen Projektordner ohne `.env`. Bei HTTPS muss dein Reverse-Proxy anschließend auf diesen Port zeigen. Du meldest dich mit deinen bisherigen Zugangsdaten an; lege kein neues erstes Administratorkonto an.
 
 Während der Kopie ist die Anwendung kurz nicht erreichbar. Danach bleibt der alte Container gestoppt und sein ursprünglicher Speicher erhalten. Bei einem Startfehler versucht das Skript automatisch, ihn wieder zu starten. Für eine spätere Rückkehr:
 
@@ -43,7 +43,7 @@ services:
   explorer:
     volumes:
       - type: bind
-        source: /mnt/meine-platte
+        source: /Explorer/D-Daten
         target: /Explorer/D-Daten
         bind:
           create_host_path: false
@@ -121,7 +121,7 @@ docker compose -f compose.yaml -f compose.bind.yaml up --build -d
 
 Beim ersten Start lädt Docker die benötigten Pakete herunter, führt Tests aus und baut das Image. Das kann einige Minuten dauern. `-d` lässt die Anwendung im Hintergrund laufen.
 
-**Verwende beide Compose-Dateien:** Die zweite Datei bindet deinen Host-Ordner `/Explorer` ein. Ohne sie verwendet die Standardkonfiguration ein von Docker verwaltetes Volume. Beim Wechsel zwischen diesen Speicherarten werden vorhandene Daten nicht automatisch kopiert.
+**Alle Daten liegen auf dem Host unter `/Explorer`.** Bereits `compose.yaml` verwendet dafür einen Bind-Mount; es werden keine benannten oder anonymen Docker-Volumes angelegt. `compose.bind.yaml` bleibt als kompatibler Zusatz für ältere Befehle erhalten. Der Host-Ordner muss vorher existieren.
 
 ### 5. Erstes Administratorkonto anlegen
 
@@ -254,7 +254,7 @@ docker compose -f compose.yaml -f compose.bind.yaml logs --tail=100 explorer
 | --- | --- |
 | Die Seite ist nicht erreichbar. | Läuft der Container? Stimmen Server-IP und Port? Steht `EXPLORER_BIND_ADDRESS=0.0.0.0` in `.env`? Erlaubt die Host-Firewall den Zugriff? |
 | Port 3000 ist belegt. | Ändere `EXPLORER_PORT` in `.env` und starte den Compose-Befehl erneut. |
-| Dateien erscheinen nicht unter `/Explorer` auf dem Host. | Wurde mit **beiden** Compose-Dateien gestartet und ist `EXPLORER_PATH=/Explorer` gesetzt? |
+| Dateien erscheinen nicht unter `/Explorer` auf dem Host. | Ist `EXPLORER_PATH=/Explorer` gesetzt und existiert der Host-Ordner mit passenden Schreibrechten? |
 | Schreiben oder Hochladen schlägt fehl. | Prüfe freien Speicher und Schreibrechte für UID/GID `1000:1000`. |
 | Gäste sehen keine Dateien. | Neue Dateien sind privat, solange weder sie selbst noch ihr Elternordner freigegeben sind. |
 | Das Administratorkonto existiert bereits. | Melde dich mit dem vorhandenen Konto an; der Einrichtungsbefehl ist nur für das erste Konto. |
@@ -269,11 +269,29 @@ Für öffentlichen Betrieb mit eigener Domain verwende einen HTTPS-Reverse-Proxy
 - [Automatische Docker-Builds und Tests](https://github.com/jbroerdev/windows7-desktop/actions)
 - [Quellen und Lizenzhinweise zu den Grafiken](public/icons/ATTRIBUTION.md)
 
+Die IndexedDB-Kompatibilität nutzt [fake-indexeddb](https://github.com/dumbmatter/fakeIndexedDB) mit einer eigenen persistenten Ablage; [Lizenz](public/proxy-runtime.LICENSE.txt).
+
 Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.org](https://mirrors.equipable.org/). Textbearbeitung nutzt CodeMirror, ZIP-Verarbeitung fflate und die PHP-Vorschau eine isolierte WebAssembly-Laufzeit.
 
 
 
 ## Desktop und Programme verwenden
+
+### Interne Apps über den Server-Proxy
+
+Nur Administratoren sehen in einer Internetverknüpfung **„Über Server-Proxy öffnen“**. Das Häkchen aktiviert Fenster- und App-Modus. Als Ziel kannst du eine interne HTTP-/HTTPS-Adresse eintragen, die der Container erreichen kann. Die Verknüpfung öffnet dann unter **`/app/<appname>/` auf derselben Explorer-Domain**; zusätzliche Domains, DNS-Einträge oder Reverse-Proxy-Regeln sind nicht nötig. Ohne Proxy-Häkchen bleibt der bisherige direkte Aufruf unverändert.
+
+Der Zugriff folgt den normalen Dateirechten und Freigaben: Ein öffentlich freigegebener Proxy-Link macht auch den Zugriff auf diese interne App öffentlich möglich. Eine eigene Anmeldung der Ziel-App bleibt erhalten. Beim Zurücknehmen der Freigabe, Löschen der Verknüpfung oder Abmelden des zugehörigen Explorer-Benutzers endet der Zugriff. Normale Benutzer können weder den Proxy aktivieren noch sein Ziel ändern. Beim Kopieren durch normale Benutzer wird die Proxy-Einstellung entfernt und muss gegebenenfalls erneut durch einen Administrator eingerichtet werden.
+
+Die Proxy-Seite läuft isoliert vom Explorer. `localStorage` wird je angemeldetem Benutzer und Verknüpfung unter **`/Explorer/.explorer/proxy-storage/`** gespeichert, maximal 5 MB je App. `sessionStorage` bleibt je geöffnetem App-Fenster getrennt. Bei Gästen bleibt dieser Speicher auf die jeweilige Proxy-Sitzung begrenzt. Diese Speicheradapter geben Apps keinen Zugriff auf Explorer-Anmeldedaten. IndexedDB wird über einen getrennten Adapter angebunden, auch in klassischen WebWorkern. Binäre Datensätze und abgeschlossene Schreibtransaktionen werden unter demselben Host-Verzeichnis gespeichert (maximal 128 MB je App-Datenbank). Die Einbettung erhält dadurch keinen Zugriff auf die nativen Explorer-Datenbanken. Diese Kompatibilitätsschicht ersetzt keine vollständige Browser-Umgebung; insbesondere spezielle Speicher- und Worker-Funktionen einer App können weitere Anpassungen benötigen.
+
+HTTP-Anfragen, Formulare, Cookies und WebSockets werden weitergeleitet; viele Pfade in HTML, CSS, Fetch und XMLHttpRequest werden angepasst. Nicht jede Webapp lässt sich unverändert unter einem Unterpfad betreiben. Manche benötigen eine passende Basis-URL oder Anpassungen für die isolierte Einbettung.
+
+**Docker-Netzwerk:** `127.0.0.1` bezeichnet im Container den Container selbst. Für einen Dienst auf dem Docker-Host verwende eine vom Container erreichbare Host-/LAN-Adresse oder einen entsprechend eingerichteten Hostnamen. Andere Docker-Dienste lassen sich über ein gemeinsames Docker-Netzwerk und ihren Servicenamen erreichen. Die lokale Vorschau ohne Container kann dagegen `127.0.0.1` des Rechners direkt verwenden.
+
+### Administratorzugriff auf Benutzerverzeichnisse
+
+Unter **Computer → Windows (C:) → Users** sehen Administratoren auch die Verzeichnisse anderer aktiver Benutzer. Sie können diese öffnen und Dateien ansehen. Fremde Dateien bleiben schreibgeschützt. Normale Benutzer sehen weiterhin nur ihre eigenen privaten Verzeichnisse und die sonst für sie freigegebenen Bereiche. Persönliche Programme anderer Benutzer erscheinen dadurch nicht automatisch im eigenen Startmenü.
 
 Die Adresse `/` öffnet nur den Desktop. Apps lassen sich direkt starten: `/explorer`, `/notepad`, `/vlc`, `/fotoanzeige`, `/browser` und `/papierkorb`. Ein vollständiger Dateipfad dahinter öffnet den Inhalt in der gewählten App, zum Beispiel `/notepad/C/Users/admin/Documents/Notiz.txt` oder `/vlc/D/Filme/Video.mp4`. Leerzeichen werden in Links als `%20` geschrieben. Anmeldung und Freigaberechte gelten unverändert.
 
