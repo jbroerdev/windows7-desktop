@@ -1,12 +1,12 @@
-# Explorer Share in Docker
+# Windows 7 Desktop in Docker
 
 ## Starten
 
 Docker mit Compose und Git auf dem Docker-Host installieren. Danach:
 
 ```sh
-git clone https://github.com/jbroerdev/explorer-share.git
-cd explorer-share
+git clone https://github.com/jbroerdev/windows7-desktop.git
+cd windows7-desktop
 ```
 
 Im Projektordner ausführen:

@@ -1,10 +1,10 @@
 {
-  "name": "explorer-share",
+  "name": "windows7-desktop",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test test.mjs storage.test.mjs selection.test.mjs windows.test.mjs",
+    "test": "node --test test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs",
     "build": "node scripts/build-editor.mjs"
   },
   "engines": {

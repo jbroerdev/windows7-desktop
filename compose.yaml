@@ -1,8 +1,8 @@
-name: explorer-share
+name: windows7-desktop
 services:
   explorer:
     build: .
-    image: explorer-share:local
+    image: windows7-desktop:local
     restart: unless-stopped
     init: true
     ports:

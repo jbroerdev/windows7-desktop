@@ -74,7 +74,7 @@ assert.equal(discovered.find(n=>n.id===imported.id).size,Buffer.byteLength('Aktu
 assert.equal(discovered.find(n=>n.name==='Später.txt').shared,false);
 assert.equal(discovered.find(n=>n.name==='Später.txt').effectiveShared,true);
 
-denied=await fetch(origin+'/api/delete',{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:JSON.stringify({id:aliceNodes.find(n=>n.system).id})});assert.equal(denied.status,400);
+denied=await fetch(origin+'/api/delete',{method:'POST',headers:{cookie,'Content-Type':'application/json'},body:JSON.stringify({id:aliceNodes.find(n=>n.system&&!n.programRoot).id})});assert.equal(denied.status,400);
 // A listing during a streamed upload must not import the unfinished file.
 let uploadController;
 const streamingBody=new ReadableStream({start(controller){uploadController=controller;controller.enqueue(Buffer.from('Beginn'));}});

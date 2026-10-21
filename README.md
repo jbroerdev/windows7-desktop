@@ -1,6 +1,6 @@
-# Explorer Share
+# Windows 7 Desktop
 
-Ein Dateimanager im Stil von Windows 7 für deinen eigenen Server. Benutzer können Dateien hochladen, verwalten und öffentlich freigeben. Fotoanzeige, Medienplayer und Texteditor sind enthalten.
+Ein Desktop im Stil von Windows 7 für den Browser: mit Startmenü, Taskleiste, Explorer, Fotoanzeige, VLC-artigem Medienplayer und Notepad++-artigem Editor. Benutzer können Dateien hochladen, verwalten und öffentlich freigeben. Dieses eigenständige Projekt basiert auf [Explorer Share](https://github.com/jbroerdev/explorer-share); das ursprüngliche Repository bleibt separat bestehen.
 
 **Die Anwendung läuft mit Docker Compose.** Docker baut das Image direkt aus diesem Repository. Node.js und pnpm musst du auf deinem Server nicht zusätzlich installieren.
 
@@ -15,8 +15,8 @@ Die folgenden Befehle sind für einen **Linux-Docker-Host** gedacht. Führe sie 
 ### 1. Projekt herunterladen
 
 ```bash
-git clone https://github.com/jbroerdev/explorer-share.git
-cd explorer-share
+git clone https://github.com/jbroerdev/windows7-desktop.git
+cd windows7-desktop
 ```
 
 Führe alle weiteren Compose-Befehle in diesem Projektordner aus.
@@ -208,9 +208,24 @@ Für öffentlichen Betrieb mit eigener Domain verwende einen HTTPS-Reverse-Proxy
 ## Weitere Informationen
 
 - [Docker-Details und Übernahme vorhandener Daten](DOCKER.md)
-- [Automatische Docker-Builds und Tests](https://github.com/jbroerdev/explorer-share/actions)
+- [Automatische Docker-Builds und Tests](https://github.com/jbroerdev/windows7-desktop/actions)
 - [Quellen und Lizenzhinweise zu den Grafiken](public/icons/ATTRIBUTION.md)
 
 Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.org](https://mirrors.equipable.org/). Textbearbeitung nutzt CodeMirror, ZIP-Verarbeitung fflate und die PHP-Vorschau eine isolierte WebAssembly-Laufzeit.
 
 
+
+## Desktop und Programme verwenden
+
+- Alles im Ordner **Desktop** erscheint auch auf dem Desktop. Dateien, Ordner und Internetverknüpfungen öffnen sich per Doppelklick. Änderungen vom Host werden beim nächsten automatischen Abgleich sichtbar.
+- Symbole lassen sich im Raster verschieben. Ein belegter Platz tauscht die beiden Symbole. Mit **Alt + Pfeiltasten** geht es auch per Tastatur. Die Positionen werden pro Benutzer in diesem Browser gespeichert. Rechtsklick auf den Desktop bietet eine automatische Anordnung.
+- Notepad++, Fotoanzeige und VLC lassen sich im Startmenü ohne Datei starten. Über **Öffnen** oder Rechtsklick → **Datei öffnen** wählst du eine Datei aus dem Explorer-Speicher. Neue Texte werden mit **Speichern unter** in einem gewählten Ordner gespeichert.
+- Unter **Computer → Windows (C:) → Programme** kannst du Internetverknüpfungen anlegen. Sie erscheinen automatisch im Startmenü, auch wenn sie in Unterordnern liegen. Die Suche findet Programme und sichtbare Dateien.
+- Die Häkchen **Im eigenen Fenster** und **Als App öffnen** bestimmen, ob eine Verknüpfung im externen Tab, als Website-Fenster oder nur mit App-Fensterrahmen startet. Für andere Docker-Apps muss die URL im Browser erreichbar sein und die App eine Einbettung erlauben.
+- Leere gewöhnliche Ordner und Ordner mit sichtbarem Inhalt haben unterschiedliche Symbole.
+
+### Speicherorte und mehrere Benutzer
+
+Die persönlichen Ordner liegen unter `/Explorer/Users/<Benutzer>/Desktop`, `Documents`, `Downloads`, `Music`, `Pictures` und `Videos`. Der neue gemeinsame Speicherbereich **C:/Programme** liegt auf dem Host unter **`/Explorer/Programme`**. Neue Einträge bleiben privat und gehören ihrem Ersteller. Freigegebene Programme erscheinen auch bei anderen Benutzern und Gästen; fremde Einträge können nicht bearbeitet werden. Direkt auf dem Host angelegte Programmdateien werden dem Besitzer des Programme-Stammordners zugeordnet. Internetverknüpfungen werden über den Explorer angelegt und in der Datenbank gespeichert.
+
+Wenn Explorer Share und Windows 7 Desktop parallel laufen, verwende **unterschiedliche Host-Datenordner und Ports**. Zwei laufende Container dürfen nicht dieselbe Datenbank bearbeiten. Für einen Umzug zuerst den alten Container stoppen, den gesamten Datenordner sichern und die Kopie mit dem neuen Projekt starten.

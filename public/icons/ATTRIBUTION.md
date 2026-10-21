@@ -1,5 +1,11 @@
 # Windows 7 icons
 
+Desktop artwork imported from the user-provided `Windows_7_Icon-Pack.zip`, “Biggest Windows 7's icons pack created by NhatPG”. Original Windows imagery; no ownership is claimed. The selection and source numbers are recorded in `scripts/import-desktop-icons.py`. Large images and 16px variants are generated from that selection.
+
+Task button states and Show Desktop graphics: https://github.com/ramensoftware/windows-11-taskbar-styling-guide/tree/main/Themes/Windows7/ThemeResources . Based on the resource URLs supplied with this project; XAML configuration is not executed.
+
+Start-menu background: https://github.com/Xalalau/Windows-7-Theme-Cinnamon/blob/master/cinnamon/menu-assets/menu-bg.png . B00merang/Xalalau theme, GPL v3; see CINNAMON-LICENSE.txt. Used as a background texture; the browser layout and interaction are implemented separately.
+
 Taskbar texture and Start button sprite: https://github.com/EJSnow/Windows-7-skin (Taskbar_texture_bottom.png and Windows 7 start button 100%.png). Windows 7 lookalike artwork for Open-Shell; original sources and contributors are documented in the upstream README. These are visual assets; Open-Shell code is not embedded.
 
 Source: https://github.com/B00merang-Artwork/Windows-7
