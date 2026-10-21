@@ -119,7 +119,7 @@ Ein neuer Host-Ordner unter `Users` erstellt **kein Benutzerkonto**. Lege Konten
 
 ### Weitere Benutzer anlegen
 
-Melde dich als Administrator unter `/login` an und öffne **„Benutzer verwalten“**. Jeder Benutzer verwaltet seine eigenen privaten Dateien. Profilbilder lassen sich ebenfalls auf der Login-Seite ändern.
+Melde dich als Administrator an und öffne **Start → Benutzerkonto**. Dort kannst du Konten anlegen, entfernen und ihre Kontogruppe ändern. Jeder Benutzer verwaltet seine eigenen privaten Dateien und sein Profilbild.
 
 ### Dateien öffentlich freigeben
 
@@ -151,7 +151,7 @@ Bei Internetverknüpfungen wählst du beim Erstellen oder Bearbeiten mit dem Hä
 
 Bilder öffnen in der Fotoanzeige mit Zoomregler, Originalgröße, Einpassen, Drehen, Bildwechsel und Diashow. Das Mausrad zoomt zum Mauszeiger; vergrößerte Bilder können mit der Maus verschoben werden. Drehen verändert nur die Ansicht. Musik und Videos öffnen im Medienplayer; unterstützte Formate hängen von den Codecs des Browsers ab. HTML und PHP öffnen als isolierte Website-Vorschau. Die PHP-Vorschau ersetzt keinen vollständigen Webhost mit Datenbank oder dauerhaften Sitzungen.
 
-Beim Verschieben bleiben eigene Freigaben erhalten; geerbte Freigaben richten sich nach dem neuen Elternordner. Namenskonflikte werden ohne Überschreiben abgewiesen. Die sechs Grundordner können nicht verschoben werden.
+Beim Verschieben bleiben eigene Freigaben erhalten; geerbte Freigaben richten sich nach dem neuen Elternordner. Namenskonflikte werden ohne Überschreiben abgewiesen. Die Grundordner einschließlich des persönlichen Programme-Ordners können nicht verschoben werden.
 
 ## Updates installieren
 
@@ -218,7 +218,7 @@ Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.
 ## Desktop und Programme verwenden
 
 - Alles im Ordner **Desktop** erscheint auch auf dem Desktop. Dateien, Ordner und Internetverknüpfungen öffnen sich per Doppelklick. Änderungen vom Host werden beim nächsten automatischen Abgleich sichtbar.
-- Symbole lassen sich im Raster verschieben. Ein belegter Platz tauscht die beiden Symbole. Mit **Alt + Pfeiltasten** geht es auch per Tastatur. Die Positionen werden pro Benutzer in diesem Browser gespeichert. Rechtsklick auf den Desktop bietet eine automatische Anordnung.
+- Symbole lassen sich im Raster verschieben. Ein belegter Platz tauscht die beiden Symbole. Mit **Alt + Pfeiltasten** geht es auch per Tastatur. Die Positionen werden im Benutzerkonto gespeichert und nach dem Anmelden wiederhergestellt. Rechtsklick auf den Desktop bietet eine automatische Anordnung.
 - Notepad++, Fotoanzeige und VLC lassen sich im Startmenü ohne Datei starten. Über **Öffnen** oder Rechtsklick → **Datei öffnen** wählst du eine Datei aus dem Explorer-Speicher. Neue Texte werden mit **Speichern unter** in einem gewählten Ordner gespeichert.
 - Unter **Computer → Windows (C:) → Programme** kannst du Internetverknüpfungen anlegen. Sie erscheinen automatisch im Startmenü, auch wenn sie in Unterordnern liegen. Die Suche findet Programme und sichtbare Dateien.
 - Die Häkchen **Im eigenen Fenster** und **Als App öffnen** bestimmen, ob eine Verknüpfung im externen Tab, als Website-Fenster oder nur mit App-Fensterrahmen startet. Für andere Docker-Apps muss die URL im Browser erreichbar sein und die App eine Einbettung erlauben.
@@ -226,7 +226,7 @@ Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.
 
 ### Speicherorte und mehrere Benutzer
 
-Die persönlichen Ordner liegen unter `/Explorer/Users/<Benutzer>/Desktop`, `Documents`, `Downloads`, `Music`, `Pictures` und `Videos`. Der neue gemeinsame Speicherbereich **C:/Programme** liegt auf dem Host unter **`/Explorer/Programme`**. Neue Einträge bleiben privat und gehören ihrem Ersteller. Freigegebene Programme erscheinen auch bei anderen Benutzern und Gästen; fremde Einträge können nicht bearbeitet werden. Direkt auf dem Host angelegte Programmdateien werden dem Besitzer des Programme-Stammordners zugeordnet. Internetverknüpfungen werden über den Explorer angelegt und in der Datenbank gespeichert.
+Die persönlichen Ordner liegen unter `/Explorer/Users/<Benutzer>/Desktop`, `Documents`, `Downloads`, `Music`, `Pictures`, `Videos` und `Programme`. Der neue gemeinsame Speicherbereich **C:/Programme** liegt auf dem Host unter **`/Explorer/Programme`**. Die Programme unter **C:/Programme** erscheinen für alle angemeldeten Benutzer im Startmenü. Unter **C:/Users/<Benutzer>/Programme** liegen persönliche Programme, die nur im Startmenü dieses Benutzers erscheinen. Öffentliche Gäste sehen weiterhin ausschließlich freigegebene Einträge; fremde Einträge können nicht bearbeitet werden. Direkt auf dem Host angelegte Programmdateien werden dem Besitzer des Programme-Stammordners zugeordnet. Internetverknüpfungen werden über den Explorer angelegt und in der Datenbank gespeichert.
 
 Wenn Explorer Share und Windows 7 Desktop parallel laufen, verwende **unterschiedliche Host-Datenordner und Ports**. Zwei laufende Container dürfen nicht dieselbe Datenbank bearbeiten. Für einen Umzug zuerst den alten Container stoppen, den gesamten Datenordner sichern und die Kopie mit dem neuen Projekt starten.
 
@@ -235,3 +235,9 @@ Programme lassen sich per Rechtsklick im Startmenü, auf einer Verknüpfung oder
 Die Explorer-Pfadleiste bietet anklickbare Ordner, Unterordner-Menüs, Zurück/Vorwärts und eine Suche im aktuellen Ordner. Mit F4 in der Adressleiste oder einem Doppelklick auf ihre freie Fläche kannst du einen vorhandenen Pfad eingeben. Titelleisten, Fensterknöpfe und Rahmen verwenden Grafiken des Cinnamon-Themes; Quellen und Lizenz stehen in den Grafikhinweisen.
 
 Die klassische Menüzeile lässt sich mit Alt oder über „Organisieren“ ein- und ausblenden. „Ansicht ändern“ wechselt zwischen Symbolen und Detailspalten. Unter „Computer“ erscheint das virtuelle Laufwerk C: als eigene Laufwerkskachel.
+
+### Benutzerkonten und Hintergrund
+
+Öffne **Start → Benutzerkonto**. Jeder Benutzer kann dort sein Kontobild auswählen oder ein eigenes Bild hochladen und seinen Desktop-Hintergrund ändern. Der Hintergrund und die Symbolpositionen werden im Konto gespeichert. Über **Rechtsklick auf den Desktop → Anpassen: Desktop-Hintergrund** erreichst du die Hintergrundauswahl direkt.
+
+Administratoren sehen alle Konten, können neue Konten erstellen und zwischen den Gruppen **Benutzer** und **Administratoren** wechseln. Zum Entfernen eines Kontos wählst du das Konto und anschließend **Konto löschen**. Die Anmeldung und seine öffentlichen Freigaben werden gesperrt. Die Dateien unter `/Explorer/Users/<Benutzer>` bleiben auf dem Host erhalten. Das eigene Konto kann nicht gelöscht werden; mindestens ein Administrator bleibt erhalten.

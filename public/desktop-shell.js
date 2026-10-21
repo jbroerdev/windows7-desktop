@@ -1,6 +1,6 @@
 import{CELL,arrangeIcons,moveIcon}from'/desktop-grid.js';
 
-export function createShell({desktop,getState,getNodes,image,openNode,openFolder,context,launch,createItem,moveFiles,uploadFiles,logout,help}){
+export function createShell({accounts,desktop,getState,getNodes,image,openNode,openFolder,context,launch,createItem,moveFiles,uploadFiles,logout,help}){
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 document.body.classList.add('desktop-shell');
 const surface=el('section',undefined,'desktop-surface');surface.setAttribute('aria-label','Desktop');document.body.prepend(surface);
@@ -24,7 +24,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)toggle
 const menuAction=fn=>()=>{toggleStart(false);fn();};
 function renderMenu(){
   const state=getState(),nodes=getNodes(),query=search.value.trim().toLocaleLowerCase('de');apps.replaceChildren();
-  const programs=nodes.filter(n=>n.kind==='link'&&n.space==='programs');
+  const programs=nodes.filter(n=>n.kind==='link'&&['programs','personal-programs'].includes(n.space));
   let items=[...builtins,...programs.map(n=>({id:'link:'+n.id,name:n.name,node:n,action:()=>openNode(n)}))];
   if(query)items=[...items,...nodes.filter(n=>!n.system&&n.space!=='programs'&&n.name.toLocaleLowerCase('de').includes(query)).map(n=>({name:n.name,node:n,action:()=>n.kind==='folder'?reopen(n.id):openNode(n)}))].filter(n=>n.name.toLocaleLowerCase('de').includes(query));
   if(allPrograms)items.sort((a,b)=>a.name.localeCompare(b.name,'de'));
@@ -33,19 +33,20 @@ function renderMenu(){
   all.textContent=allPrograms?'◂  Zurück':'▸  Alle Programme';
   portrait.src=state.avatar||'/avatars/user.png';user.textContent=state.readonly?'share':state.username||'share';user.onclick=menuAction(()=>reopen('@home'));
   links.replaceChildren();for(const[label,id]of [['Dokumente','@documents'],['Bilder','@pictures'],['Musik','@music'],['Programme','@programs'],['Computer','@computer']]){const b=el('button',label);b.onclick=menuAction(()=>reopen(id));links.append(b);}
-  if(state.authenticated){const profile=el('button','Benutzerkonto');profile.onclick=menuAction(()=>location.assign('/login'));links.append(profile);}
+  if(state.authenticated){const profile=el('button','Benutzerkonto');profile.onclick=menuAction(()=>accounts.open());links.append(profile);}
   const defaults=el('button','Standardprogramme');defaults.onclick=()=>{allPrograms=true;renderMenu();};const support=el('button','Hilfe und Support');support.onclick=menuAction(help);links.append(defaults,support);
   power.textContent=state.authenticated?'Abmelden':'Desktop anzeigen';power.onclick=menuAction(state.authenticated?logout:showDesktop);
 }
 all.onclick=()=>{allPrograms=!allPrograms;renderMenu();};search.oninput=renderMenu;
 function desktopRoot(){return getNodes().find(n=>n.system&&n.space==='desktop');}
-function savePositions(){try{localStorage.setItem(key,JSON.stringify(positions));}catch{}}
+let saveTimer;function savePositions(){if(getState().authenticated){const userId=getState().userId,snapshot=JSON.parse(JSON.stringify(positions));clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{if(getState().userId!==userId)return;try{const r=await fetch('/api/desktop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({positions:snapshot})});if(!r.ok)throw Error();getState().desktop={...getState().desktop,positions:snapshot};}catch{document.getElementById('toast').textContent='Symbolanordnung konnte nicht gespeichert werden.';}},250);}try{localStorage.setItem(key,JSON.stringify(positions));}catch{}}
 function place(){const arranged=arrangeIcons(entries.map(n=>n.id),positions,surface.clientWidth,surface.clientHeight);for(const button of surface.querySelectorAll('.desktop-icon')){const p=arranged[button.dataset.id];button.style.left=CELL.padding+p.col*CELL.width+'px';button.style.top=CELL.padding+p.row*CELL.height+'px';}return arranged;}
 function refresh(){
   const state=getState(),nodes=getNodes(),nextKey='windows7.desktop.'+(state.readonly?'share':state.userId||'share');
   const nextPinKey='windows7.taskbar.'+(state.readonly?'share':state.userId||'share');if(pinKey!==nextPinKey){pinKey=nextPinKey;try{const saved=JSON.parse(localStorage.getItem(pinKey)||'[]');pinnedIds=Array.isArray(saved)?[...new Set(saved.filter(id=>typeof id==='string'))]:[];}catch{pinnedIds=[];}}
+  document.body.style.backgroundImage=state.authenticated&&state.desktop?.wallpaper?'url('+JSON.stringify(state.desktop.wallpaper)+')':'';
   const nextSignature=JSON.stringify([nextKey,state.avatar,nodes]);if(signature===nextSignature||drag)return;signature=nextSignature;
-  if(key!==nextKey){key=nextKey;try{positions=JSON.parse(localStorage.getItem(key)||'{}');}catch{positions={};}if(!positions||typeof positions!=='object')positions={};}
+  if(key!==nextKey){key=nextKey;try{positions=state.authenticated&&state.desktop?.positions?structuredClone(state.desktop.positions):JSON.parse(localStorage.getItem(key)||'{}');}catch{positions={};}if(!positions||typeof positions!=='object')positions={};}
   entries=[{id:'shell-computer',name:'Computer',icon:'computer',action:()=>reopen('@computer')},{id:'shell-home',name:state.readonly?'share':state.username||'Dateien',icon:'home',action:()=>reopen('@home')},...nodes.filter(n=>n.parent===desktopRoot()?.id).map(n=>({...n,action:()=>n.kind==='folder'?reopen(n.id):openNode(n)}))];
   surface.replaceChildren();positions=arrangeIcons(entries.map(n=>n.id),positions,surface.clientWidth,surface.clientHeight);
   for(const item of entries){const b=el('button',undefined,'desktop-icon');b.dataset.id=item.id;b.title=item.name;const img=item.icon?el('img'):image(item);if(item.icon){img.src='/icons/'+item.icon+'.png?v=5';img.alt='';}img.draggable=false;b.append(img,el('span',item.name));if(item.kind==='link')b.append(el('span','↗','desktop-shortcut'));b.ondblclick=()=>{if(!suppressClick)item.action();};b.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();item.action();}if(e.altKey&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const p=positions[item.id],col=Math.max(0,Math.min(Math.floor((surface.clientWidth-16)/CELL.width)-1,p.col+(e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0))),row=Math.max(0,Math.min(Math.floor((surface.clientHeight-16)/CELL.height)-1,p.row+(e.key==='ArrowDown'?1:e.key==='ArrowUp'?-1:0)));positions=moveIcon(positions,item.id,col,row);place();savePositions();}};
@@ -57,7 +58,7 @@ function refresh(){
   place();savePositions();renderMenu();renderPins();
 }
 function showContext(event,actions){const context=document.getElementById('context');context.replaceChildren();for(const[label,fn]of actions){const b=el('button',label);b.onclick=()=>{context.hidden=true;fn();};context.append(b);}context.hidden=false;context.style.left=Math.max(0,Math.min(event.clientX,innerWidth-220))+'px';context.style.top=Math.max(0,Math.min(event.clientY,innerHeight-context.offsetHeight-44))+'px';}
-surface.oncontextmenu=e=>{if(e.target.closest('.desktop-icon'))return;e.preventDefault();const actions=[['Symbole automatisch anordnen',()=>{positions={};signature='';refresh();}],['Desktop-Ordner öffnen',()=>reopen('@desktop')]];if(getState().authenticated)actions.unshift(['Neuer Ordner',()=>createItem('folder')],['Neue Verknüpfung',()=>createItem('link')],['Neue Textdatei',()=>createItem('text')]);showContext(e,actions);};
+surface.oncontextmenu=e=>{if(e.target.closest('.desktop-icon'))return;e.preventDefault();const actions=[['Symbole automatisch anordnen',()=>{positions={};signature='';refresh();}],['Desktop-Ordner öffnen',()=>reopen('@desktop')]];if(getState().authenticated)actions.unshift(['Anpassen: Desktop-Hintergrund',()=>accounts.open('background')],['Neuer Ordner',()=>createItem('folder')],['Neue Verknüpfung',()=>createItem('link')],['Neue Textdatei',()=>createItem('text')]);showContext(e,actions);};
 surface.ondragover=e=>{if(getState().authenticated&&(e.dataTransfer.types.includes('application/x-explorer-nodes')||e.dataTransfer.types.includes('Files')))e.preventDefault();};
 surface.ondrop=e=>{e.preventDefault();if(!getState().authenticated)return;const parent=desktopRoot()?.id;if(!parent)return;if(e.dataTransfer.files.length)uploadFiles(e.dataTransfer.files,parent);else{try{const ids=JSON.parse(e.dataTransfer.getData('application/x-explorer-nodes'));if(Array.isArray(ids))moveFiles(ids,parent);}catch{}}};
 let minimized=[];function showDesktop(){if(minimized.length){for(const id of minimized)if(document.getElementById(id)?.open)desktop.show(id);minimized=[];}else{minimized=[...document.querySelectorAll('dialog.desktop-window[open]:not([hidden])')].sort((a,b)=>Number(a.style.zIndex)-Number(b.style.zIndex)).map(el=>el.id);for(const id of minimized)desktop.minimize(id);}}
