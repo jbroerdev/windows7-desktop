@@ -343,3 +343,23 @@ Die Hintergrundauswahl unter **Anpassung** zeigt mitgelieferte Motive und bereit
 Die Galerie enthält außerdem die 31 regulären und 108 regionalen Original-Windows-7-Hintergründe aus dem referenzierten Windows-UI-Assets-Archiv. Über **Bildkategorie** filterst du z. B. Natur, Landschaften oder ein Land. Die Auswahl lädt kleine Vorschauen und verwendet beim Anwenden die unveränderte Originaldatei.
 
 Eigene hochgeladene Hintergründe lassen sich in **Anpassung → Eigene Hintergründe → Aus Auswahl löschen** entfernen. Mitgelieferte Motive haben keine Löschfunktion. Die Aktion betrifft nur die jeweilige Galerie. Wird der gerade aktive eigene Hintergrund entfernt, stellt die Anwendung den Windows-7-Standardhintergrund wieder her.
+
+
+### Gemeinsamen Share-Desktop bearbeiten
+
+Melde dich als Administrator an und wähle auf der Login-Seite **Share-Desktop bearbeiten**.
+In diesem Modus kannst du den öffentlichen Desktop und seine Taskleiste einrichten sowie
+gemeinsame Ordner, Dateien und Verknüpfungen erstellen, bearbeiten, verschieben und löschen.
+Die gemeinsamen Dateien liegen auf dem Host unter `/Explorer/Users/share`.
+Die Änderungen gelten anschließend für alle Besucher der öffentlichen Ansicht.
+Ohne Anmeldung bleibt diese Ansicht schreibgeschützt; auch Anheftungen und Symbolpositionen
+lassen sich dann nicht verändern. Der Share-Modus verwendet die Administrator-Anmeldung,
+es wird kein zusätzliches Share-Passwort benötigt.
+
+### Fensterpositionen pro Konto
+
+Persönliche Konten speichern pro Programm und Fensterinstanz die relative Größe und Position,
+die Maximierung und das Andocken links oder rechts. Beim erneuten Öffnen werden diese Werte
+an die aktuelle Bildschirmgröße angepasst. Die Einstellungen liegen mit den Kontodaten unter
+`/Explorer/.explorer`, ebenso die persönlichen Taskleisten-Anheftungen.
+Es werden keine offenen Dokumente oder ungespeicherten Texte automatisch wieder geöffnet.

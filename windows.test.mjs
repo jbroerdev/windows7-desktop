@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {constrainBounds,resizeBounds,snapBounds} from './public/window-manager.js';
+import {constrainBounds,resizeBounds,snapBounds,rememberBounds,recallBounds} from './public/window-manager.js';
 import {photoLayout,zoomAt} from './public/photo-geometry.js';
 
 test('Fenster bleiben nach Verschieben und Verkleinern des Bildschirms erreichbar',()=>{
@@ -53,4 +53,18 @@ test('Foto lässt sich nicht aus der Ansicht schieben; Zoom bleibt am Mauspunkt'
   const next=zoomAt({scale:1,nextScale:2,x:10,y:20,anchorX:100,anchorY:50});
   assert.equal((100-next.x)/next.scale,(100-10)/1);
   assert.equal((50-next.y)/next.scale,(50-20)/1);
+});
+
+test('Fenster erinnern relative Größe, Position, Maximierung und Andocken',()=>{
+const bounds={left:150,top:70,width:600,height:490},view={width:1000,height:700};
+const stored=rememberBounds({bounds,maximized:false,snapSide:null},view);
+assert.deepEqual(stored,{mode:'normal',left:.15,top:.1,width:.6,height:.7});
+assert.deepEqual(recallBounds(stored,{width:2000,height:1000}).bounds,{left:300,top:100,width:1200,height:700});
+const maximized=rememberBounds({bounds:{left:0,top:0,width:1000,height:700},restore:bounds,maximized:true},view);
+assert.equal(recallBounds(maximized,view).maximized,true);
+assert.deepEqual(recallBounds(maximized,view).bounds,bounds);
+assert.equal(recallBounds({...stored,mode:'right'},view).snapSide,'right');
+const small=recallBounds(stored,{width:300,height:180},480,330).bounds;
+assert.ok(small.width<=300&&small.height<=180&&small.top<=149);
+assert.equal(recallBounds({...stored,width:NaN},view),null);
 });
