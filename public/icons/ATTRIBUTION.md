@@ -28,3 +28,5 @@ Explorer navigation buttons, search and refresh: `icons/aero/nav-*.png` from the
 Explorer command bar, hover/selection surfaces and details pane: `icons/aero/command-*.png`, `item-*.png`, `details-pane.png` from https://mirrors.equipable.org/ (Windows 7 interface imagery supplied as a project reference). Import: `scripts/import-explorer-surfaces.mjs`.
 
 The 16px library document, music, pictures and videos symbols use the native small variants `filesystems/16/folder-*-2` (`folder-documents2.png`, etc.) from B00merang-Artwork/Windows-7, rather than scaled user-folder images.
+
+Caption glyphs (`icons/aero/caption-*.png`) and search-vector artwork from https://github.com/khang-nd/7.css (`gui/icon`), MIT license, retained in `7CSS-LICENSE.txt`. The controls use separate glyphs and backgrounds to preserve original-size symbols and Windows 7 button proportions.
