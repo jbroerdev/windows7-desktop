@@ -4,7 +4,7 @@ import http from 'node:http';
 import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {unzipSync,strFromU8} from 'fflate';
+import {unzipSync,zipSync,strToU8,strFromU8} from 'fflate';
 import {blankOfficeDocument,parseDiscovery,createOffice} from './office.mjs';
 
 test('Office-Discovery und neue OpenDocument-Dateien',async()=>{
@@ -57,6 +57,41 @@ test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen un
   await api('/api/share',{id,shared:true});const guest=await(await api('/api/office-open',{id},'')).json();assert.equal(guest.writable,false);assert.equal((await(await wopi(id,guest.accessToken)).json()).UserCanWrite,false);assert.equal((await wopi(id,guest.accessToken,'PUT','edit-lock',changed)).status,403);
   await api('/api/users',{username:'alice',password:'office-alice-password'});const aliceLogin=await api('/api/login',{username:'alice',password:'office-alice-password'});const alice=aliceLogin.headers.get('set-cookie').split(';')[0];
   const reader=await(await api('/api/office-open',{id},alice)).json();assert.equal(reader.writable,false);assert.equal((await wopi(id,reader.accessToken,'LOCK','reader')).status,403);
+  const draft=await(await api('/api/office-draft',{kind:'text',template:id},admin)).json();assert.equal(draft.temporary,true);
+  assert.ok(!(await(await api('/api/nodes',undefined,admin)).json()).nodes.some(n=>n.id===draft.id));
+  assert.equal((await api('/api/office-open',{id:draft.id},alice)).status,404);
+  assert.equal((await api('/api/office-discard',{id:draft.id},alice)).status,404);
+  assert.equal((await api('/api/office-draft',{kind:'text'},'')).status,401);
+  const draftGrant=await(await api('/api/office-open',{id:draft.id},admin)).json();assert.equal(draftGrant.writable,true);
+  assert.equal((await wopi(draft.id,draftGrant.accessToken,'LOCK','draft-lock')).status,200);
+  assert.equal((await wopi(draft.id,draftGrant.accessToken,'PUT','draft-lock',changed)).status,200);
+  assert.deepEqual(await readFile(savedPath),original);
+  assert.equal((await api('/api/office-save-draft',{id:draft.id,kind:'text',parent:folder,name:'Entwurf.odt'},alice)).status,404);
+  const promoted=await api('/api/office-save-draft',{id:draft.id,kind:'text',parent:folder,name:'Entwurf.odt'},admin);assert.equal(promoted.status,201);
+  assert.deepEqual(await readFile(path.join(path.dirname(savedPath),'Entwurf.odt')),changed);
+  assert.equal((await api('/api/office-discard',{id:draft.id},admin)).status,200);
+  assert.equal((await wopi(draft.id,draftGrant.accessToken)).status,401);
+  assert.equal((await api('/api/office-save-draft',{id:draft.id,kind:'text',parent:folder,name:'Verworfen.odt'},admin)).status,404);
+  const working=await(await api('/api/office-edit',{id},admin)).json();assert.equal(working.workingCopy,true);
+  const workingGrant=await(await api('/api/office-open',{id:working.id},admin)).json();
+  assert.equal((await wopi(working.id,workingGrant.accessToken,'LOCK','working-lock')).status,200);
+  assert.equal((await wopi(working.id,workingGrant.accessToken,'PUT','working-lock',changed)).status,200);
+  assert.deepEqual(await readFile(savedPath),original);
+  assert.equal((await api('/api/office-commit',{id:working.id},alice)).status,404);
+  assert.equal((await api('/api/office-commit',{id:working.id},admin)).status,409); // Original is still locked by the earlier editor.
+  await wopi(id,grant.accessToken,'UNLOCK','edit-lock');
+  assert.equal((await api('/api/office-commit',{id:working.id},admin)).status,200);
+  assert.deepEqual(await readFile(savedPath),changed);
+  await writeFile(savedPath,original);
+  assert.equal((await api('/api/office-commit',{id:working.id},admin)).status,409);
+  await api('/api/office-discard',{id:working.id},admin);assert.deepEqual(await readFile(savedPath),original);
+  const templateZip=unzipSync(original);templateZip.mimetype=strToU8('application/vnd.oasis.opendocument.text-template');
+  const templateUpload=await fetch(base+'/api/upload?'+new URLSearchParams({parent:folder,name:'Briefvorlage.ott'}),{method:'POST',headers:{cookie:admin},body:zipSync(templateZip)}),templateId=(await templateUpload.json()).id;
+  const fromTemplate=await(await api('/api/office-draft',{kind:'text',template:templateId},admin)).json();assert.equal(fromTemplate.name,'Unbenannt.odt');
+  const templateGrant=await(await api('/api/office-open',{id:fromTemplate.id},admin)).json();
+  const templateBytes=Buffer.from(await(await fetch(base+'/wopi/files/'+fromTemplate.id+'/contents?access_token='+templateGrant.accessToken)).arrayBuffer());
+  assert.equal(strFromU8(unzipSync(templateBytes).mimetype),'application/vnd.oasis.opendocument.text');
+  await api('/api/office-discard',{id:fromTemplate.id},admin);
   await api('/api/share',{id,shared:false},admin);assert.equal((await wopi(id,guest.accessToken)).status,404);assert.equal((await wopi(id,reader.accessToken)).status,404);
   await api('/api/logout',{},admin);assert.equal((await wopi(id,grant.accessToken)).status,401);
  }finally{await new Promise(r=>server.close(r));await new Promise(r=>fixture.close(r));await rm(dir,{recursive:true,force:true});}

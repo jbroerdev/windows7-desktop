@@ -42,3 +42,7 @@ Desktop-Ordnersymbol (`desktop.png`, `desktop-16.png`): Original Nummer `178.png
 Windows-7-Hintergründe: Originaldateien aus [bartekl1/windows-ui-assets](https://github.com/bartekl1/windows-ui-assets/tree/main/Wallpapers/Windows%207), Stand `21970f48b8f66b4d44742cb30388c1454512d681`. 31 reguläre und 108 regionale Motive, Microsoft Windows artwork. JPEG-Originale bleiben unverändert; `thumb-win7-*` sind verkleinerte Galerie-Vorschauen. Import: `scripts/import-windows7-wallpapers.py`.
 
 Navigationsrahmen mit Schattierung: `navigation_frame.png` aus RinFox Updated, lokal `aero/navigation-frame.png`.
+
+Word, Excel und PowerPoint: Original Microsoft-Produktsymbole (48px PNG), Microsoft CDN: https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/png/word_48x1.png ; excel_48x1.png ; powerpoint_48x1.png. Dokumentbearbeitung: Collabora Online.
+
+Office-Dateisymbole: Original Microsoft CDN PNGs https://static2.sharepointonline.com/files/fabric/assets/item-types/96/docx.png , https://static2.sharepointonline.com/files/fabric/assets/item-types/96/xlsx.png , https://static2.sharepointonline.com/files/fabric/assets/item-types/96/pptx.png . Unveränderte Bilder auch für kleine Ansichten.

@@ -78,8 +78,8 @@ und `http://192.168.1.50:3000` öffnen. Beim späteren Umstieg auf HTTPS die Dom
 ## Benutzung und Dateirechte
 
 - Office-Dateien mit Doppelklick öffnen. Ohne Office-Konfiguration bleibt der Dateidownload verfügbar.
-- Im Startmenü erscheinen Office-Textdokument, Office-Tabelle und Office-Präsentation.
-  Leere Fenster bieten **Öffnen** und **Neu**. Neue Dateien werden als `.odt`, `.ods` und `.odp` angelegt.
+- Im Startmenü erscheinen Word, Excel und PowerPoint.
+  Der Start öffnet ein temporäres neues Dokument. Neue Dateien werden als `.odt`, `.ods` und `.odp` angelegt.
   Word-, Excel- und PowerPoint-Dateien behalten beim Bearbeiten ihre vorhandene Dateiendung.
 - Die unterstützten Formate werden zusätzlich anhand der Collabora-Discovery geprüft.
   Makros und die originalgetreue Darstellung komplexer Microsoft-Office-Dateien sind nicht garantiert.
@@ -87,8 +87,9 @@ und `http://192.168.1.50:3000` öffnen. Beim späteren Umstieg auf HTTPS die Dom
   Im ausdrücklich aktivierten Share-Bearbeitungsmodus können öffentliche Dateien bearbeitet werden.
 - Gäste erhalten nur Lesezugriff auf freigegebene Dateien. Aufheben der Freigabe beendet diesen Zugriff.
   Abmelden beendet die zugehörigen angemeldeten Office-Berechtigungen.
-- Das Dokument wird über **Speichern** an Collabora übermittelt. Der äußere Schließen-Knopf wartet bei
-  bearbeitbaren Dateien auf dessen Speicherbestätigung. Bei einer Fehlermeldung bleibt das Fenster offen.
+- **Speichern** übernimmt die Arbeitskopie in den gewählten Ordner bzw. das vorhandene Original.
+  Nach Änderungen fragt der Schließen-Knopf nach Speichern, Nicht speichern oder Abbrechen.
+  Bei einem Speicherfehler bleibt das Fenster offen.
 - Die Office-Berechtigung gilt höchstens acht Stunden und endet spätestens mit der Explorer-Anmeldung.
   Bei Ablauf die Datei nach erneuter Anmeldung wieder öffnen.
 - Die Dateigröße ist auf 64 MB begrenzt. Gleichzeitiges Bearbeiten von Host-Dateien außerhalb des Explorers
@@ -128,3 +129,13 @@ CODE-Version muss beim ersten echten Container-Test geprüft werden.
 
 Für die Schnittstelle gelten die [WOPI-Operationen](https://learn.microsoft.com/en-us/microsoft-365/cloud-storage-partner-program/rest/)
 und die [Collabora-Integrationshinweise](https://www.collaboraonline.com/integrate-collabora-online/).
+
+## Neue Dokumente und Vorlagen
+
+Die Programme heißen Word, Excel und PowerPoint; die Bearbeitung übernimmt Collabora Online. Beim Start als angemeldeter Benutzer öffnet sich sofort ein neues temporäres ODT-, ODS- oder ODP-Dokument. Erst Datei → Speichern fragt nach Dateiname und Zielordner. Automatische Zwischenspeicherungen legen keine sichtbaren Explorer-Dateien an.
+
+Datei → Aus Vorlage öffnet eine vorhandene passende ODT-/OTT-, ODS-/OTS- oder ODP-/OTP-Datei als neue Kopie. Der vorherige Entwurf wird nach Bestätigung verworfen; die Vorlage bleibt unverändert. Nicht gespeicherte Entwürfe werden beim Schließen verworfen, nach Abmeldung bereinigt und spätestens beim Serverneustart entfernt. Öffentliche Besucher können weiterhin nur freigegebene Dateien lesen.
+
+Direktstart: `/word`, `/excel`, `/powerpoint`; die bisherigen Aliase `/writer`, `/calc`, `/impress` bleiben verfügbar.
+
+Ohne Änderungen schließt das Fenster direkt. Nach Änderungen fragt es nach Speichern, Nicht speichern oder Abbrechen. Auch vorhandene bearbeitbare Dateien werden zunächst als private Arbeitskopie geöffnet: Nicht speichern lässt das Original unverändert. Beim ausdrücklichen Speichern werden zwischenzeitliche Änderungen erkannt und nicht überschrieben.
