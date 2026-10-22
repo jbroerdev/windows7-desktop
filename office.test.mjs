@@ -1,0 +1,63 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {unzipSync,strFromU8} from 'fflate';
+import {blankOfficeDocument,parseDiscovery,createOffice} from './office.mjs';
+
+test('Office-Discovery und neue OpenDocument-Dateien',async()=>{
+ const actions=parseDiscovery('<wopi-discovery><action ext="docx" name="edit" urlsrc="http://internal:9980/browser/hash/cool.html?&lt;ui=UI_LLCC&amp;&gt;"/></wopi-discovery>','https://office.example.org');
+ assert.equal(actions[0].url,'https://office.example.org/browser/hash/cool.html');
+ assert.throws(()=>parseDiscovery('<!DOCTYPE x><action ext="docx" name="edit" urlsrc="http://evil/foo"/>','https://office.example.org'));
+ assert.throws(()=>parseDiscovery('<action ext="docx" name="edit" urlsrc="https://evil/other.html"/>','https://office.example.org'));
+ for(const[kind,extension]of [['text','odt'],['sheet','ods'],['presentation','odp']]){const blank=blankOfficeDocument(kind),zip=unzipSync(blank.bytes);assert.equal(blank.extension,extension);assert.match(strFromU8(zip.mimetype),/^application\/vnd.oasis.opendocument\./);assert.match(strFromU8(zip['content.xml']),/office:document-content/);assert.ok(zip['META-INF/manifest.xml']);assert.equal(blank.bytes.readUInt16LE(8),0);}
+ const disabled=await createOffice({config:{}});assert.equal(disabled.enabled,false);assert.throws(()=>disabled.open(),/nicht eingerichtet/);
+});
+
+test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen und Widerruf',async()=>{
+ const fixture=http.createServer((req,res)=>{if(req.url==='/hosting/discovery'){res.setHeader('Content-Type','application/xml');res.end('<wopi-discovery>'+['odt','ods','odp','docx','xlsx','pptx'].flatMap(ext=>['edit','view'].map(action=>`<action ext="${ext}" name="${action}" urlsrc="http://internal:9980/browser/test/cool.html?"/>`)).join('')+'</wopi-discovery>');}else{res.writeHead(404).end();}});
+ await new Promise(r=>fixture.listen(0,'127.0.0.1',r));const officeOrigin='http://127.0.0.1:'+fixture.address().port;
+ const dir=await mkdtemp(path.join(os.tmpdir(),'office-integration-'));
+ Object.assign(process.env,{NODE_ENV:'test',DATA_DIR:dir,EXPLORER_ROOT:path.join(dir,'Explorer'),OFFICE_URL:officeOrigin,EXPLORER_PUBLIC_URL:'https://explorer.example.org',OFFICE_WOPI_URL:'http://explorer:3000'});
+ const {server}=await import('./backend.mjs');await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;let cookie='';
+ const api=(route,data,session=cookie)=>fetch(base+route,{method:data===undefined?'GET':'POST',headers:{cookie:session,'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});
+ const wopi=(id,token,override,lock,bytes)=>fetch(base+'/wopi/files/'+id+(bytes!==undefined?'/contents':'')+'?access_token='+token,{method:override?'POST':'GET',headers:{...(override?{'X-WOPI-Override':override}:{}),...(lock?{'X-WOPI-Lock':lock}:{})},body:bytes});
+ try{
+  const login=await api('/api/setup',{username:'admin',password:'office-integration-password'});cookie=login.headers.get('set-cookie').split(';')[0];const admin=cookie;
+  assert.equal((await(await api('/api/session')).json()).officeEnabled,true);
+  const nodes=(await(await api('/api/nodes')).json()).nodes,documents=nodes.find(n=>n.system&&n.space==='documents'&&n.writable);
+  const folder=(await(await api('/api/folder',{parent:documents.id,name:'Office-Test'})).json()).id;
+  const created=await api('/api/office-new',{parent:folder,name:'Brief.odt',kind:'text'});assert.equal(created.status,201);const id=(await created.json()).id;
+  assert.equal((await api('/api/office-new',{parent:folder,name:'Falsch.exe',kind:'text'})).status,400);
+  const savedPath=path.join(process.env.EXPLORER_ROOT,'Users','admin','Documents','Office-Test','Brief.odt'),original=await readFile(savedPath);
+  assert.ok(unzipSync(original)['content.xml']);
+  assert.equal((await api('/api/office-open',{id},'')).status,404);
+  const grant=await(await api('/api/office-open',{id})).json();assert.equal(grant.writable,true);assert.equal(new URL(grant.url).origin,officeOrigin);assert.equal(new URL(grant.url).searchParams.get('WOPISrc'),'http://explorer:3000/wopi/files/'+id);assert.ok(!grant.url.includes(grant.accessToken));
+  assert.match((await api('/')).headers.get('content-security-policy'),new RegExp('form-action.*'+officeOrigin));
+  assert.equal((await wopi(id,'invalid')).status,401);
+  const info=await(await wopi(id,grant.accessToken)).json();assert.equal(info.UserCanWrite,true);assert.equal(info.PostMessageOrigin,'https://explorer.example.org');assert.equal(info.Size,original.length);
+  assert.equal((await wopi(id,grant.accessToken,'PUT',undefined,original)).status,409);
+  assert.equal((await wopi(id,grant.accessToken,'LOCK','edit-lock')).status,200);
+  const clash=await wopi(id,grant.accessToken,'LOCK','wrong');assert.equal(clash.status,409);assert.equal(clash.headers.get('x-wopi-lock'),'edit-lock');
+  assert.equal((await wopi(id,grant.accessToken,'GET_LOCK')).headers.get('x-wopi-lock'),'edit-lock');
+  assert.equal((await api('/api/rename',{id,name:'Verschoben.odt'})).status,409);
+  assert.equal((await api('/api/delete',{id:folder})).status,409);
+  assert.equal((await api('/api/move',{ids:[folder],parent:documents.id})).status,409);
+  assert.ok(JSON.parse(await readFile(path.join(dir,'office-locks.json'),'utf8'))[id]);
+  const changed=Buffer.concat([original,Buffer.from('changed')]);assert.equal((await wopi(id,grant.accessToken,'PUT','wrong',changed)).status,409);
+  assert.equal((await wopi(id,grant.accessToken,'PUT','edit-lock',changed)).status,200);assert.deepEqual(await readFile(savedPath),changed);
+  assert.notEqual((await(await wopi(id,grant.accessToken)).json()).Version,info.Version);
+  const external=Buffer.from('external host edit');await writeFile(savedPath,external);assert.equal((await wopi(id,grant.accessToken,'PUT','edit-lock',original)).status,409);assert.deepEqual(await readFile(savedPath),external);
+  assert.equal((await wopi(id,grant.accessToken,'UNLOCK','edit-lock')).status,200);
+  assert.equal((await wopi(id,grant.accessToken,'LOCK','edit-lock')).status,200);
+  assert.equal((await wopi(id,grant.accessToken,'REFRESH_LOCK','edit-lock')).status,200);
+  assert.equal((await wopi(id,grant.accessToken,'PUT','edit-lock',original)).status,200);
+  await api('/api/share',{id,shared:true});const guest=await(await api('/api/office-open',{id},'')).json();assert.equal(guest.writable,false);assert.equal((await(await wopi(id,guest.accessToken)).json()).UserCanWrite,false);assert.equal((await wopi(id,guest.accessToken,'PUT','edit-lock',changed)).status,403);
+  await api('/api/users',{username:'alice',password:'office-alice-password'});const aliceLogin=await api('/api/login',{username:'alice',password:'office-alice-password'});const alice=aliceLogin.headers.get('set-cookie').split(';')[0];
+  const reader=await(await api('/api/office-open',{id},alice)).json();assert.equal(reader.writable,false);assert.equal((await wopi(id,reader.accessToken,'LOCK','reader')).status,403);
+  await api('/api/share',{id,shared:false},admin);assert.equal((await wopi(id,guest.accessToken)).status,404);assert.equal((await wopi(id,reader.accessToken)).status,404);
+  await api('/api/logout',{},admin);assert.equal((await wopi(id,grant.accessToken)).status,401);
+ }finally{await new Promise(r=>server.close(r));await new Promise(r=>fixture.close(r));await rm(dir,{recursive:true,force:true});}
+});

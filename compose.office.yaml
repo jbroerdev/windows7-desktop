@@ -1,0 +1,25 @@
+# Optional: docker compose -f compose.yaml -f compose.office.yaml up --build -d
+services:
+  explorer:
+    environment:
+      OFFICE_URL: ${OFFICE_URL:-https://office.xserverx.app}
+      EXPLORER_PUBLIC_URL: ${EXPLORER_PUBLIC_URL:-https://explorer.xserverx.app}
+      OFFICE_DISCOVERY_URL: http://collabora:9980
+      OFFICE_WOPI_URL: http://explorer:3000
+  collabora:
+    image: collabora/code:25.04.10.3.1@sha256:a51dd5d1741dea5d19f49d9997de2c321bf582076015ec4015941f3f00a5f4c0
+    restart: unless-stopped
+    ports:
+      - "${COLLABORA_BIND_ADDRESS:-127.0.0.1}:${COLLABORA_PORT:-9980}:9980"
+    environment:
+      aliasgroup1: http://explorer:3000
+      server_name: ${COLLABORA_SERVER_NAME:-office.xserverx.app}
+      dictionaries: de_DE en_US
+      extra_params: >-
+        --o:ssl.enable=false
+        --o:ssl.termination=${COLLABORA_SSL_TERMINATION:-true}
+        --o:net.frame_ancestors=${EXPLORER_PUBLIC_URL:-https://explorer.xserverx.app}
+    cap_add:
+      - MKNOD
+    shm_size: 512m
+    stop_grace_period: 60s

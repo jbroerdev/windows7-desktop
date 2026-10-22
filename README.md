@@ -273,6 +273,13 @@ Die Oberfläche orientiert sich am Windows-7-Explorer und an [mirrors.equipable.
 
 
 
+## Office-Dokumente bearbeiten (optional)
+
+Die optionale Collabora-Anbindung öffnet Word-, Excel-, PowerPoint- und OpenDocument-Dateien
+in eigenen Fenstern und speichert sie über die Explorer-Dateirechte zurück. Neue Textdokumente,
+Tabellen und Präsentationen werden im OpenDocument-Format angelegt. Ohne Office-Konfiguration
+bleibt der Explorer unverändert nutzbar. Einrichtung und aktueller Teststatus: [Office-Anleitung](DOCKER-OFFICE.md).
+
 ## Desktop und Programme verwenden
 
 ### Apps und Internetverknüpfungen

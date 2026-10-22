@@ -104,5 +104,9 @@ dialog.desktop-window.desktop-maximized,dialog.desktop-window.desktop-snapped{bo
 
 .trash-window:not([open]){display:none}
 
+.office-stage.office-empty{display:grid;place-items:center;color:#526b81;font-size:14px;text-align:center;padding:24px;box-sizing:border-box}
+
 body.desktop-shell dialog.desktop-window.confirm-window[open]{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;margin:0!important}
 .explorer-window .explorer-navigation .nav-pair{display:flex;flex:0 0 57px;width:57px;height:29px;gap:0;background:url(/icons/aero/navigation-frame.png) 0 0/57px 29px no-repeat}.explorer-window .explorer-navigation .nav-pair .nav-round,.explorer-window .explorer-navigation .nav-pair .nav-round:is(:hover,:active,:focus-visible,:disabled){margin:0!important;background-image:url(/icons/aero/navigation-states.png)!important;background-size:57px 116px!important;background-position:var(--nav-x,0px) var(--nav-y,0px)!important}.explorer-window .explorer-navigation .nav-pair .nav-forward{width:28px;min-width:28px}
+
+.office-window{width:min(1100px,94vw);height:min(760px,88vh);display:flex;flex-direction:column}.office-window:not([open]){display:none}.office-toolbar{display:flex;gap:8px;align-items:center;flex:none;padding:5px 9px;background:linear-gradient(#f6faff,#dceaf6);border-bottom:1px solid #a8bdcf}.office-toolbar button{padding:3px 9px}.office-toolbar [role=status]{font-size:11px;color:#31516f}.office-stage{flex:1;min-height:0;background:white}.office-stage>iframe{display:block;width:100%;height:100%;border:0}
