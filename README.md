@@ -57,6 +57,22 @@ docker compose -f compose.yaml -f compose.bind.yaml -f compose.drives.yaml up --
 
 Der Inhalt erscheint als **Daten (D:)** unter Computer. Die Balken zeigen den echten freien und gesamten Speicher des jeweiligen Dateisystems. Mehrere Ordner auf derselben Platte zeigen entsprechend dieselbe Kapazität. Dateien vom Host werden automatisch eingelesen. Angemeldete Benutzer können Zusatzlaufwerke lesen und eigene Einträge anlegen; ändern und löschen darf der jeweilige Besitzer. Vom Host importierte Einträge gehören dem ersten vorhandenen Administrator. Gäste sehen nur ausdrücklich freigegebene Inhalte. Sichere zusätzliche Platten ebenfalls; eine Sicherung des Hauptordners allein reicht bei separaten Mounts nicht aus.
 
+## Netzlaufwerke (Administrator)
+
+Angemeldete Administratoren öffnen im Explorer unter **Network** oder über den Button **Netzlaufwerk** den Windows-ähnlichen Dialog. Dort lassen sich Laufwerksbuchstabe, UNC-Pfad, Anzeigename, Wiederverbindung, Schreibschutz, SMB-Version, Port, Domäne und Zugangsdaten hinterlegen. Die Konfiguration gilt für alle Benutzer. Das Passwort liegt getrennt von der Explorer-Datenbank unter `/Explorer/.explorer/network-credentials/` und wird nicht an normale Benutzer zurückgegeben.
+
+Der Container mountet SMB absichtlich nicht selbst. Die Compose-Sicherheitsrichtlinien entfernen Mount-Rechte. Nach dem Speichern zeigt der Dialog den Host-Befehl an. Auf dem Linux-Docker-Host installierst du einmal `cifs-utils`, legst den Zielordner an und führst den Befehl aus. Beispiel für die getestete Freigabe:
+
+```bash
+sudo apt-get install -y cifs-utils
+sudo mkdir -p /Explorer/N-Netzwerk
+sudo mount -t cifs //192.168.178.40/192.168.178.31 /Explorer/N-Netzwerk \
+  -o credentials=/Explorer/.explorer/network-credentials/LAUFWERK-ID,vers=3.0
+sudo chown -R 1000:1000 /Explorer/N-Netzwerk
+docker compose -f compose.yaml -f compose.bind.yaml up --build -d
+```
+
+Ersetze `LAUFWERK-ID` durch die vom Dialog angezeigte ID. Sobald der Host-Mount vorhanden ist, erkennt der Explorer `/Explorer/N-Netzwerk` automatisch als `Netzwerk (N:)`; die freien und belegten Bytes werden wie bei den anderen Laufwerken angezeigt. Das Entfernen im Dialog löscht nur die Konfiguration und hängt den Host-Mount aus Sicherheitsgründen nicht automatisch aus.
 ## Papierkorb
 
 Löschen öffnet einen eigenen Ja/Nein-Dialog und verschiebt Einträge in den persönlichen Papierkorb. Öffne das Desktop-Symbol **Papierkorb**, um sie wiederherzustellen oder endgültig zu löschen. Bei Namenskonflikten wird nichts überschrieben. Der Papierkorb liegt versteckt unter `.recycle` auf dem ursprünglichen Laufwerk und belegt dort weiterhin Speicher. Erst endgültiges Löschen gibt den Platz frei. Ein nicht eingebundenes Laufwerk muss für Wiederherstellung und endgültiges Löschen wieder verfügbar sein.
@@ -377,3 +393,17 @@ die Maximierung und das Andocken links oder rechts. Beim erneuten Öffnen werden
 an die aktuelle Bildschirmgröße angepasst. Die Einstellungen liegen mit den Kontodaten unter
 `/Explorer/.explorer`, ebenso die persönlichen Taskleisten-Anheftungen.
 Es werden keine offenen Dokumente oder ungespeicherten Texte automatisch wieder geöffnet.
+
+### Task-Manager und öffentliche Ansicht
+
+Im Startmenü steht der **Task-Manager** zur Verfügung. Er zeigt nach der Anmeldung die vom Docker-Host gelesenen CPU-, Arbeitsspeicher-, Laufzeit- und Plattformdaten sowie die laufenden Prozesse. Die Ansicht ist absichtlich schreibgeschützt; das Beenden von Host-Prozessen ist nicht über die Weboberfläche möglich. Die Messwerte werden automatisch aktualisiert.
+
+Administratoren können unter **Start → Benutzerkonto → Öffentliche Share-Ansicht verwalten** festlegen, ob `/C/Users/share/` öffentlich erreichbar ist. Bei deaktivierter Ansicht führt ein Aufruf zur Login-Seite. Die Einstellung wird in der Datenbank unter `/Explorer/.explorer` gespeichert und bleibt bei Neustarts erhalten.
+
+### Taskleiste und Terminal
+
+Wenn mehrere Fenster derselben App geöffnet sind, zeigt ein Hover über dem Taskleisten-Symbol eine Auswahl der einzelnen Instanzen. Ein Klick aktiviert genau dieses Fenster. Das **Terminal** im Startmenü ist ein sicherer App-Launcher: Es akzeptiert Befehle wie `vlc /C/Users/admin/Videos/Test.mp4`, `notepad /C/Users/admin/Documents/Notiz.txt` oder `explorer /C/Users/admin/Documents`. Es führt keine beliebigen Host-Shell-Befehle aus.
+
+### Ordnerrechte und Gruppen
+
+Administratoren öffnen unter **Start → Benutzerkonto → Ordnerzugriff verwalten** die Computerverwaltung. Für jeden normalen Ordner können einzelne Benutzer oder die Gruppen **Benutzer** und **Administratoren** mit **Nur Lesen** oder **Lesen und Schreiben** eingetragen werden. Die Regeln gelten auch für Unterordner und werden serverseitig bei Anzeigen, Uploads, Umbenennen, Verschieben und Löschen geprüft. Entfernen lassen sich Rechte, indem alle Auswahlfelder abgewählt und die leere Regel gespeichert wird.
