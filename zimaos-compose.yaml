@@ -1,0 +1,23 @@
+services:
+  explorer:
+    image: ghcr.io/jbroerdev/windows7-desktop:latest
+    container_name: windows7-desktop
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3000"
+      EXPLORER_ROOT: /Explorer
+      DATA_DIR: /Explorer/.explorer
+      COOKIE_SECURE: "0"
+      FFMPEG_ENABLED: "1"
+    volumes:
+      - /Explorer:/Explorer
+    x-casaos:
+      title:
+        en_us: Windows 7 Desktop
+        de_de: Windows 7 Desktop
+      main: explorer
+      scheme: http
+      index: /

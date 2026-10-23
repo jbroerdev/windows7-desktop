@@ -69,6 +69,12 @@ Die folgenden Befehle sind für einen **Linux-Docker-Host** gedacht. Führe sie 
 
 ## Installation
 
+### ZimaOS App Store
+
+Für ZimaOS ist die fertige Vorlage [zimaos-compose.yaml](zimaos-compose.yaml) vorbereitet. Öffne **App Store → Benutzerdefinierte App installieren → YAML**, kopiere den Inhalt dieser Datei in den YAML-Editor und wähle **Installieren**. ZimaOS lädt anschließend `ghcr.io/jbroerdev/windows7-desktop:latest` und bindet den Host-Ordner `/Explorer` ein. Der Port ist `3000`.
+
+Falls GitHub Container Registry den Zugriff verweigert, öffne im GitHub-Profil unter **Packages** das Paket `windows7-desktop`, stelle es auf **Public** und importiere die Vorlage erneut. Der erste Image-Build läuft nach dem Push automatisch in GitHub Actions.
+
 ### 1. Projekt herunterladen
 
 ```bash
