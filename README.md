@@ -112,6 +112,7 @@ COOKIE_SECURE=0
 | `EXPLORER_BIND_ADDRESS` | `0.0.0.0` erlaubt Zugriff über die Server-IP. `127.0.0.1` beschränkt den Zugriff auf den Server selbst. |
 | `EXPLORER_PORT` | Port der Anwendung. Ist `3000` belegt, wähle beispielsweise `8080`. |
 | `COOKIE_SECURE` | Für direkten HTTP-Zugriff `0`; bei Betrieb über HTTPS am Reverse-Proxy `1`. |
+| `FFMPEG_ENABLED` | `1` aktiviert den automatischen Medien-Fallback. Direkt abspielbare Dateien laufen im Browser; bei inkompatiblen Video- oder Audio-Codecs übernimmt FFmpeg die Umwandlung. |
 
 ### 4. Container bauen und starten
 
@@ -207,7 +208,9 @@ Fotoanzeige, Editor und Medienplayer öffnen als verschiebbare Fenster. Ziehe di
 
 Bei Internetverknüpfungen wählst du beim Erstellen oder Bearbeiten mit dem Häkchen **„Im eigenen Fenster innerhalb des Explorers öffnen“**, ob die Website in einem solchen Fenster erscheint. Mit dem zusätzlichen Häkchen **„Als App öffnen (nur Fensterrahmen)“** entfallen die Adress- und Werkzeugleiste. Damit kannst du auch andere bereits laufende Docker-Webapps über ihre im Browser erreichbare URL einbinden. Im App-Modus bietet ein Rechtsklick auf die Titelleiste „Extern öffnen“. Ohne das erste Häkchen öffnet die Verknüpfung in einem externen Tab. Manche Websites verhindern eine Einbettung; im Fenster gibt es dafür immer „Extern öffnen“.
 
-Bilder öffnen in der Fotoanzeige mit Zoomregler, Originalgröße, Einpassen, Drehen, Bildwechsel und Diashow. Das Mausrad zoomt zum Mauszeiger; vergrößerte Bilder können mit der Maus verschoben werden. Drehen verändert nur die Ansicht. Musik und Videos öffnen im Medienplayer; unterstützte Formate hängen von den Codecs des Browsers ab. HTML und PHP öffnen als isolierte Website-Vorschau. Die PHP-Vorschau ersetzt keinen vollständigen Webhost mit Datenbank oder dauerhaften Sitzungen.
+Bilder öffnen in der Fotoanzeige mit Zoomregler, Originalgröße, Einpassen, Drehen, Bildwechsel und Diashow. Das Mausrad zoomt zum Mauszeiger; vergrößerte Bilder können mit der Maus verschoben werden. Drehen verändert nur die Ansicht. Musik und Videos öffnen im Medienplayer. Wenn der Browser einen Codec nicht unterstützt, wird die Datei bei aktiviertem `FFMPEG_ENABLED=1` automatisch über `/transcode/...` als kompatibler Stream abgespielt. M3U- und M3U8-Playlists werden als Medienlisten geöffnet. HTML und PHP öffnen als isolierte Website-Vorschau. Die PHP-Vorschau ersetzt keinen vollständigen Webhost mit Datenbank oder dauerhaften Sitzungen.
+
+Office-Dateien werden über Collabora geöffnet, wenn `compose.office.yaml` aktiviert ist. PDF-Dateien können dort angezeigt werden; Writer-Dokumente starten im A4-Hochkantformat. Für die Office-Integration muss `OFFICE_URL` auf die später eingerichtete Collabora-Adresse zeigen.
 
 Beim Verschieben bleiben eigene Freigaben erhalten; geerbte Freigaben richten sich nach dem neuen Elternordner. Namenskonflikte werden ohne Überschreiben abgewiesen. Die Grundordner einschließlich des persönlichen Programme-Ordners können nicht verschoben werden.
 
