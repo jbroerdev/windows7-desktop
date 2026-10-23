@@ -14,10 +14,10 @@ services:
       FFMPEG_ENABLED: "1"
     volumes:
       - /Explorer:/Explorer
-    x-casaos:
-      title:
-        en_us: Windows 7 Desktop
-        de_de: Windows 7 Desktop
-      main: explorer
-      scheme: http
-      index: /
+x-casaos:
+  title:
+    custom: Windows 7 Desktop
+  main: explorer
+  scheme: http
+  hostname: ""
+  index: /
