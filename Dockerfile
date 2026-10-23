@@ -15,6 +15,7 @@ ENV NODE_ENV=production \
     EXPLORER_ROOT=/Explorer \
     DATA_DIR=/Explorer/.explorer
 RUN mkdir -p /Explorer/Users /Explorer/.explorer && chown -R node:node /Explorer
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/public ./public
 COPY --from=build --chown=node:node /app/package.json /app/server.mjs /app/backend.mjs /app/storage.mjs /app/disk-space.mjs /app/file-operations.mjs /app/office.mjs /app/php-worker.mjs ./

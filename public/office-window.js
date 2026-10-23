@@ -1,5 +1,5 @@
 const types={text:{name:'Word',extension:'odt',icon:'word'},sheet:{name:'Excel',extension:'ods',icon:'excel'},presentation:{name:'PowerPoint',extension:'odp',icon:'powerpoint'}};
-export const officeFile=n=>n?.kind==='file'&&/\.(docm?|docx|dotx?|odt|ott|rtf|xlsx?|xlsm|xltx?|ods|ots|csv|pptx?|ppsx?|odp|otp)$/i.test(n.name);
+export const officeFile=n=>n?.kind==='file'&&/\.(docm?|docx|dotx?|odt|ott|rtf|xlsx?|xlsm|xltx?|ods|ots|csv|pptx?|ppsx?|odp|otp|pdf)$/i.test(n.name);
 export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getNode,toast}){
  let serial=0;
  function open(node=null,kind='text'){

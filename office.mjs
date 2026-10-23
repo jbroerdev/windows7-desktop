@@ -3,7 +3,7 @@ import path from 'node:path';
 import {randomBytes,createHash} from 'node:crypto';
 import {zipSync,unzipSync,strToU8,strFromU8} from 'fflate';
 
-const extensions=new Set('doc docx docm dot dotx odt ott rtf xls xlsx xlsm xlt xltx ods ots csv ppt pptx pps ppsx odp otp'.split(' '));
+const extensions=new Set('doc docx docm dot dotx odt ott rtf xls xlsx xlsm xlt xltx ods ots csv ppt pptx pps ppsx odp otp pdf'.split(' '));
 export const isOfficeFile=n=>n?.kind==='file'&&extensions.has(path.extname(n.name).slice(1).toLowerCase());
 const error=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 const digest=b=>createHash('sha256').update(b).digest('hex');
@@ -31,7 +31,7 @@ export function blankOfficeDocument(kind){
  const namespaces='xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"';
  const files={mimetype:[strToU8(type[1]),{level:0}],
   'content.xml':strToU8(`<?xml version="1.0" encoding="UTF-8"?><office:document-content ${namespaces} office:version="1.3"><office:automatic-styles/><office:body>${type[2]}</office:body></office:document-content>`),
-  'styles.xml':strToU8(`<?xml version="1.0" encoding="UTF-8"?><office:document-styles ${namespaces} office:version="1.3"><office:styles/><office:automatic-styles><style:page-layout style:name="pm1"><style:page-layout-properties fo:page-width="29.7cm" fo:page-height="21cm"/></style:page-layout></office:automatic-styles><office:master-styles><style:master-page style:name="Standard" style:page-layout-name="pm1"/></office:master-styles></office:document-styles>`),
+  'styles.xml':strToU8(`<?xml version="1.0" encoding="UTF-8"?><office:document-styles ${namespaces} office:version="1.3"><office:styles/><office:automatic-styles><style:page-layout style:name="pm1"><style:page-layout-properties fo:page-width="21cm" fo:page-height="29.7cm"/></style:page-layout></office:automatic-styles><office:master-styles><style:master-page style:name="Standard" style:page-layout-name="pm1"/></office:master-styles></office:document-styles>`),
   'META-INF/manifest.xml':strToU8(`<?xml version="1.0"?><manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.3"><manifest:file-entry manifest:full-path="/" manifest:media-type="${type[1]}"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/></manifest:manifest>`)};
  return {extension:type[0],bytes:Buffer.from(zipSync(files,{level:6}))};
 }

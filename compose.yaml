@@ -11,6 +11,7 @@ services:
       HOST: 0.0.0.0
       PORT: "3000"
       EXPLORER_ROOT: /Explorer
+      FFMPEG_ENABLED: ${FFMPEG_ENABLED:-1}
       DATA_DIR: /Explorer/.explorer
       COOKIE_SECURE: "${COOKIE_SECURE:-0}"
     volumes:
