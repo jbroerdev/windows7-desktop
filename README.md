@@ -73,6 +73,13 @@ docker compose -f compose.yaml -f compose.bind.yaml up --build -d
 ```
 
 Ersetze `LAUFWERK-ID` durch die vom Dialog angezeigte ID. Sobald der Host-Mount vorhanden ist, erkennt der Explorer `/Explorer/N-Netzwerk` automatisch als `Netzwerk (N:)`; die freien und belegten Bytes werden wie bei den anderen Laufwerken angezeigt. Das Entfernen im Dialog löscht nur die Konfiguration und hängt den Host-Mount aus Sicherheitsgründen nicht automatisch aus.
+
+Bei einer Freigabe mit aktiviertem **Gast/Anonym anmelden** verwendet der Dialog automatisch `guest` und benötigt keine Credential-Datei. Für das obige Beispiel lautet der Mount dann beispielsweise:
+
+```bash
+sudo mkdir -p /Explorer/N-Netzwerk
+sudo mount -t cifs //192.168.178.40/192.168.178.31 /Explorer/N-Netzwerk -o guest,vers=2.0,soft
+```
 ## Papierkorb
 
 Löschen öffnet einen eigenen Ja/Nein-Dialog und verschiebt Einträge in den persönlichen Papierkorb. Öffne das Desktop-Symbol **Papierkorb**, um sie wiederherzustellen oder endgültig zu löschen. Bei Namenskonflikten wird nichts überschrieben. Der Papierkorb liegt versteckt unter `.recycle` auf dem ursprünglichen Laufwerk und belegt dort weiterhin Speicher. Erst endgültiges Löschen gibt den Platz frei. Ein nicht eingebundenes Laufwerk muss für Wiederherstellung und endgültiges Löschen wieder verfügbar sein.
