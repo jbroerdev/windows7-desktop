@@ -1,3 +1,4 @@
+import{readHostMonitor}from'./host-monitor.mjs';
 import{isIP}from'node:net';
 import{scanStorage}from'./storage-scan.mjs';
 import{createOffice,blankOfficeDocument}from'./office.mjs';
@@ -65,16 +66,23 @@ function validIcon(value,max=750000){if(!value)return null;const m=typeof value=
 const explorerRoot=path.resolve(process.env.EXPLORER_ROOT||path.join(dir,'Explorer'));
 
 async function hostProcesses(){
-  const parse=(text)=>text.split(/\r?\n/).slice(1).map(line=>line.trim()).filter(Boolean).map(line=>{
+  const parse=(text)=>text.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
     const parts=line.split(/\s+/);if(parts.length<6)return null;
     const [pid,command,cpu,memory,rss,...elapsed]=parts;return{pid:Number(pid),name:command,cpu:Number(cpu)||0,memory:Number(memory)||0,rss:Number(rss)||0,elapsed:elapsed.join(' ')};
   }).filter(p=>p&&Number.isInteger(p.pid));
   if(process.platform==='win32')return[{pid:process.pid,name:'windows7-desktop',cpu:0,memory:0,rss:0,elapsed:'—'}];
   return await new Promise(resolve=>{const child=spawn('ps',['-eo','pid=,comm=,%cpu=,%mem=,rss=,etime=','--sort=-%cpu'],{stdio:['ignore','pipe','ignore']});let text='';const timer=setTimeout(()=>{child.kill('SIGTERM');resolve(parse(text).slice(0,100));},1500);child.stdout.on('data',chunk=>{text+=chunk.toString();});child.on('error',()=>{clearTimeout(timer);resolve([{pid:process.pid,name:'windows7-desktop',cpu:0,memory:0,rss:0,elapsed:'—'}]);});child.on('close',()=>{clearTimeout(timer);resolve(parse(text).slice(0,100));});});
 }
+let previousCPU=os.cpus(),taskSnapshotCache,taskSnapshotRequest;
 async function taskManagerSnapshot(){
-  const total=os.totalmem(),free=os.freemem();
-  return {host:{hostname:os.hostname(),platform:os.platform(),arch:os.arch(),cpus:os.cpus().length,load:os.loadavg(),totalMemory:total,freeMemory:free,usedMemory:Math.max(0,total-free),uptime:os.uptime(),processUptime:process.uptime()},processes:await hostProcesses(),generatedAt:new Date().toISOString()};
+if(taskSnapshotCache&&Date.now()-taskSnapshotCache.time<1500)return taskSnapshotCache.value;
+if(taskSnapshotRequest)return taskSnapshotRequest;
+taskSnapshotRequest=(async()=>{try{
+let value=await readHostMonitor(path.join(dir,'host-monitor.json'));
+if(!value){const cpus=os.cpus(),perCore=cpus.map((core,i)=>{const before=previousCPU[i]?.times||core.times,total=Object.values(core.times).reduce((a,b)=>a+b,0)-Object.values(before).reduce((a,b)=>a+b,0);return total>0?Math.max(0,Math.min(100,100*(1-(core.times.idle-before.idle)/total))):0;});previousCPU=cpus;
+const total=os.totalmem(),free=os.freemem();value={scope:'runtime',host:{hostname:os.hostname(),platform:os.platform(),arch:os.arch(),cpus:cpus.length,cpuPercent:perCore.reduce((a,b)=>a+b,0)/(perCore.length||1),cpuPerCore:perCore,totalMemory:total,freeMemory:free,usedMemory:Math.max(0,total-free),uptime:os.uptime()},processes:await hostProcesses(),interfaces:[],dockerAvailable:false,containers:[],generatedAt:new Date().toISOString()};}
+taskSnapshotCache={time:Date.now(),value};return value;
+}finally{taskSnapshotRequest=undefined;}})();return taskSnapshotRequest;
 }
 const rootsBefore=JSON.stringify(db.nodes);if(db.users.some(u=>!u.deleted&&!u.sharedWorkspace))shareWorkspace();for(const account of db.users)roots(account);storage=createStorage({root:explorerRoot,metadataDir:dir,db});if(storage.initialize()||JSON.stringify(db.nodes)!==rootsBefore)await save();
 const filePath=n=>storage.path(n),ext=n=>path.extname(n.name).toLowerCase();
@@ -153,7 +161,8 @@ if(url.pathname==='/api/share-settings'){
 if(url.pathname==='/api/task-manager'){
   if(!user)fail('Bitte zuerst anmelden.',401);
   if(req.method!=='GET')fail('Methode nicht erlaubt.',405);
-  return json(200,await taskManagerSnapshot());
+  const snapshot=await taskManagerSnapshot(),activeUsers=new Map();for(const session of sessions.values()){if(session.expiry<Date.now())continue;const account=db.users.find(u=>u.id===session.userId&&!u.deleted);if(!account||user.role!=='admin'&&account.id!==user.id)continue;const row=activeUsers.get(account.id)||{id:account.id,username:account.username,avatar:account.avatar||'/avatars/user.png',role:account.role,sessions:0,status:'Aktiv'};row.sessions++;activeUsers.set(account.id,row);}
+return json(200,{...snapshot,...(user.role!=='admin'?{containers:[],dockerAvailable:false}:{}),canViewServices:user.role==='admin',users:[...activeUsers.values()]});
 }
 if(url.pathname==='/api/login-info'){const accounts=db.users.filter(u=>!u.deleted&&!u.sharedWorkspace).map(u=>({id:u.id,username:u.username,avatar:u.avatar||'/avatars/user.png'}));return json(200,{setup:!accounts.length,accounts,username:user?.username||accounts[0]?.username||'',avatar:user?.avatar||accounts[0]?.avatar||'/avatars/user.png',defaults:(await fs.readdir(path.join(base,'public','avatars'))).filter(n=>n.endsWith('.png')).map(n=>'/avatars/'+n)});}
 if(url.pathname==='/avatar'||url.pathname.startsWith('/avatar/')){const a=url.pathname==='/avatar'?db.users[0]:db.users.find(u=>u.id===url.pathname.split('/')[2]);if(!a?.avatar?.startsWith('/avatar/')){res.writeHead(302,{Location:'/avatars/user.png'});res.end();return;}const bytes=await fs.readFile(path.join(dir,'avatar-'+a.id));res.writeHead(200,{'Content-Type':raster(bytes),'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(bytes);return;}
@@ -269,7 +278,7 @@ if(url.pathname==='/api/unzip'){if(n.kind!=='file'||ext(n)!=='.zip')fail('Bitte 
 fail('Nicht gefunden.',404);}
 if(/^\/icons\/(?:(?:taskbar|aero)\/)?[a-zA-Z0-9-]+\.png$/.test(url.pathname)||/^\/avatars\/[a-z0-9]+\.png$/.test(url.pathname)){const bytes=await fs.readFile(path.join(base,'public',url.pathname));res.writeHead(200,{'Content-Type':'image/png','Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'});res.end(bytes);return;}
 if(url.pathname==='/icons/cmd.svg'){res.writeHead(200,{'Content-Type':'image/svg+xml','X-Content-Type-Options':'nosniff'});res.end(await fs.readFile(path.join(base,'public/icons/cmd.svg')));return;}
-const assets={'/cmd.js':'cmd.js','/launch-route.js':'launch-route.js','/file-actions.js':'file-actions.js','/ie-browser.css':'ie-browser.css','/ie-browser.js':'ie-browser.js','/user-settings.js':'user-settings.js','/app-instance':'index.html','/':'index.html','/login':'login.html','/login.js':'login.js','/login.css':'login.css','/office-window.js':'office-window.js','/window-manager.js':'window-manager.js','/desktop-shell.js':'desktop-shell.js','/desktop-grid.js':'desktop-grid.js','/file-picker.js':'file-picker.js','/photo-geometry.js':'photo-geometry.js','/app.js':'app.js','/aero.css':'aero.css','/explorer-chrome.js':'explorer-chrome.js','/style.css':'style.css','/editor.bundle.js':'editor.bundle.js'};const asset=(launchRoute(url.pathname)||/^\/[A-Z](?:\/|$)/.test(url.pathname))?'index.html':assets[url.pathname];if(!asset)fail('Nicht gefunden.',404);
+const assets={'/task-manager.js':'task-manager.js','/cmd.js':'cmd.js','/launch-route.js':'launch-route.js','/file-actions.js':'file-actions.js','/ie-browser.css':'ie-browser.css','/ie-browser.js':'ie-browser.js','/user-settings.js':'user-settings.js','/app-instance':'index.html','/':'index.html','/login':'login.html','/login.js':'login.js','/login.css':'login.css','/office-window.js':'office-window.js','/window-manager.js':'window-manager.js','/desktop-shell.js':'desktop-shell.js','/desktop-grid.js':'desktop-grid.js','/file-picker.js':'file-picker.js','/photo-geometry.js':'photo-geometry.js','/app.js':'app.js','/aero.css':'aero.css','/explorer-chrome.js':'explorer-chrome.js','/style.css':'style.css','/editor.bundle.js':'editor.bundle.js'};const asset=(launchRoute(url.pathname)||/^\/[A-Z](?:\/|$)/.test(url.pathname))?'index.html':assets[url.pathname];if(!asset)fail('Nicht gefunden.',404);
 const nonce=randomBytes(16).toString('base64');res.writeHead(200,{'Content-Type':asset.endsWith('.css')?'text/css':asset.endsWith('.js')?'text/javascript':'text/html; charset=utf-8','X-Content-Type-Options':'nosniff','Content-Security-Policy':`default-src 'self'; script-src 'self'; style-src 'self' 'nonce-${nonce}'; img-src 'self' data:; media-src 'self' blob:; frame-src 'self' https: http:; object-src 'none'; frame-ancestors ${url.pathname==='/app-instance'?"'self'":"'none'"}; base-uri 'none'; form-action 'self' ${office.origin||''}`,'Cache-Control':'no-cache'});const bytes=await fs.readFile(path.join(base,'public',asset));res.end(asset.endsWith('.html')?bytes.toString().replace('<head>','<head><meta name="editor-nonce" content="'+nonce+'">'):bytes);
 }catch(e){console.error(e.message);if(!res.headersSent)json(e.status||400,{error:e.status?e.message:'Anfrage konnte nicht verarbeitet werden.'});else res.end();}finally{officeMutations.delete(req);if(changingFilesystem)filesystemMutations--;}
 });
