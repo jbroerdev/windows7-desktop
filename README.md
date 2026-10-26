@@ -426,3 +426,5 @@ Administratoren finden im Startmenü die **Computerverwaltung** (auch direkt unt
 - Die Verwaltung ist nur im persönlichen Administratorkonto verfügbar. Öffentliche Ansicht und Share-Bearbeitungsmodus erhalten keinen Zugriff.
 
 Diese Funktionen verwalten Webkonten und Anwendungsberechtigungen. Linux-Benutzer, UID/GID und Dateisystem-ACLs werden dadurch noch nicht verändert.
+
+Die separate Konsole **Lokale Benutzer und Gruppen** ist im Startmenü sowie unter `/lusrmgr` verfügbar. Sie verwendet dieselben Konten und Gruppen wie die Computerverwaltung. Mitgliedschaften werden als Listen mit **Hinzufügen …**, **Entfernen** und einem Objektauswahldialog bearbeitet. **Übernehmen** speichert Eigenschaften, ohne das Fenster zu schließen. Die Symbolleiste bietet außerdem einen CSV-Export der aktuellen Benutzer- oder Gruppenliste. Die Quellen der mitgelieferten Windows-7-Symbole stehen unter `public/icons/mmc/SOURCES.txt`.

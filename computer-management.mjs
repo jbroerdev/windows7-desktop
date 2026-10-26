@@ -14,7 +14,7 @@ export function createComputerManagement({db,id,fail,makeUser,sessions,save,get,
  const action=data.action;
  if(action==='user-create'){
   const fullName=text(data.fullName||''),description=text(data.description||'');
-  const role=data.role==='admin'?'admin':'user';const u=makeUser(data.username,data.password,role);Object.assign(u,{fullName,description});
+  const role=data.role==='admin'?'admin':'user';const groups=data.groups??[];if(!Array.isArray(groups)||groups.some(gid=>!db.groups.some(g=>g.id===gid)))fail('Ungültige Gruppenmitgliedschaft.');const u=makeUser(data.username,data.password,role);Object.assign(u,{fullName,description});for(const g of db.groups)if(groups.includes(g.id))g.members.push(u.id);
  }else if(action==='user-update'||action==='user-delete'){
   const u=users().find(u=>u.id===data.id);if(!u)fail('Benutzer nicht gefunden.',404);
   const deleting=action==='user-delete';const next={...u};
