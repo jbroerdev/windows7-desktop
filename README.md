@@ -414,3 +414,15 @@ Wenn mehrere Fenster derselben App geöffnet sind, zeigt ein Hover über dem Tas
 ### Ordnerrechte und Gruppen
 
 Administratoren öffnen unter **Start → Benutzerkonto → Ordnerzugriff verwalten** die Computerverwaltung. Für jeden normalen Ordner können einzelne Benutzer oder die Gruppen **Benutzer** und **Administratoren** mit **Nur Lesen** oder **Lesen und Schreiben** eingetragen werden. Die Regeln gelten auch für Unterordner und werden serverseitig bei Anzeigen, Uploads, Umbenennen, Verschieben und Löschen geprüft. Entfernen lassen sich Rechte, indem alle Auswahlfelder abgewählt und die leere Regel gespeichert wird.
+
+### Erweiterte Computerverwaltung
+
+Administratoren finden im Startmenü die **Computerverwaltung** (auch direkt unter `/compmgmt`). Die einfache Benutzerkontenverwaltung bleibt erhalten und verwendet dieselben Konten.
+
+- Benutzer anlegen, vollständigen Namen/Beschreibung ändern, Kontotyp und eigene Gruppen festlegen, deaktivieren und löschen.
+- Eigene Gruppen anlegen, umbenennen, beschreiben, mit Mitgliedern versehen und löschen. Die Systemgruppen Administratoren/Benutzer entsprechen den Kontotypen.
+- Eigene Gruppen lassen sich bei Ordnerberechtigungen für Lesen oder Lesen/Schreiben auswählen; die Rechte gelten auch für Unterordner.
+- Das eigene Konto kann nicht deaktiviert/gelöscht werden; mindestens ein aktiver Administrator bleibt erhalten. Beim Deaktivieren werden bestehende Sitzungen beendet. Beim Löschen bleiben persönliche Dateien erhalten.
+- Die Verwaltung ist nur im persönlichen Administratorkonto verfügbar. Öffentliche Ansicht und Share-Bearbeitungsmodus erhalten keinen Zugriff.
+
+Diese Funktionen verwalten Webkonten und Anwendungsberechtigungen. Linux-Benutzer, UID/GID und Dateisystem-ACLs werden dadurch noch nicht verändert.
