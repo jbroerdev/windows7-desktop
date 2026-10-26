@@ -12,3 +12,4 @@ export.png: actions/16/document-save-as.png
 Other legacy MMC icons extracted from Windows system resources: mycomput.dll, localsec.dll, mmcndmgr.dll. Microsoft graphical assets retain their original ownership.
 
 CMD: ../cmd.ico from visnalize/resources, icons/win7/Default Programs/cmd_IDI_APPICON.ico
+CMD (active): ../cmd.png from B00merang-Artwork/Windows-7, apps/32/utilities-terminal.png
