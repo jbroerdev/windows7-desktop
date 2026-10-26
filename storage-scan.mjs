@@ -4,7 +4,9 @@ import { createStorage } from './storage.mjs';
 // Filesystem calls on a slow network drive must never occupy the HTTP thread.
 export function scanStorage(options) {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(new URL(import.meta.url), { workerData: options });
+    const workerOptions = { workerData: options };
+    if (process.execArgv.some(arg => arg === '--input-type' || arg.startsWith('--input-type='))) workerOptions.execArgv = [];
+    const worker = new Worker(new URL(import.meta.url), workerOptions);
     const timeout = setTimeout(() => {
       reject(new Error('Zeitlimit beim Dateiabgleich überschritten.'));
       void worker.terminate();

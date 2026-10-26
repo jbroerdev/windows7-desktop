@@ -17,6 +17,8 @@ FFMPEG_STARTUP_TIMEOUT=30
 
 Die Größen begrenzen ausschließlich die transcodierte Wiedergabe, nicht die Originaldatei oder direkte Wiedergabe. Für höhere Qualität können z. B. `1920` und `1080` verwendet werden, sofern die CPU schnell genug ist. Das Encoding läuft auf der CPU. Wird das Fenster geschlossen oder die Datei gewechselt, wird der zugehörige FFmpeg-Prozess beendet. Bei belegten Transcoding-Plätzen oder einem Startfehler antwortet der Server mit einem Fehlerstatus, statt einen leeren erfolgreichen Stream zu liefern.
 
+Jedes VLC-Fenster erhält eine eigene zufällige Player-Kennung. Ein neuer Transcoding-Auftrag dieses Players ersetzt dessen alten Auftrag; andere Fenster werden nicht beendet. Bei langsamer Prozessbeendigung wartet der neue Auftrag bis zu fünf Sekunden auf einen freien Platz. FFmpeg erhält beim Abbruch zuerst SIGTERM und nach 1,5 Sekunden gegebenenfalls SIGKILL. Ausstehende Playlist-Anfragen werden ebenfalls abgebrochen, verspätete Ergebnisse ignoriert. HLS-Manifeste werden als Stream behandelt, nicht als Liste einzelner Segmente.
+
 Beim transcodierten Stream ist kein beliebiges Springen an noch nicht erzeugte Positionen möglich. Die Wiedergabe unterstützt Dateien, deren Decoder im mitgelieferten FFmpeg vorhanden ist; beschädigte oder verschlüsselte Dateien sind dadurch nicht automatisch abspielbar.
 
 ## Echter Codec-Test im fertigen Container
