@@ -437,3 +437,53 @@ Rechtsklick auf einen Ordner → **Eigenschaften** öffnet die Reiter Allgemein,
 Besitzer und Administratoren können Benutzer oder Gruppen mit Lese- oder Schreibzugriff hinzufügen. Geerbte Rechte werden angezeigt und am übergeordneten Ordner geändert. Der Besitzer behält Zugriff. Zugriff für **share** entspricht einer öffentlichen Lesefreigabe für den Ordner und seine Unterordner.
 
 Das Konto **share** erscheint in Lokale Benutzer und Gruppen. **Konto ist deaktiviert** schaltet die öffentliche Ansicht ab; Besucher gelangen zur Login-Seite. Das Share-Profil kann nicht gelöscht oder zum Administrator gemacht werden. Die Änderungen betreffen Webprofile und Webberechtigungen, keine Linux-Konten oder Linux-ACLs. Der separate Einstieg Computerverwaltung wurde entfernt; alte Links werden zur Benutzerkonsole weitergeleitet.
+
+### Profil sperren und Arbeitsstand fortsetzen
+
+Im Startmenü öffnet **Abmelden ▸** die Auswahl **Sperren / Abmelden**. Sperren sichert zuerst den privaten Arbeitsstand auf dem Server und beendet die bestehenden Anmeldungen dieses Profils. Bei der nächsten Anmeldung am Desktop (`/`) wird er auch auf einem anderen Gerät geladen. Ein frischer Login öffnet kein zusätzliches Explorer-Fenster.
+
+Gesichert werden offene Fenster mit relativer Position/Größe, Maximierung und Minimierung, Explorer-Ordner, ungespeicherte Editorinhalte samt Cursor/Auswahl, CMD-Verlauf, VLC-Datei/Playlist und Zeitposition, Fotoansicht sowie geöffnete Browser-Registerkarten. Office fordert vor dem Sperren eine Speicherbestätigung von Collabora an und sichert temporäre Dokumente privat unter `.explorer/office-workspaces`; die eigentliche Datei wird dabei nicht überschrieben. Bei einem Sicherungsfehler bleibt das Profil offen. Normales Abmelden verwirft die Wiederaufnahme-Vorgabe.
+
+Der Arbeitsstand liegt im Benutzerkonto in `.explorer/database.json`, nicht im Browser-Cache. Dateien werden beim Wiederöffnen weiterhin auf Zugriffsrechte geprüft. Der gesamte Ordner `/Explorer` gehört deshalb in die Sicherung. Normale Video-/Audiodateien setzen an der gespeicherten Position fort; FFmpeg kann dafür ebenfalls an dieser Position starten. Live-Streams setzen beim Live-Signal fort. Der Browser kann zum erneuten Abspielen einen Klick verlangen. Bei externen Webapps lassen sich Seiten und Registerkarten wiederherstellen, aber keine fremden Cookies, internen Formulare oder laufenden Programme auf einen anderen PC übertragen. Office-Dokumentinhalte werden erhalten; die interne Collabora-Cursor-/Ansichtsposition wird nicht übertragen.
+
+### Startmenü und Standard-Anheftungen
+
+Die normale Startmenüansicht enthält angeheftete Programme mit großen Symbolen; ohne eigene Auswahl sind zunächst alle verfügbaren Programme angeheftet. Über Rechtsklick → **An Startmenü anheften / Vom Startmenü lösen** passt jeder Benutzer seine Liste an. Im Share-Bearbeitungsmodus legt der Administrator die gemeinsame Liste fest. Die Auswahl wird getrennt von den Taskleisten-Anheftungen im Konto gespeichert. **Alle Programme** zeigt eine kompakte Liste mit kleinen Symbolen, Programmordnern und **Windows-Zubehör**. Neue bzw. noch nicht angepasste Taskleisten enthalten standardmäßig Internet Explorer und Windows-Explorer. Eine ausdrücklich gespeicherte eigene Liste, auch eine leere, bleibt erhalten.
+
+### Aero Glass und Fensterfarbe
+
+Unter **Anpassen → Fensterfarbe** (oder Benutzerkonto → Fensterfarbe und Darstellung) stehen 16 Farbfelder, Transparenz, Farbintensität und ein Farbmixer mit Farbton/Sättigung/Helligkeit zur Verfügung. Änderungen erscheinen sofort als Vorschau auf Fensterrahmen, Taskleiste und Startmenü. **Änderungen speichern** übernimmt sie im Benutzerkonto; **Abbrechen** oder Schließen verwirft die Vorschau. Im Share-Bearbeitungsmodus wird die gemeinsame Darstellung gespeichert. Die Arbeitsflächen der Programme bleiben deckend.
+
+Das Glas wird im Browser mit Farbschichten, Glanzreflexen und Hintergrundunschärfe dargestellt. Die Fensterfarbe ist Teil der vorhandenen Desktop-Daten und bleibt bei Neustarts und Gerätewechsel erhalten. Gestaltungsreferenz: Windows 7 Inside Out (Microsoft Press), Fensterfarbe und Darstellung: https://ptgmedia.pearsoncmg.com/images/9780735626652/samplepages/9780735626652.pdf
+
+### Windows-Sicherheit
+
+Bei bestehender Anmeldung zeigt `/login` das Windows-7-Sicherheitsmenü: Computer sperren, Benutzer wechseln, Abmelden, Kennwort ändern und Task-Manager starten. Abbrechen kehrt zum Desktop zurück. Sperren übernimmt den Arbeitsstand aus dem zuletzt verwendeten offenen Desktop; ohne offenen Desktop bleibt der bereits gesicherte Stand erhalten. Benutzer wechseln sichert und sperrt das Profil vor der Kontoauswahl.
+
+Profilbild und administrative Kontofunktionen bleiben unter Kontoeinstellungen erreichbar. Eine Kennwortänderung verlangt das bisherige Kennwort und mindestens zwölf Zeichen für das neue; andere bestehende Anmeldungen dieses Benutzers werden beendet.
+
+### Desktopsymbole und Verknüpfungen
+
+Computer und Benutzerordner lassen sich per Rechtsklick vom Desktop entfernen. Das löscht keine Dateien. Über den Desktop-Rechtsklick können alle Symbole ausgeblendet oder die Standardsymbole wiederhergestellt werden. Dateien und Ordner bieten im Kontextmenü Desktop-Verknüpfung erstellen; Programme bieten dies im Startmenü. Die Verknüpfungen öffnen das Original. Sichtbarkeit und Verknüpfungen werden pro Profil auf dem Server gespeichert; für den öffentlichen Desktop können Administratoren sie im Share-Bearbeitungsmodus festlegen.
+
+Desktop-Symbole lassen sich auf den Papierkorb ziehen. Dateien und Ordner werden über den bestehenden Papierkorb verschoben; Desktop-Verknüpfungen bleiben dort separat wiederherstellbar. Standardsymbole werden dabei nur ausgeblendet. Der Papierkorb nimmt auch aus Explorer-Fenstern gezogene Dateien und Ordner an. Kontextmenüs stehen ebenfalls in der Explorer-Seitenleiste bereit, einschließlich Desktop-Verknüpfung erstellen für Bibliotheksordner.
+
+Der Papierkorb ist ein spezieller, nicht aufgelisteter Explorer-Ort: Das Desktopsymbol öffnet ihn im normalen Explorer-Fenster mit Navigation, Adressleiste, Suche und Dateiansicht. Die Leiste bietet Papierkorb leeren sowie Wiederherstellen aller oder ausgewählter Elemente; das Dateikontextmenü bietet Wiederherstellen und endgültiges Löschen mit Bestätigung.
+
+### Zusätzliche CMD-Befehle
+
+`mkdir "Neuer Ordner"` (auch `md`) erstellt einen Ordner im aktuellen Pfad. `rename "alt.txt" "neu.txt"` (auch `ren`) benennt eine Datei oder einen Ordner um. `del "datei.txt"` (auch `erase`) verschiebt eine Datei in den Papierkorb. `nano "datei.txt"` öffnet einen Texteditor direkt in der Eingabeaufforderung und kann neue Textdateien anlegen: Strg+O oder Strg+S speichert, Strg+X schließt mit Rückfrage bei ungespeicherten Änderungen. Relative und absolute Pfade werden unterstützt; Namen mit Leerzeichen stehen in Anführungszeichen.
+
+Desktop-Verknüpfungen erscheinen ebenfalls im Explorer-Ordner Desktop und lassen sich dort öffnen, umbenennen und in den Papierkorb verschieben. Die Desktopfläche unterstützt Strg-Klick, einen Auswahlrahmen auf freier Fläche, Strg+A sowie gemeinsames Verschieben und Ziehen in den Papierkorb.
+
+Mehrere Fenster derselben Anwendung teilen sich ein Taskleistensymbol. Darüber öffnet sich beim Darüberfahren oder Anklicken eine vertikale Fensterliste mit eigenem Schließen-Knopf pro Fenster. Diese Knöpfe verwenden den normalen Schließvorgang der Anwendung; Notepad zeigt bei ungespeicherten Änderungen eine OK/Abbrechen-Rückfrage.
+
+Der gemeinsame Öffnen-/Speichern-Dialog verwendet den Windows-7-Explorer-Aufbau mit Zurück/Vorwärts, Pfadeingabe, Ordnersuche, Favoriten/Bibliotheken/Laufwerken, großen Symbolen oder Listenansicht, Dateiname und Dateityp. Über Neuer Ordner lässt sich im beschreibbaren Zielverzeichnis ein Ordner erstellen. Der zuletzt erfolgreich verwendete Ordner bleibt für die laufende App erhalten.
+
+### Erweiterter Desktop mit zwei Bildschirmen
+
+Rechtsklick auf den Desktop → Bildschirmauflösung öffnet die Anzeigeeinstellungen. Neuer Bildschirm öffnet `/Desktop2` in einem weiteren Tab; die Adresse ist auch direkt aufrufbar. Beide Tabs müssen dasselbe angemeldete Profil verwenden. Bildschirm 2 startet ohne Symbole und Taskleiste und ist keine Spiegelung. Die Einstellungen speichern Links-/Rechtsanordnung, das optionale Verschieben der Desktopsymbole auf Bildschirm 2 und eine optionale zweite Taskleiste pro Profil. Auflösung und Ausrichtung werden vom Browser bestimmt und sind nicht bearbeitbar. Identifizieren blendet die Bildschirmnummern ein.
+
+Im Titelleisten-Kontextmenü verschiebt Auf Bildschirm 1/2 verschieben ein Fenster mit seinem aktuellen Arbeitsstand. Am Verbindungsrand dockt die obere Ecke (erste 96 Pixel) auf halber Breite an; der Rand darunter übergibt ohne Zusatztaste an den anderen Bildschirm. Ohne Verbindung bleibt das Andocken auf beiden Seiten erhalten. Der obere Rand in der Mitte maximiert. Geschlossene Tabs melden sich ab; zusätzlich überwachen Fensterreferenz und Verbindungskontrolle die Erreichbarkeit. Das Original schließt erst nach bestätigter Wiederherstellung am Ziel. Notepad-Entwürfe, Explorer, CMD und Medienfenster nutzen die vorhandene Zustandssicherung; Webseiten können neu laden und Medien kurz unterbrechen. Office-Fenster werden derzeit nicht übertragen und bleiben am Ausgangsbildschirm geöffnet. Minimisierte Fenster auf dem zweiten Bildschirm können über dessen Desktop-Kontextmenü wieder angezeigt werden. Sperren sammelt die Arbeitsstände beider erreichbaren Bildschirme und sperrt beide Flächen.
+
+Das Desktop-Kontextmenü gruppiert Symboloptionen unter Ansicht und neue Dateien/Ordner unter Neu. Aktualisieren, Bildschirmauflösung, Anpassen und Desktop-Ordner öffnen bleiben direkt erreichbar.

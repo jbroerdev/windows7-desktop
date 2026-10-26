@@ -7,7 +7,7 @@ export function transcodeOptions(env=process.env){return{
  maxProcesses:integer(env.FFMPEG_MAX_PROCESSES,2,1,8),startupTimeout:integer(env.FFMPEG_STARTUP_TIMEOUT,30,5,120)*1000
 };}
 export function transcodeArguments(input,audioOnly,options=transcodeOptions()){
- const args=['-hide_banner','-loglevel','error','-nostdin','-filter_threads',String(options.threads),'-threads',String(options.threads),'-i',input];
+ const args=['-hide_banner','-loglevel','error','-nostdin','-filter_threads',String(options.threads),'-threads',String(options.threads),...(Number.isFinite(options.startSeconds)&&options.startSeconds>0?['-ss',String(Math.min(options.startSeconds,604800))]:[]),'-i',input];
  if(audioOnly)args.push('-map','0:a:0','-vn');
  else args.push('-map','0:v:0?','-map','0:a:0?','-sn','-dn','-c:v','libx264','-preset','ultrafast','-tune','zerolatency','-threads',String(options.threads),'-vf',`scale=w='min(${options.width},iw)':h='min(${options.height},ih)':force_original_aspect_ratio=decrease:force_divisible_by=2,format=yuv420p`,'-profile:v','main','-g','30');
  return [...args,'-c:a','aac','-b:a','128k','-ac','2','-ar','48000','-movflags','frag_keyframe+empty_moov+default_base_moof','-frag_duration','1000000','-f','mp4','pipe:1'];
@@ -29,7 +29,7 @@ export function createTranscoder({options=transcodeOptions(),spawnProcess=spawn,
  function start(job){
  clearTimeout(job.waitTimer);active++;
  const {res,input,audioOnly}=job;let child;
- try{child=job.child=spawnProcess(options.executable,transcodeArguments(input,audioOnly,options),{stdio:['ignore','pipe','pipe']});}catch{finish(job);reply(res,'FFmpeg konnte nicht gestartet werden.');return;}
+ try{child=job.child=spawnProcess(options.executable,transcodeArguments(input,audioOnly,{...options,startSeconds:job.startSeconds}),{stdio:['ignore','pipe','pipe']});}catch{finish(job);reply(res,'FFmpeg konnte nicht gestartet werden.');return;}
  let started=false,errorText='';
  job.startTimer=setTimeout(()=>{cancel(job,false);reply(res,'FFmpeg hat innerhalb des Zeitlimits keine abspielbaren Daten geliefert.',504);},options.startupTimeout);
  child.stderr.on('data',chunk=>{errorText=(errorText+chunk.toString()).slice(-4096);});
@@ -38,9 +38,9 @@ export function createTranscoder({options=transcodeOptions(),spawnProcess=spawn,
  child.once('error',()=>{finish(job);reply(res,'FFmpeg ist nicht verfügbar oder konnte nicht gestartet werden.');});
  child.once('close',code=>{finish(job);if(job.cancelled)return;if(code!==0){if(!res.destroyed&&errorText)log('ffmpeg:',errorText.trim());reply(res,'Diese Datei konnte von FFmpeg nicht umgewandelt werden.',502);}else if(!started)reply(res,'FFmpeg hat keine Mediendaten geliefert.',502);else if(!res.writableEnded)res.end();});
  }
- return function stream(res,input,audioOnly,ownerKey=null){
+ return function stream(res,input,audioOnly,ownerKey=null,startSeconds=0){
  if(ownerKey&&owners.has(ownerKey))cancel(owners.get(ownerKey));
- const job={res,input,audioOnly,ownerKey,cancelled:false,done:false};job.onClose=()=>cancel(job);res.once('close',job.onClose);if(ownerKey)owners.set(ownerKey,job);
+ const job={res,input,audioOnly,ownerKey,startSeconds,cancelled:false,done:false};job.onClose=()=>cancel(job);res.once('close',job.onClose);if(ownerKey)owners.set(ownerKey,job);
  if(active<options.maxProcesses){start(job);return;}
  if(queue.length>=maxQueue){forget(job);job.done=true;reply(res,'Alle Transcoding-Plätze sind belegt. Bitte kurz warten.');return;}
  queue.push(job);job.waitTimer=setTimeout(()=>{const index=queue.indexOf(job);if(index>=0)queue.splice(index,1);forget(job);job.done=true;reply(res,'Alle Transcoding-Plätze sind belegt. Bitte einen anderen Player schließen und erneut starten.');},queueTimeout);

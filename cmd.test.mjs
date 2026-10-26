@@ -20,3 +20,11 @@ test('CMD navigiert mit Windows-Pfaden und startet Apps, Dateien und Verknüpfun
  await assert.rejects(cmd.execute('notepad fehlt.txt'),/nicht gefunden/);
  assert.equal(cmdDisplay(cmdPath('..\\..','/C/Users')),'C:\\');
 });
+
+test('CMD Dateioperationen verwenden aktuelle Pfade und zitierte Namen',async()=>{
+ const nodes=[{id:'d',name:'Documents',kind:'folder',path:'/C/Users/alice/Documents'},{id:'f',name:'Test Datei.txt',kind:'file',path:'/C/Users/alice/Documents/Test%20Datei.txt'}],calls=[];
+ const cmd=createCMD({home:'/C/Users/alice/Documents',getNodes:()=>nodes,print:()=>{},mkdir:p=>calls.push(['mkdir',p]),rename:(n,name)=>calls.push(['rename',n.id,name]),remove:n=>calls.push(['del',n.id]),edit:(n,p)=>calls.push(['nano',n?.id,p])});
+ await cmd.execute('mkdir "Neuer Ordner"');await cmd.execute('rename "Test Datei.txt" "Neu.txt"');await cmd.execute('del "Test Datei.txt"');await cmd.execute('nano "Test Datei.txt"');await cmd.execute('nano neu.txt');
+ assert.deepEqual(calls,[['mkdir','/C/Users/alice/Documents/Neuer Ordner'],['rename','f','Neu.txt'],['del','f'],['nano','f','/C/Users/alice/Documents/Test Datei.txt'],['nano',undefined,'/C/Users/alice/Documents/neu.txt']]);
+ await assert.rejects(cmd.execute('del fehlt.txt'),/nicht gefunden/);await assert.rejects(cmd.execute('del .'),/Dateien/);await assert.rejects(cmd.execute('rename "Test Datei.txt" ../anders'),/neuen Namen/);await assert.rejects(cmd.execute('mkdir'),/Syntax/);
+});

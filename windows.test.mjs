@@ -68,3 +68,9 @@ const small=recallBounds(stored,{width:300,height:180},480,330).bounds;
 assert.ok(small.width<=300&&small.height<=180&&small.top<=149);
 assert.equal(recallBounds({...stored,width:NaN},view),null);
 });
+
+test('Taskleiste gruppiert Instanzen und übernimmt verbleibende Fenster',async()=>{
+ const {readFile}=await import('node:fs/promises');const source=await readFile(new URL('./public/window-manager.js',import.meta.url),'utf8'),start=source.indexOf('  function syncPins(){'),end=source.indexOf('  function setPins(',start);const record=(id,appId)=>({appId,el:{id,open:true,hidden:false,classList:{contains:()=>false}},title:{textContent:id},task:{hidden:false,classList:{toggle(){}},setAttribute(){}}});const a=record('a','editor'),b=record('b','editor'),c=record('c','media'),records=new Map([['a',a],['b',b],['c',c]]),pins=[];const sync=new Function('records','pins','pinButtons',source.slice(start,end)+';return syncPins;')(records,pins,new Map());sync();assert.equal(a.task.hidden,false);assert.equal(b.task.hidden,true);assert.equal(c.task.hidden,false);a.el.open=false;sync();assert.equal(b.task.hidden,false);pins.push({id:'editor'});sync();assert.equal(b.task.hidden,true);
+});
+
+test('Verbindungsrand dockt oben an und übergibt darunter ohne Umschalt',async()=>{const {windowEdgeAction}=await import('./public/window-manager.js');const target=side=>side==='right'?'Auf Bildschirm 2 verschieben':null;assert.deepEqual(windowEdgeAction(1199,50,1200,target),{snap:'right',transfer:null});assert.deepEqual(windowEdgeAction(1199,180,1200,target),{snap:'right',transfer:'Auf Bildschirm 2 verschieben'});assert.deepEqual(windowEdgeAction(1,180,1200,target),{snap:'left',transfer:null});assert.deepEqual(windowEdgeAction(600,2,1200,target),{snap:'top',transfer:null});assert.deepEqual(windowEdgeAction(1199,180,1200,()=>null),{snap:'right',transfer:null});});
