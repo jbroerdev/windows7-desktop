@@ -1,0 +1,17 @@
+[Unit]
+Description=Windows7 Desktop read-only host metrics
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/lib/windows7-host-monitor.py --output /Explorer/.explorer/host-monitor.json
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/Explorer/.explorer
+
+[Install]
+WantedBy=multi-user.target
