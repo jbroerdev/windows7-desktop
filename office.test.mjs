@@ -57,7 +57,7 @@ test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen un
   await api('/api/share',{id,shared:true});const guest=await(await api('/api/office-open',{id},'')).json();assert.equal(guest.writable,false);assert.equal((await(await wopi(id,guest.accessToken)).json()).UserCanWrite,false);assert.equal((await wopi(id,guest.accessToken,'PUT','edit-lock',changed)).status,403);
   await api('/api/users',{username:'alice',password:'office-alice-password'});const aliceLogin=await api('/api/login',{username:'alice',password:'office-alice-password'});const alice=aliceLogin.headers.get('set-cookie').split(';')[0];
   const reader=await(await api('/api/office-open',{id},alice)).json();assert.equal(reader.writable,false);assert.equal((await wopi(id,reader.accessToken,'LOCK','reader')).status,403);
-  const draft=await(await api('/api/office-draft',{kind:'text',template:id},admin)).json();assert.equal(draft.temporary,true);
+  const draft=await(await api('/api/office-draft',{kind:'text',template:id,open:true},admin)).json();assert.equal(draft.temporary,true);assert.ok(draft.grant.accessToken);assert.ok(draft.grant.url);
   assert.ok(!(await(await api('/api/nodes',undefined,admin)).json()).nodes.some(n=>n.id===draft.id));
   assert.equal((await api('/api/office-open',{id:draft.id},alice)).status,404);
   assert.equal((await api('/api/office-discard',{id:draft.id},alice)).status,404);
@@ -72,7 +72,7 @@ test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen un
   assert.equal((await api('/api/office-discard',{id:draft.id},admin)).status,200);
   assert.equal((await wopi(draft.id,draftGrant.accessToken)).status,401);
   assert.equal((await api('/api/office-save-draft',{id:draft.id,kind:'text',parent:folder,name:'Verworfen.odt'},admin)).status,404);
-  const working=await(await api('/api/office-edit',{id},admin)).json();assert.equal(working.workingCopy,true);
+  const working=await(await api('/api/office-edit',{id,open:true},admin)).json();assert.equal(working.workingCopy,true);assert.ok(working.grant.accessToken);
   const workingGrant=await(await api('/api/office-open',{id:working.id},admin)).json();
   assert.equal((await wopi(working.id,workingGrant.accessToken,'LOCK','working-lock')).status,200);
   assert.equal((await wopi(working.id,workingGrant.accessToken,'PUT','working-lock',changed)).status,200);
