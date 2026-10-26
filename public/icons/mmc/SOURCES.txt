@@ -1,0 +1,1 @@
+Legacy MMC icons extracted from Windows system resources: mycomput.dll, localsec.dll, mmcndmgr.dll. Microsoft graphical assets retain their original ownership.
