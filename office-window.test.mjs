@@ -16,7 +16,7 @@ test('Office-Speichern wartet auf die ausdrücklich angeforderte Collabora-Rück
    replaceChildren(...nodes){this.children=[...nodes];}
    setAttribute(){}
    addEventListener(name,callback){this.events.set(name,callback);}
-   submit(){queueMicrotask(()=>activeFrame.events.get('load')?.());}
+   submit(){queueMicrotask(()=>emit({MessageId:'App_LoadingStatus',Values:{Status:'Initialized'}}));}
    remove(){}
    close(){this.events.get('close')?.();}
   }
