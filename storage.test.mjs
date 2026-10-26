@@ -3,6 +3,23 @@ import assert from'node:assert/strict';
 import{mkdtemp,rm,readFile,stat,writeFile,mkdir}from'node:fs/promises';
 import os from'node:os';import path from'node:path';
 import{createStorage}from'./storage.mjs';
+import{scanStorage}from'./storage-scan.mjs';
+
+test('Dateiabgleich im Worker lässt den Hauptthread frei und verändert nur den Snapshot',async()=>{
+const temp=await mkdtemp(path.join(os.tmpdir(),'explorer-worker-'));
+try{
+const root=path.join(temp,'Explorer'),metadataDir=path.join(temp,'metadata');
+const db={users:[{id:'u',username:'alice'}],nodes:[]};
+createStorage({root,metadataDir,db}).initialize();
+await writeFile(path.join(root,'Users','alice','Host.txt'),'Hostinhalt');
+let ticks=0;const timer=setInterval(()=>ticks++,1);
+let nodes;try{nodes=await scanStorage({root,metadataDir,db});}finally{clearInterval(timer);}
+assert.ok(ticks>0,'Event Loop bleibt während des Scans erreichbar');
+assert.ok(nodes.some(n=>n.name==='Host.txt'&&n.size===10));
+assert.ok(!db.nodes.some(n=>n.name==='Host.txt'),'Live-Daten werden nicht vom Worker überschrieben');
+assert.equal(await scanStorage({root,metadataDir,db:{...db,nodes}}),null);
+}finally{await rm(temp,{recursive:true,force:true});}
+});
 
 test('Migration bevorzugt aktuelle Ordnerdateien vor alten ID-Sicherungen',async()=>{
 const temp=await mkdtemp(path.join(os.tmpdir(),'explorer-migration-'));
