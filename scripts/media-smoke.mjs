@@ -1,6 +1,6 @@
 // Run inside the built image: docker exec -i CONTAINER node --input-type=module < scripts/media-smoke.mjs
 import assert from 'node:assert/strict';
-import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,writeFile,rm,readdir} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
@@ -18,6 +18,15 @@ try{
  const response=await fetch(origin+'/transcode/'+id,{headers:{cookie},signal:AbortSignal.timeout(60000)});assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'video/mp4');await writeFile(output,Buffer.from(await response.arrayBuffer()));
  const probe=JSON.parse(await run('ffprobe',['-v','error','-show_streams','-of','json',output]));
  assert.ok(probe.streams.some(s=>s.codec_name==='h264'&&s.pix_fmt==='yuv420p'));assert.ok(probe.streams.some(s=>s.codec_name==='aac'));
+ // Exercise repeated cancellation against real FFmpeg, not only mock processes.
+ const player='0123456789abcdef0123456789abcdef';
+ for(let index=0;index<10;index++){
+  const switched=await fetch(origin+'/transcode/'+id+'?player='+player,{headers:{cookie},signal:AbortSignal.timeout(15000)});
+  assert.equal(switched.status,200);await switched.body.cancel();
+ }
+ const encoders=async()=>{let count=0;for(const pid of(await readdir('/proc')).filter(name=>/^\d+$/.test(name))){try{const status=await readFile('/proc/'+pid+'/status','utf8');if(/^Name:\s+ffmpeg$/m.test(status)&&new RegExp('^PPid:\\s+'+process.pid+'$','m').test(status))count++;}catch{}}return count;};
+ const deadline=Date.now()+5000;while(await encoders()){assert.ok(Date.now()<deadline,'FFmpeg-Prozesse blieben nach dem Titelwechsel aktiv.');await new Promise(r=>setTimeout(r,50));}
+ const recovered=await fetch(origin+'/transcode/'+id+'?player='+player,{headers:{cookie},signal:AbortSignal.timeout(15000)});assert.equal(recovered.status,200);assert.ok((await recovered.arrayBuffer()).byteLength>1000);
  assert.equal((await fetch(origin+'/transcode/'+id)).status,404);
- console.log('PASS: 10-Bit-FFV1/PCM-MKV → H.264/yuv420p + AAC; API und Dateirechte geprüft.');
+ console.log('PASS: MKV → H.264/AAC; 10 schnelle Wechsel ohne verwaiste FFmpeg-Prozesse; Wiedergabe danach und Dateirechte geprüft.');
 }finally{if(server)await new Promise(r=>server.close(r));await rm(temp,{recursive:true,force:true});}
