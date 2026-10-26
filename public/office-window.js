@@ -2,7 +2,7 @@ const types={text:{name:'Word',extension:'odt',icon:'word'},sheet:{name:'Excel',
 export const officeFile=n=>n?.kind==='file'&&/\.(docm?|docx|dotx?|odt|ott|rtf|xlsx?|xlsm|xltx?|ods|ots|csv|pptx?|ppsx?|odp|otp|pdf)$/i.test(n.name);
 export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getNode,toast}){
  let serial=0;
- function open(node=null,kind='text'){
+ function open(node=null,kind='text',resumeState={}){
   if(!getState().officeEnabled){toast('Office ist noch nicht eingerichtet.');return;}
   const type=types[kind]||types.text,el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
   const dialog=el('dialog'),bar=el('header'),title=el('span',type.name),min=el('button'),max=el('button'),close=el('button'),toolbar=el('nav'),menu=el('details'),label=el('summary','Datei'),items=el('div'),status=el('footer','Dokument wird vorbereitet …'),stage=el('section');
@@ -44,7 +44,8 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   desktop.register(dialog,{bar,title,minimizeButton:min,maximizeButton:max,closeButton:close,close:()=>requestClose().catch(e=>toast(e.message)),appId:'office-'+kind,icon:'/icons/'+type.icon+'.png',minWidth:620,minHeight:400});
   dialog.addEventListener('cancel',e=>{e.preventDefault();requestClose().catch(e=>toast(e.message));});
   dialog.addEventListener('close',()=>{disposed=true;clearTimeout(saveTimer);window.removeEventListener('message',message);desktop.unregister(dialog.id);if(frame)frame.src='about:blank';dialog.remove();});
-  desktop.show(dialog.id);Promise.resolve(node?load(node):fresh()).catch(e=>{status.textContent=e.message;toast(e.message);});
+  dialog.workspaceState=async()=>{if(!ready||busy||pending)throw Error('Office ist noch beschäftigt. Bitte kurz warten.');if(!node?.temporary&&!node?.workingCopy)return {type:'office-file',id:node.id,kind};if(grant?.writable)await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Office hat den Arbeitsstand nicht bestätigt.')),22000);flush(()=>{clearTimeout(timeout);resolve();});});const saved=await api('/api/office-checkpoint',{id:node.id});return {type:'office',kind,checkpoint:saved.id,dirty};};
+  desktop.show(dialog.id);Promise.resolve(node?load(node):fresh()).then(()=>{if(resumeState.dirty){dirty=true;updateTitle();status.textContent='Geändert';}}).catch(e=>{status.textContent=e.message;toast(e.message);});return dialog;
  }
  return {open};
 }

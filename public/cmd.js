@@ -6,24 +6,33 @@ export function cmdPath(value, cwd = '/C/') {
   return '/' + result.join('/');
 }
 export const cmdDisplay = path => path.replace(/^\/([a-z])(?:\/|$)/i, (_, drive) => drive.toUpperCase() + ':\\').replaceAll('/', '\\');
-export function createCMD({ getNodes, home, print, launch, open, publicIP, close }) {
+export function createCMD({ getNodes, home, print, launch, open, publicIP, close, mkdir, rename, remove, edit }) {
   let cwd = cmdPath(home || '/C/');
   const pathOf = n => { try { return cmdPath(decodeURIComponent(n.path)); } catch { return cmdPath(n.path); } };
   const find = value => { const path = cmdPath(value, cwd).toLowerCase(); return getNodes().find(n => pathOf(n).toLowerCase() === path); };
   const directory = path => /^\/[a-z]$/i.test(path) || getNodes().some(n => (n.kind === 'folder' && pathOf(n).toLowerCase() === path.toLowerCase()) || pathOf(n).toLowerCase().startsWith(path.toLowerCase() + '/'));
   const apps = { cmd:'terminal',terminal:'terminal',explorer:'explorer',notepad:'editor','notepad++':'editor',word:'office-text',winword:'office-text',writer:'office-text',excel:'office-sheet',powerpoint:'office-presentation',powerpnt:'office-presentation',vlc:'media',media:'media',fotoanzeige:'photo',photo:'photo',browser:'browser',iexplore:'browser','internet-explorer':'browser',taskmgr:'task-manager','task-manager':'task-manager' };
-  return { get cwd() { return cwd; }, async execute(command) {
+  return { get cwd() { return cwd; }, set cwd(value) { cwd=cmdPath(value); }, async execute(command) {
     command=command.replace(/^cd(?=\.\.|[\\/])/i,'cd ');
     let args = command.match(/"[^"]*"|[^\s"]+/g)?.map(v => v.replace(/^"|"$/g,'')) || [];
     if (!args.length) return;
     let name = args.shift(), verb = name.toLowerCase();
     if (verb === 'start') { if (args[0] === '') args.shift(); name = args.shift() || 'cmd'; verb = name.toLowerCase(); }
+    if (['mkdir','md','rename','ren','del','erase','nano'].includes(verb)) {
+      const renameCommand=['rename','ren'].includes(verb);if(args.length!==(renameCommand?2:1))throw Error(renameCommand?'Syntax: rename "Dateiname" "Neuer Name"':'Syntax: '+verb+' "Name oder Pfad"');
+      const path=cmdPath(args[0],cwd),node=find(args[0]);
+      if(verb==='mkdir'||verb==='md'){if(node)throw Error('Datei oder Ordner existiert bereits.');return mkdir(path);}
+      if(verb==='nano'){if(node&&node.kind!=='file')throw Error('Bitte eine Textdatei auswählen.');return edit(node,path);}
+      if(!node)throw Error('Datei oder Pfad nicht gefunden.');
+      if(renameCommand){if(/[\\/]/.test(args[1])||['.','..'].includes(args[1]))throw Error('Bitte nur den neuen Namen angeben.');return rename(node,args[1]);}
+      if(node.kind==='folder')throw Error('DEL löscht Dateien. Bitte einen Dateinamen angeben.');return remove(node);
+    }
     if (verb === 'hostname') return print('Windows7');
     if (verb === 'ipconfig') return print('Windows-IP-Konfiguration\n\n   Öffentliche IP-Adresse . . . . . : ' + await publicIP());
     if (verb === 'cls') return print(null);
     if (verb === 'exit') return close();
     if (verb === 'echo') return print(args.join(' '));
-    if (verb === 'help' || verb === '/?') return print('CD [Pfad]   DIR [Pfad]   CLS   HOSTNAME   IPCONFIG   EXIT\nProgramme: explorer, notepad, vlc, word, excel, powerpoint, browser, taskmgr\nDateien und Verknüpfungen: Namen oder Pfad eingeben. Pfade mit Leerzeichen in "Anführungszeichen" setzen.');
+    if (verb === 'help' || verb === '/?') return print('CD [Pfad]   DIR [Pfad]   MKDIR [Ordner]   DEL [Datei]\nRENAME [Datei] [Neuer Name]   NANO [Textdatei]   CLS   HOSTNAME   IPCONFIG   EXIT\nProgramme: explorer, notepad, vlc, word, excel, powerpoint, browser, taskmgr\nDateien und Verknüpfungen: Namen oder Pfad eingeben. Pfade mit Leerzeichen in "Anführungszeichen" setzen.');
     if (verb === 'cd' || verb === 'chdir' || /^[a-z]:$/i.test(verb)) {
       if (args[0]?.toLowerCase() === '/d') args.shift();
       if (!args.length && !/^[a-z]:$/i.test(verb)) return print(cmdDisplay(cwd));

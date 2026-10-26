@@ -268,3 +268,15 @@ dialog.explorer-window{width:min(1100px,85vw);height:min(740px,82vh)}
 
 /* Task Manager shares the Aero frame instead of painting over its title bar. */
 .taskmanager-window .taskmanager-inner{background:linear-gradient(to bottom,transparent 0,transparent 30px,#f0f0f0 30px,#f0f0f0 100%)}.taskmanager-window .taskmanager-title{border-bottom:0}.taskmanager-window .taskmanager-tabs,.taskmanager-window .tm-menu,.taskmanager-window .taskmanager-footer,.taskmanager-inner>p.tm-note{background-color:#f0f0f0}
+
+/* Windows 7 split button: direct sign-out and a separate narrow options arrow. */
+.start-power-group{display:flex;align-self:flex-start;margin:4px 4px 0;height:24px;flex-shrink:0}
+.start-power-group .start-power{margin:0}
+.start-power-group.split .start-power{border-radius:3px 0 0 3px}
+.start-power-group .start-power-more{height:24px;width:22px;min-width:22px;margin:0 0 0 -1px;padding:0;text-align:center;border:1px solid #163a52;border-radius:0 3px 3px 0;background:linear-gradient(#b9d6e780,#72a6c066 48%,#2e6b8b99 49%,#9fc9db77);box-shadow:inset 0 0 0 1px #d4efff77;color:white;text-shadow:0 1px #234a60}
+.start-power-group .start-power-more:hover,.start-power-group .start-power-more[aria-expanded=true]{border-color:#a4ccdc;background:linear-gradient(#d5edf6aa,#73accbaa 48%,#3b7e9daa 49%,#b1d8ebaa)}
+
+/* All Programs uses the compact Windows 7 list; pinned programs keep large icons. */
+.start-apps.all-programs{padding:3px 2px}
+.start-apps.all-programs .start-app{min-height:22px;height:22px;padding:1px 4px;gap:5px;border-radius:2px;line-height:18px}
+.start-apps.all-programs .start-app img{width:16px;height:16px}
