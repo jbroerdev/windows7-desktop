@@ -1,1 +1,12 @@
-Legacy MMC icons extracted from Windows system resources: mycomput.dll, localsec.dll, mmcndmgr.dll. Microsoft graphical assets retain their original ownership.
+Windows 7 icon sources:
+https://github.com/Visnalize/win7-icons (viewer; resource repository: https://github.com/visnalize/resources)
+user.png and user-large.png: icons/win7/Filetypes, Devices, Miscellaneous/AdmTmpl_1.ico
+https://github.com/B00merang-Artwork/Windows-7
+back.png: actions/16/go-previous.png
+forward.png: actions/16/go-next.png
+refresh.png: actions/16/view-refresh.png
+properties.png: actions/16/document-properties.png
+groups.png: apps/32/system-users.png
+console.png: actions/16/view-sidetree.png
+export.png: actions/16/document-save-as.png
+Other legacy MMC icons extracted from Windows system resources: mycomput.dll, localsec.dll, mmcndmgr.dll. Microsoft graphical assets retain their original ownership.
