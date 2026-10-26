@@ -415,9 +415,9 @@ Wenn mehrere Fenster derselben App geöffnet sind, zeigt ein Hover über dem Tas
 
 Administratoren öffnen unter **Start → Benutzerkonto → Ordnerzugriff verwalten** die Computerverwaltung. Für jeden normalen Ordner können einzelne Benutzer oder die Gruppen **Benutzer** und **Administratoren** mit **Nur Lesen** oder **Lesen und Schreiben** eingetragen werden. Die Regeln gelten auch für Unterordner und werden serverseitig bei Anzeigen, Uploads, Umbenennen, Verschieben und Löschen geprüft. Entfernen lassen sich Rechte, indem alle Auswahlfelder abgewählt und die leere Regel gespeichert wird.
 
-### Erweiterte Computerverwaltung
+### Lokale Benutzer und Gruppen
 
-Administratoren finden im Startmenü die **Computerverwaltung** (auch direkt unter `/compmgmt`). Die einfache Benutzerkontenverwaltung bleibt erhalten und verwendet dieselben Konten.
+Administratoren finden im Startmenü **Lokale Benutzer und Gruppen** (auch direkt unter `/lusrmgr`). Die einfache Benutzerkontenverwaltung bleibt erhalten und verwendet dieselben Konten.
 
 - Benutzer anlegen, vollständigen Namen/Beschreibung ändern, Kontotyp und eigene Gruppen festlegen, deaktivieren und löschen.
 - Eigene Gruppen anlegen, umbenennen, beschreiben, mit Mitgliedern versehen und löschen. Die Systemgruppen Administratoren/Benutzer entsprechen den Kontotypen.
@@ -427,4 +427,13 @@ Administratoren finden im Startmenü die **Computerverwaltung** (auch direkt unt
 
 Diese Funktionen verwalten Webkonten und Anwendungsberechtigungen. Linux-Benutzer, UID/GID und Dateisystem-ACLs werden dadurch noch nicht verändert.
 
-Die separate Konsole **Lokale Benutzer und Gruppen** ist im Startmenü sowie unter `/lusrmgr` verfügbar. Sie verwendet dieselben Konten und Gruppen wie die Computerverwaltung. Mitgliedschaften werden als Listen mit **Hinzufügen …**, **Entfernen** und einem Objektauswahldialog bearbeitet. **Übernehmen** speichert Eigenschaften, ohne das Fenster zu schließen. Die Symbolleiste bietet außerdem einen CSV-Export der aktuellen Benutzer- oder Gruppenliste. Die Quellen der mitgelieferten Windows-7-Symbole stehen unter `public/icons/mmc/SOURCES.txt`.
+Die separate Konsole **Lokale Benutzer und Gruppen** ist im Startmenü sowie unter `/lusrmgr` verfügbar. Sie verwendet dieselben Konten und Gruppen wie die einfache Kontoverwaltung. Mitgliedschaften werden als Listen mit **Hinzufügen …**, **Entfernen** und einem Objektauswahldialog bearbeitet. **Übernehmen** speichert Eigenschaften, ohne das Fenster zu schließen. Die Symbolleiste bietet außerdem einen CSV-Export der aktuellen Benutzer- oder Gruppenliste. Die Quellen der mitgelieferten Windows-7-Symbole stehen unter `public/icons/mmc/SOURCES.txt`.
+
+
+### Ordnereigenschaften und Share-Profil
+
+Rechtsklick auf einen Ordner → **Eigenschaften** öffnet die Reiter Allgemein, Freigabe und Sicherheit im Aero-Stil. Angezeigt werden rekursive Dateigröße, Dateianzahl, Unterordner, Besitzer, Erstellungsdatum und der Pfad. Die belegte Größe wird angezeigt, sofern das Dateisystem sie meldet. **Versteckt** blendet den Ordner aus; über Ansicht → Versteckte Elemente anzeigen ist er wieder erreichbar. Verstecken ersetzt keine Zugriffsrechte.
+
+Besitzer und Administratoren können Benutzer oder Gruppen mit Lese- oder Schreibzugriff hinzufügen. Geerbte Rechte werden angezeigt und am übergeordneten Ordner geändert. Der Besitzer behält Zugriff. Zugriff für **share** entspricht einer öffentlichen Lesefreigabe für den Ordner und seine Unterordner.
+
+Das Konto **share** erscheint in Lokale Benutzer und Gruppen. **Konto ist deaktiviert** schaltet die öffentliche Ansicht ab; Besucher gelangen zur Login-Seite. Das Share-Profil kann nicht gelöscht oder zum Administrator gemacht werden. Die Änderungen betreffen Webprofile und Webberechtigungen, keine Linux-Konten oder Linux-ACLs. Der separate Einstieg Computerverwaltung wurde entfernt; alte Links werden zur Benutzerkonsole weitergeleitet.
