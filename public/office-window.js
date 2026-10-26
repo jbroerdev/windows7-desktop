@@ -30,6 +30,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   const message=async event=>{
    if(disposed||!frame||event.source!==frame.contentWindow||event.origin!==grant?.origin)return;let data;try{data=typeof event.data==='string'?JSON.parse(event.data):event.data;}catch{return;}
    try{
+    if(data?.MessageId==='App_LoadingStatus'&&['Initialized','Frame_Ready'].includes(data.Values?.Status))send('Host_PostmessageReady');
     if(data?.MessageId==='App_LoadingStatus'&&data.Values?.Status==='Document_Loaded'){ready=true;send('Disable_Default_UIAction',{action:'UI_Save',disable:true});send('Disable_Default_UIAction',{action:'UI_Close',disable:true});status.textContent=temporary?'Nicht gespeichert':grant.writable?'Bereit':'Schreibgeschützt';}
     if(data?.MessageId==='Doc_ModifiedStatus'&&data.Values?.Modified===true){dirty=true;updateTitle();status.textContent=temporary?'Nicht gespeichert':'Geändert';}
     if(data?.MessageId==='Action_Save_Resp'&&pending){clearTimeout(saveTimer);const done=pending;pending=null;if(data.Values?.success===true||data.Values?.result==='unmodified')await done();else{status.textContent='Speichern fehlgeschlagen: '+(data.Values?.errorMsg||data.Values?.result||'Keine Fehlerdetails von Collabora.');toast(status.textContent);}}
