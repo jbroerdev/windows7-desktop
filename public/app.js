@@ -116,7 +116,7 @@ const taskManager=createTaskManager({desktop,api,getState:()=>state,toast,runTas
 const terminalApp=(()=>{
 const dialog=make('dialog',undefined,'terminal-window'),bar=make('header'),title=make('span','C:\\Windows\\system32\\cmd.exe'),min=make('button'),max=make('button'),close=make('button'),screen=make('div',undefined,'cmd-screen'),output=make('pre',undefined,'terminal-output'),form=make('form'),prompt=make('span'),input=make('input');
 dialog.id='terminal-window';title.id='terminal-title';input.autocomplete='off';input.spellcheck=false;input.setAttribute('aria-label','Eingabeaufforderung');form.append(prompt,input);screen.append(output,form);bar.append(title,min,max,close);dialog.append(bar,screen);document.body.append(dialog);
-desktop.register(dialog,{bar,title,minimizeButton:min,maximizeButton:max,closeButton:close,icon:'/icons/cmd.svg',appId:'terminal',minWidth:400,minHeight:240});
+desktop.register(dialog,{bar,title,minimizeButton:min,maximizeButton:max,closeButton:close,icon:'/icons/cmd.ico',appId:'terminal',minWidth:400,minHeight:240});
 let cmd,account,history=[],cursor=0;
 const print=text=>{if(text===null)output.textContent='';else output.textContent+=text+'\n';screen.scrollTop=screen.scrollHeight;};
 const update=()=>{prompt.textContent=cmdDisplay(cmd.cwd)+'>';screen.scrollTop=screen.scrollHeight;};

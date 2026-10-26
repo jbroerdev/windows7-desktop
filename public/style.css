@@ -265,3 +265,6 @@ dialog.explorer-window{width:min(1100px,85vw);height:min(740px,82vh)}
 
 /* Show a populated desktop/application, never the bootstrap Explorer. */
 .desktop-booting>main.window,.desktop-booting .desktop-window{visibility:hidden!important}.app-loading{position:absolute;inset:31px 0 0;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;background:#f0f0f0;color:#444;font:12px 'Segoe UI',sans-serif;z-index:2}.media-instance-window .app-loading{background:#000;color:#bbb}.app-loading img{width:80px;height:80px;object-fit:contain}.independent-app-window>iframe{flex:1;min-height:0}.media-instance-window>iframe{background:#000}
+
+/* Task Manager shares the Aero frame instead of painting over its title bar. */
+.taskmanager-window .taskmanager-inner{background:transparent}.taskmanager-window .taskmanager-title{border-bottom:0}.taskmanager-window .taskmanager-tabs,.taskmanager-window .tm-menu,.taskmanager-window .taskmanager-footer,.taskmanager-inner>p.tm-note{background-color:#f0f0f0}
