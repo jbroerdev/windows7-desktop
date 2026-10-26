@@ -1,0 +1,2 @@
+const types={mkv:'video/x-matroska',avi:'video/x-msvideo',mov:'video/quicktime',mp4:'video/mp4',m4v:'video/mp4',webm:'video/webm',ogv:'video/ogg',wma:'audio/x-ms-wma',mp3:'audio/mpeg',aac:'audio/aac',m4a:'audio/mp4',wav:'audio/wav',flac:'audio/flac',ogg:'audio/ogg',opus:'audio/ogg'};
+export function needsTranscoding(name,canPlayType){const extension=String(name).split('.').pop().toLowerCase(),mime=types[extension];if(!mime)return false;const supported=canPlayType(mime);return ['mkv','avi','wma'].includes(extension)?supported!=='probably':!supported;}

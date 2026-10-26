@@ -66,6 +66,6 @@ surface.ondrop=e=>{e.preventDefault();if(!getState().authenticated)return;const 
 let minimized=[];function showDesktop(){if(minimized.length){for(const id of minimized)if(document.getElementById(id)?.open)desktop.show(id);minimized=[];}else{minimized=[...document.querySelectorAll('dialog.desktop-window[open]:not([hidden])')].sort((a,b)=>Number(a.style.zIndex)-Number(b.style.zIndex)).map(el=>el.id);for(const id of minimized)desktop.minimize(id);}}
 const tray=el('div',undefined,'system-tray'),clock=el('time'),show=el('button',undefined,'show-desktop');show.setAttribute('aria-label','Desktop anzeigen');show.title='Desktop anzeigen';show.onclick=showDesktop;tray.append(clock,show);document.body.append(tray);const tick=()=>{const date=new Date();clock.replaceChildren(el('span',date.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})),el('span',date.toLocaleDateString('de-DE')));clock.dateTime=date.toISOString();};tick();setInterval(tick,10000);
 new MutationObserver(()=>{title.textContent=document.title.replace(/ - Explorer Share$/,'')+' – Explorer';}).observe(document.querySelector('title'),{childList:true});
-window.addEventListener('resize',place);desktop.show(explorer.id);refresh();
+window.addEventListener('resize',place);refresh();
 return{refresh,reopen,pinAction};
 }
