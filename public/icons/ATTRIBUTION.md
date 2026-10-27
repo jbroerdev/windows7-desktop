@@ -46,3 +46,11 @@ Navigationsrahmen mit Schattierung: `navigation_frame.png` aus RinFox Updated, l
 Word, Excel und PowerPoint: Original Microsoft-Produktsymbole (48px PNG), Microsoft CDN: https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/png/word_48x1.png ; excel_48x1.png ; powerpoint_48x1.png. Dokumentbearbeitung: Collabora Online.
 
 Office-Dateisymbole: Original Microsoft CDN PNGs https://static2.sharepointonline.com/files/fabric/assets/item-types/96/docx.png , https://static2.sharepointonline.com/files/fabric/assets/item-types/96/xlsx.png , https://static2.sharepointonline.com/files/fabric/assets/item-types/96/pptx.png . Unveränderte Bilder auch für kleine Ansichten.
+
+## Weitere Dateitypen und Systemsteuerung
+
+Die Original-ICO-Dateien in `filetypes/` stammen aus [visnalize/resources – Windows 7](https://github.com/visnalize/resources/tree/main/icons/win7). Die Zuordnung der Quelldateien steht in `filetypes/SOURCES.json`. Die PNG-Dateien `control-panel.png` und `control-panel-16.png` sind native Größen aus `imageres_27.ico`. Rechte an den ursprünglichen Windows-Symbolen verbleiben bei Microsoft und den jeweiligen Rechteinhabern.
+
+Das Website-Favicon (`public/favicon.ico`) ist das unveränderte `Shell32.dll/shell32_18.ico` aus [visnalize/resources](https://raw.githubusercontent.com/Visnalize/resources/main/icons/win7/Shell32.dll/shell32_18.ico).
+
+Der animierte Ladeindikator `session-spinner.gif` wurde auf Nutzerwunsch unverändert von [Tenor](https://media.tenor.com/ggWF2p1Xu_IAAAAi/loading-windows.gif) übernommen.
