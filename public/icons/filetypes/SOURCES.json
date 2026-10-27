@@ -1,0 +1,32 @@
+{
+  "repository": "https://github.com/visnalize/resources",
+  "license": "Original Microsoft Windows assets; ownership remains with the respective rights holders.",
+  "icons": {
+    "file": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_2.ico",
+    "text": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_102.ico",
+    "image": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_132.ico",
+    "audio": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_131.ico",
+    "video": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_133.ico",
+    "playlist": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_134.ico",
+    "application": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_15.ico",
+    "library": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_67.ico",
+    "settings": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_69.ico",
+    "installer": "icons/win7/Control Panel/imageres_87.ico",
+    "disc": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_61.ico",
+    "font": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_124.ico",
+    "font-ttf": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_158.ico",
+    "font-otf": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_160.ico",
+    "font-collection": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_159.ico",
+    "contact": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_164.ico",
+    "shortcut": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_163.ico",
+    "control-panel": "icons/win7/Control Panel/imageres_27.ico",
+    "users": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_1010.ico",
+    "personalization": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_151.ico",
+    "display": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_110.ico",
+    "network": "icons/win7/Filetypes, Devices, Miscellaneous/imageres_120.ico",
+    "richtext": "icons/win7/Wordpad/wordpad_154.ico",
+    "powershell": "icons/win7/Windows PowerShell/powershell_ise_1.ico",
+    "script": "icons/win7/Windows PowerShell/powershell_MSH_MAIN.ico",
+    "journal": "icons/win7/Windows Journal/Journal_105.ico"
+  }
+}
