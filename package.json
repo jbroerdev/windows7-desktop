@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
+    "test": "node --test session-loading.test.mjs file-icons.test.mjs test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
     "build": "node scripts/build-editor.mjs"
   },
   "engines": {

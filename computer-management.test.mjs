@@ -19,6 +19,15 @@ test('Computerverwaltung: Konten, eigene Gruppen, Zugriff, Sperren und Administr
   assert.equal((await manage({action:'user-update',id:alice.id,groups:[]})).status,200);assert.ok(!(await(await manage()).json()).groups.find(g=>g.id===group.id).members.includes(alice.id));assert.equal((await manage({action:'user-update',id:alice.id,groups:[group.id]})).status,200);assert.equal((await manage({action:'user-update',id:alice.id,groups:['missing']})).status,400);
   assert.equal((await manage({action:'group-save',name:'familie',members:[]})).status,409);
   const nodes=await(await request('/api/nodes')).json(),parent=nodes.nodes.find(n=>n.space==='documents'&&n.system&&n.ownerId===self.id);const folder=await(await request('/api/folder',{name:'Gruppenordner',parent:parent.id})).json();
+  const secondView=await(await manage({action:'group-save',name:'Projekt',members:[]})).json(),secondGroup=secondView.groups.find(g=>g.name==='Projekt');
+  const multiple=await(await manage({action:'user-update',id:alice.id,groups:[group.id,secondGroup.id]})).json();assert.ok(multiple.users.find(u=>u.id===alice.id).groups.includes(group.id));assert.ok(multiple.users.find(u=>u.id===alice.id).groups.includes(secondGroup.id));
+  assert.equal((await request('/api/folder-properties',{id:folder.id,permissions:[{type:'group',id:group.id,mode:'read'},{type:'group',id:secondGroup.id,mode:'write'}]})).status,200);
+  assert.ok((await(await request('/api/nodes',undefined,cookie)).json()).nodes.find(n=>n.id===folder.id).writable);
+  await manage({action:'user-update',id:alice.id,groups:[group.id]});assert.equal((await(await request('/api/nodes',undefined,cookie)).json()).nodes.find(n=>n.id===folder.id).writable,false);
+  await manage({action:'user-update',id:alice.id,groups:[]});assert.ok(!(await(await request('/api/nodes',undefined,cookie)).json()).nodes.some(n=>n.id===folder.id));await manage({action:'user-update',id:alice.id,groups:[group.id]});
+  const bob=created.users.find(u=>u.username==='bob');let both=await(await manage({action:'user-update',id:bob.id,builtinGroups:['admin','user'],groups:[group.id,secondGroup.id]})).json();assert.deepEqual(both.users.find(u=>u.id===bob.id).groups,['admin','user',group.id,secondGroup.id]);
+  const withoutUser=await(await manage({action:'group-save',id:'user',members:both.groups.find(g=>g.id==='user').members.filter(id=>id!==bob.id)})).json();assert.equal(withoutUser.users.find(u=>u.id===bob.id).role,'admin');assert.ok(!withoutUser.users.find(u=>u.id===bob.id).groups.includes('user'));
+  await manage({action:'user-update',id:bob.id,builtinGroups:['user'],groups:[group.id]});
   assert.equal((await request('/api/folder-permissions',{nodeId:folder.id,users:[],groups:[group.id],mode:'write'})).status,200);
   assert.ok((await(await request('/api/nodes',undefined,cookie)).json()).nodes.some(n=>n.id===folder.id&&n.writable));
   assert.equal((await request('/api/folder',{name:'Alice darf schreiben',parent:folder.id},cookie)).status,201);
