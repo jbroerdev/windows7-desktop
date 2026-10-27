@@ -11,7 +11,7 @@ test('Login, Upload, rekursive Freigabe und Widerruf',async()=>{
  const {server}=await import('./server.mjs');await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;let cookie='';
  const request=(url,data,logged=true)=>fetch(base+url,{method:data===undefined?'GET':'POST',headers:{...(logged?{cookie}:{}),'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});
  try{
- for(const asset of ['/window-manager.js','/photo-geometry.js','/file-icons.js','/control-panel.js','/context-menu.js','/session-loading.js']){const r=await fetch(base+asset);assert.equal(r.status,200);assert.ok(r.headers.get('content-type').includes('javascript'));}
+ for(const asset of ['/window-manager.js','/photo-geometry.js','/file-icons.js','/control-panel.js','/context-menu.js','/session-loading.js','/desktop-preload.js']){const r=await fetch(base+asset);assert.equal(r.status,200);assert.ok(r.headers.get('content-type').includes('javascript'));}
  for(const url of ['/control','/systemsteuerung','/control-panel','/control-panel.css','/session-loading.css','/icons/session-spinner.gif','/favicon.ico','/icons/filetypes/image.ico','/icons/control-panel.png'])assert.equal((await fetch(base+url)).status,200,url);
  assert.ok((await fetch(base+'/icons/filetypes/image.ico')).headers.get('content-type').includes('icon'));
  {const plain=await fetch(base+'/app.js',{headers:{'accept-encoding':'identity'}}),plainText=await plain.text(),etag=plain.headers.get('etag');assert.ok(etag);assert.equal(plain.headers.get('content-encoding'),null);

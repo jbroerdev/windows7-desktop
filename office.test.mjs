@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,writeFile,rm,readdir} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {unzipSync,zipSync,strToU8,strFromU8} from 'fflate';
@@ -17,7 +17,7 @@ test('Office-Discovery und neue OpenDocument-Dateien',async()=>{
 });
 
 test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen und Widerruf',async()=>{
- const fixture=http.createServer((req,res)=>{if(req.url==='/hosting/discovery'){res.setHeader('Content-Type','application/xml');res.end('<wopi-discovery>'+['odt','ods','odp','docx','xlsx','pptx'].flatMap(ext=>['edit','view'].map(action=>`<action ext="${ext}" name="${action}" urlsrc="http://internal:9980/browser/test/cool.html?"/>`)).join('')+'</wopi-discovery>');}else{res.writeHead(404).end();}});
+ const fixture=http.createServer((req,res)=>{if(req.url==='/hosting/discovery'){res.setHeader('Content-Type','application/xml');res.end('<wopi-discovery>'+['odt','ods','odp','docx','xlsx','pptx'].flatMap(ext=>['edit','view'].map(action=>`<action ext="${ext}" name="${action}" urlsrc="http://internal:9980/browser/test/cool.html?"/>`)).join('')+'</wopi-discovery>');}else if(req.url==='/browser/test/cool.html'){res.end('<script src="app.js"></script><link href="style.css" rel="stylesheet"><script src="https://untrusted.example/evil.js"></script><script src="app.js?access_token=private"></script>');}else{res.writeHead(404).end();}});
  await new Promise(r=>fixture.listen(0,'127.0.0.1',r));const officeOrigin='http://127.0.0.1:'+fixture.address().port;
  const dir=await mkdtemp(path.join(os.tmpdir(),'office-integration-'));
  Object.assign(process.env,{NODE_ENV:'test',DATA_DIR:dir,EXPLORER_ROOT:path.join(dir,'Explorer'),OFFICE_URL:officeOrigin,EXPLORER_PUBLIC_URL:'https://explorer.example.org',OFFICE_WOPI_URL:'http://explorer:3000'});
@@ -27,6 +27,9 @@ test('WOPI: Benutzerrechte, direkte Speicherung, Sperren, externe Änderungen un
  try{
   const login=await api('/api/setup',{username:'admin',password:'office-integration-password'});cookie=login.headers.get('set-cookie').split(';')[0];const admin=cookie;
   assert.equal((await(await api('/api/session')).json()).officeEnabled,true);
+  assert.equal((await api('/api/office-preload',undefined,'')).status,401);assert.equal((await api('/api/office-preload',{})).status,405);
+  const preloaded=await(await api('/api/office-preload')).json();assert.deepEqual(preloaded.assets,[officeOrigin+'/browser/test/cool.html',officeOrigin+'/browser/test/app.js',officeOrigin+'/browser/test/style.css']);assert.equal(preloaded.origin,officeOrigin);assert.deepEqual((await(await api('/api/office-preload')).json()),preloaded);assert.deepEqual(await readdir(path.join(dir,'office-drafts')),[]);
+
   const nodes=(await(await api('/api/nodes')).json()).nodes,documents=nodes.find(n=>n.system&&n.space==='documents'&&n.writable);
   const folder=(await(await api('/api/folder',{parent:documents.id,name:'Office-Test'})).json()).id;
   const created=await api('/api/office-new',{parent:folder,name:'Brief.odt',kind:'text'});assert.equal(created.status,201);const id=(await created.json()).id;
