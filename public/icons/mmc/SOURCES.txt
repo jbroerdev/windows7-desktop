@@ -5,11 +5,14 @@ https://github.com/B00merang-Artwork/Windows-7
 back.png: actions/16/go-previous.png
 forward.png: actions/16/go-next.png
 refresh.png: actions/16/view-refresh.png
-properties.png: actions/16/document-properties.png
-groups.png: apps/32/system-users.png
+properties.png: visnalize/resources, icons/win7/Filetypes, Devices, Miscellaneous/AdmTmpl_4.ico (native 16x16 frame)
+groups.png: visnalize/resources, icons/win7/Filetypes, Devices, Miscellaneous/dsuiext_4108.ico (native 16x16 frame)
 console.png: actions/16/view-sidetree.png
 export.png: actions/16/document-save-as.png
 Other legacy MMC icons extracted from Windows system resources: mycomput.dll, localsec.dll, mmcndmgr.dll. Microsoft graphical assets retain their original ownership.
 
 CMD: ../cmd.ico from visnalize/resources, icons/win7/Default Programs/cmd_IDI_APPICON.ico
 CMD (active): ../cmd.png from B00merang-Artwork/Windows-7, apps/32/utilities-terminal.png
+
+console-folder.png: visnalize/resources, icons/win7/Filetypes, Devices, Miscellaneous/dsuiext_4096.ico (native 16x16 frame)
+The local-user console navigation arrows are inline SVG artwork (computer-management.js).
