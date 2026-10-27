@@ -1,0 +1,245 @@
+{
+  "repository": "https://github.com/GNOME/gnome-nibbles",
+  "version": "GNOME_NIBBLES_3_8_1",
+  "license": "GPL-2.0-or-later",
+  "files": {
+    "bonus3.svg": {
+      "source": "data/pix/bonus3.svg",
+      "sha256": "792b99df3c00d533007867ceae457733f43a7ad7ba6d82250d26808a0f856e89"
+    },
+    "snake-yellow.svg": {
+      "source": "data/pix/snake-yellow.svg",
+      "sha256": "71f5de6f9fe4b12a62a4656777e540cef0f29fd81429a30737d63df934fa3802"
+    },
+    "bonus4.svg": {
+      "source": "data/pix/bonus4.svg",
+      "sha256": "72b9c2520c8fb20123e15a9eae2e4729bd23ccbcf616b7e9baf02d00f0a32cd2"
+    },
+    "blank.svg": {
+      "source": "data/pix/blank.svg",
+      "sha256": "4c58a309e5140409d68969904d4413820ea38d1569781158fa00fe1375dab6ba"
+    },
+    "wall-empty.svg": {
+      "source": "data/pix/wall-empty.svg",
+      "sha256": "523bea5c9e43274cbab699ca0ce3a33cda81d687f7f9d9d72769e24b93b9c704"
+    },
+    "bonus5.svg": {
+      "source": "data/pix/bonus5.svg",
+      "sha256": "d59c8f8dc0c5f0fb36e6e8561443e4c24824175a7c5add9898f6226f2cd851fe"
+    },
+    "bonus1.svg": {
+      "source": "data/pix/bonus1.svg",
+      "sha256": "de8054b4006de009757d9d56d431ab575d27037e234f8ee2e97d860c3f5761f7"
+    },
+    "snake-blue.svg": {
+      "source": "data/pix/snake-blue.svg",
+      "sha256": "e4101a07ef9e1f294de2073e0792c4adfadef12b30bab8df1147541116f6a457"
+    },
+    "snake-red.svg": {
+      "source": "data/pix/snake-red.svg",
+      "sha256": "c7fc339b9532f49946aeb70f106210afd0652c74281a6a9a33b57fad981e673b"
+    },
+    "snake-grey.svg": {
+      "source": "data/pix/snake-grey.svg",
+      "sha256": "28376a2a455b7e3a086ed0651fe15f505fbafe1efeb9cb2fb0d90450417b5687"
+    },
+    "wall-corner-bottom-left.svg": {
+      "source": "data/pix/wall-corner-bottom-left.svg",
+      "sha256": "3ec3a6288df8b2265c0e605c8b0eef9440403f87ceab2f83042d57246780f0d3"
+    },
+    "wall-cross.svg": {
+      "source": "data/pix/wall-cross.svg",
+      "sha256": "cebb7e69d443800268df0fea72205fca7f0d5060f8ba2d0aafa64bf1f22f0039"
+    },
+    "life.svg": {
+      "source": "data/pix/life.svg",
+      "sha256": "969b58f3e2e546f1087fbcd529a96fcc5a2e5014009076b06e0f2a86e8ac0dc6"
+    },
+    "snake-green.svg": {
+      "source": "data/pix/snake-green.svg",
+      "sha256": "f4271a0a2b5ca94dabace2ae0a71a59259d36461b01e11e55e1c409993fcf399"
+    },
+    "wall-straight-up.svg": {
+      "source": "data/pix/wall-straight-up.svg",
+      "sha256": "354d08be27e75dd85ab933727873c8421c0799a8724941984b8269dc58a0efff"
+    },
+    "bonus2.svg": {
+      "source": "data/pix/bonus2.svg",
+      "sha256": "aea61b56e6d63b2cad684f69ec7d3577978c5ad16f84f668f385124d073dcb0e"
+    },
+    "gobble.ogg": {
+      "source": "data/gobble.ogg",
+      "sha256": "2c127ebf901e7fa89725845cb2b852f7f44156ec9fdfbb5f16048862410d3640"
+    },
+    "bonus.ogg": {
+      "source": "data/bonus.ogg",
+      "sha256": "b384814dd7f8db6ad6a3d63dd947161d51f72fb6cd491c622adc935d294d61b8"
+    },
+    "wall-corner-top-right.svg": {
+      "source": "data/pix/wall-corner-top-right.svg",
+      "sha256": "e35606cb0a4b93f7979d6023c7c77127b30178b12ac660186ad5880c9db8f2d7"
+    },
+    "gameover.ogg": {
+      "source": "data/gameover.ogg",
+      "sha256": "d93242dae1dbaca0ff4afe9883c2dfb7c1e6d7a5042cc47e1653d66877757276"
+    },
+    "snake-cyan.svg": {
+      "source": "data/pix/snake-cyan.svg",
+      "sha256": "e26611513d9d385926f62919dd53933434a673d22640a68ca64b2321771390a9"
+    },
+    "teleport.ogg": {
+      "source": "data/teleport.ogg",
+      "sha256": "a6180e79b3c3de50403099ba740f0eee50a5f19d136580975cc06cafefbfe6d0"
+    },
+    "wall-corner-bottom-right.svg": {
+      "source": "data/pix/wall-corner-bottom-right.svg",
+      "sha256": "fb1ca64906ca12c7647d89be40793aa88e76b60c8d488a01437c0004242746bb"
+    },
+    "icon.svg": {
+      "source": "data/icons/hicolor/scalable/gnome-nibbles.svg",
+      "sha256": "69d8f3ac60e386afc669d54081386f8cfff44b44853e252d052c231c6268a54b"
+    },
+    "diamond.svg": {
+      "source": "data/pix/diamond.svg",
+      "sha256": "99f5ace4030c68c54e5b019ae0314687d6ed86fd89cf45d95c37565a4292fe08"
+    },
+    "wall-small-empty.svg": {
+      "source": "data/pix/wall-small-empty.svg",
+      "sha256": "97e9a724c00930dc89a2c0387af61b8ab31bc8c2018393d70254e0be0f5589fa"
+    },
+    "COPYING.txt": {
+      "source": "COPYING",
+      "sha256": "32b1062f7da84967e7019d01ab805935caa7ab7321a7ced0e30ebe75e5df1670"
+    },
+    "wall-corner-top-left.svg": {
+      "source": "data/pix/wall-corner-top-left.svg",
+      "sha256": "2944dd281fc60a82d8797f6df72e0ab03b3ebeca5d5a0320bcabc7b3f5115437"
+    },
+    "wall-tee-up.svg": {
+      "source": "data/pix/wall-tee-up.svg",
+      "sha256": "5f197424d2df3e924942b1656b7ad9ab6952aa2e0eddbea80a64021081f4cfbb"
+    },
+    "wall-tee-left.svg": {
+      "source": "data/pix/wall-tee-left.svg",
+      "sha256": "ef6afff2547f042d67c802783af030dc83f43a134e8ea179e613b47f129add32"
+    },
+    "wall-tee-down.svg": {
+      "source": "data/pix/wall-tee-down.svg",
+      "sha256": "e02aeb5fe7992a1a110b2b7c4e6263cfeddf50d8918b49e46f6d48827d8c0614"
+    },
+    "life.ogg": {
+      "source": "data/life.ogg",
+      "sha256": "321543f1aab7dc13d65e85e5afb05abe42875c5e2bdf729e8d55bd1fb09a7938"
+    },
+    "wall-tee-right.svg": {
+      "source": "data/pix/wall-tee-right.svg",
+      "sha256": "4d61df649bd5c9bd3caac26bbb71705fca40a17b3e0a3cf657acd8cd4f4c890c"
+    },
+    "crash.ogg": {
+      "source": "data/crash.ogg",
+      "sha256": "bad3488dbd5a896934358749978f4ef49a4246579f5dbb6cba79c4ed8efde23d"
+    },
+    "questionmark.svg": {
+      "source": "data/pix/questionmark.svg",
+      "sha256": "6c89d5cf5b8ae9b6edc8693d28339503e5747dc983db64eb0dd3e349ff2b445e"
+    },
+    "appear.ogg": {
+      "source": "data/appear.ogg",
+      "sha256": "4bee838382e3e7b91421ddb8bca7c4f21e8231a5c7399c3989c1b38897036adc"
+    },
+    "logo.svg": {
+      "source": "data/gnome-nibbles-logo.svg",
+      "sha256": "4004c06cfe78b5632b5a35e75387d80a9d888ae7f8eb8c626343bb16a52f7a0c"
+    },
+    "wall-straight-side.svg": {
+      "source": "data/pix/wall-straight-side.svg",
+      "sha256": "60c65a906841b72f202c86057b7921c274b311d4ea6f139ff46fcd72799a2bc0"
+    },
+    "reverse.ogg": {
+      "source": "data/reverse.ogg",
+      "sha256": "8d8098880f61f0f72a54361679e4980e8efc6e088e90d3d7c109e0f6e0fd1eeb"
+    },
+    "snake-magenta.svg": {
+      "source": "data/pix/snake-magenta.svg",
+      "sha256": "8bf152fb70aaa78d365e4345a744d9505a798ffb0d811ca21e5edee985384dfa"
+    },
+    "data/levels/level009.gnl": {
+      "sha256": "78295fdd0064585340da7add4fed856ec3182ee04bc5b167c32712acfa9533d0"
+    },
+    "data/levels/level012.gnl": {
+      "sha256": "61e7f9122544b2e429f79a434b5fee8402ff360c769dce2ded40e6a829dc6074"
+    },
+    "data/levels/level020.gnl": {
+      "sha256": "3928d6fc3d6efc4df25a989f128491b13badf0a16acdc66d8d11180cbe8e0277"
+    },
+    "data/levels/level001.gnl": {
+      "sha256": "8e940d9ecd30a69345c6a3affff2557f33b6ac87dabf7061668fe1e2773f2253"
+    },
+    "data/levels/level016.gnl": {
+      "sha256": "339a8695603bfa933a1fe2259130fde2c3f1d628c8a6d3d0a532d76d169801c3"
+    },
+    "data/levels/level015.gnl": {
+      "sha256": "66c82defda788c55f5df0e8e29f4d59c664b8f521c2a6920f1b8237db8633f5e"
+    },
+    "data/levels/level003.gnl": {
+      "sha256": "187f4092acd961cf6a5c30030ee58c43848cf467075d670ab4e0a63c66c9cb29"
+    },
+    "data/levels/level025.gnl": {
+      "sha256": "27a519114e218bd47d6eed7e23bc1b43eca8ea2dd432ca957005454a3ce3f862"
+    },
+    "data/levels/level002.gnl": {
+      "sha256": "e872d0014ccf533c6a2c2a867f4fc9d0a4bf04dc1c1949dd91c9d4e12f7604b7"
+    },
+    "data/levels/level013.gnl": {
+      "sha256": "ab2fdef62fc90e278fa1ffc03b55296f62267841b5f63e475a77d9026b2c5fbc"
+    },
+    "data/levels/level005.gnl": {
+      "sha256": "1f5e67fc847b7e7416fdc62f94d080e163ce6ea51394c19a29d283fa8133e2e8"
+    },
+    "data/levels/level014.gnl": {
+      "sha256": "f6154154e437bc7745f6a8b7090ed0b3dc86607fcae9bc2acd75d49a2219a69e"
+    },
+    "data/levels/level022.gnl": {
+      "sha256": "96964ea61cedd7d35c0d084c4868935734f2722f2a4f187bc5838c6e3c999b5f"
+    },
+    "data/levels/level010.gnl": {
+      "sha256": "6d8f5a9ee25557eaddb67b2ce9f61773428851422944d18a3f98ece1cc016b62"
+    },
+    "data/levels/level018.gnl": {
+      "sha256": "32b4a30804dde31aaaa7202ab122d1af8bf32c4cb1f509ff1b3466005d6f83b5"
+    },
+    "data/levels/level026.gnl": {
+      "sha256": "0fbb4217688eb3b3bcbb086783b34f05d8833054a5106197ce4b5b7fc2189070"
+    },
+    "data/levels/level017.gnl": {
+      "sha256": "64dc777e920913ce7774c761142696df16bc760e9de53bcb8f89e096944af57b"
+    },
+    "data/levels/level023.gnl": {
+      "sha256": "e1ae4db93dadadaba9f54b8bd6770b053444808991fe132a55d80340b0b814dd"
+    },
+    "data/levels/level008.gnl": {
+      "sha256": "b95d365ed0cbb8082106f4ef0d82177ffac6aa8ec0f9d886e517ab2800b46a32"
+    },
+    "data/levels/level007.gnl": {
+      "sha256": "bd72da575a4905757aca347cae472d999965cdacc99c5b7d0f9593c3706addab"
+    },
+    "data/levels/level024.gnl": {
+      "sha256": "41671b4452670d497086d7deb18c17ef898d8c060eb4ca932e573d62a6c7b018"
+    },
+    "data/levels/level019.gnl": {
+      "sha256": "c65809dc71d34a1b93b4e44918ba9e30dbdfaa9796a23f2b0bdc9db0df4cccdd"
+    },
+    "data/levels/level021.gnl": {
+      "sha256": "3a3d6ebe86b35bd07dec9d8bbae7b62508b18d1555952463200515efafd93aac"
+    },
+    "data/levels/level004.gnl": {
+      "sha256": "7736035df5fe138ac76a714417b84d7c30ab2060e40fb1b4d8f32d19c8607669"
+    },
+    "data/levels/level011.gnl": {
+      "sha256": "133ac9cc65f592c1748879269b85e4e350917f1b445ec18ace83bd972571b3a7"
+    },
+    "data/levels/level006.gnl": {
+      "sha256": "03153354d2aa1fff17fde48dd9d5e9e06ec17a1337f9e288c3d07a4bfb6d145d"
+    }
+  }
+}
