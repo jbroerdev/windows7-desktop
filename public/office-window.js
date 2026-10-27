@@ -7,6 +7,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   const type=types[kind]||types.text,el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
   const dialog=el('dialog'),bar=el('header'),title=el('span',type.name),min=el('button'),max=el('button'),close=el('button'),toolbar=el('nav'),menu=el('details'),label=el('summary','Datei'),items=el('div'),status=el('footer','Dokument wird vorbereitet …'),stage=el('section');
   dialog.className='office-window';dialog.id='office-window-'+(++serial);title.id=dialog.id+'-title';toolbar.className='office-menubar';menu.className='office-file-menu';status.className='office-status';stage.className='office-stage';status.setAttribute('role','status');menu.append(label,items);toolbar.append(menu);bar.append(title,min,max,close);dialog.append(bar,toolbar,stage,status);document.body.append(dialog);
+  let finishLoading;dialog.whenReady=new Promise(resolve=>finishLoading=resolve);
   let frame=null,grant=null,temporary=false,disposed=false,ready=false,pending=null,saveTimer=null,busy=false,dirty=false;
   const send=(MessageId,Values={})=>{if(frame&&grant)frame.contentWindow.postMessage(JSON.stringify({MessageId,SendTime:Date.now(),Values}),grant.origin);};
   const action=(name,fn)=>{const b=el('button',name);b.type='button';b.onclick=()=>{menu.open=false;Promise.resolve(fn()).catch(e=>{status.textContent=e.message;toast(e.message);});};items.append(b);return b;};
@@ -31,7 +32,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
    if(disposed||!frame||event.source!==frame.contentWindow||event.origin!==grant?.origin)return;let data;try{data=typeof event.data==='string'?JSON.parse(event.data):event.data;}catch{return;}
    try{
     if(data?.MessageId==='App_LoadingStatus'&&['Initialized','Frame_Ready'].includes(data.Values?.Status))send('Host_PostmessageReady');
-    if(data?.MessageId==='App_LoadingStatus'&&data.Values?.Status==='Document_Loaded'){ready=true;send('Disable_Default_UIAction',{action:'UI_Save',disable:true});send('Disable_Default_UIAction',{action:'UI_Close',disable:true});status.textContent=temporary?'Nicht gespeichert':grant.writable?'Bereit':'Schreibgeschützt';}
+    if(data?.MessageId==='App_LoadingStatus'&&data.Values?.Status==='Document_Loaded'){ready=true;finishLoading();send('Disable_Default_UIAction',{action:'UI_Save',disable:true});send('Disable_Default_UIAction',{action:'UI_Close',disable:true});status.textContent=temporary?'Nicht gespeichert':grant.writable?'Bereit':'Schreibgeschützt';}
     if(data?.MessageId==='Doc_ModifiedStatus'&&data.Values?.Modified===true){dirty=true;updateTitle();status.textContent=temporary?'Nicht gespeichert':'Geändert';}
     if(data?.MessageId==='Action_Save_Resp'&&pending){clearTimeout(saveTimer);const done=pending;pending=null;if(data.Values?.success===true||data.Values?.result==='unmodified')await done();else{status.textContent='Speichern fehlgeschlagen: '+(data.Values?.errorMsg||data.Values?.result||'Keine Fehlerdetails von Collabora.');toast(status.textContent);}}
     if(data?.MessageId==='UI_Save')await saveDocument();
@@ -44,9 +45,9 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   action('Neu',()=>fresh());action('Aus Vorlage …',template);action('Öffnen …',pickFile);action('Speichern',()=>saveDocument());action('Speichern unter …',()=>saveDocument(()=>{},true));action('Schließen',requestClose);
   desktop.register(dialog,{bar,title,minimizeButton:min,maximizeButton:max,closeButton:close,close:()=>requestClose().catch(e=>toast(e.message)),appId:'office-'+kind,icon:'/icons/'+type.icon+'.png',minWidth:620,minHeight:400});
   dialog.addEventListener('cancel',e=>{e.preventDefault();requestClose().catch(e=>toast(e.message));});
-  dialog.addEventListener('close',()=>{disposed=true;clearTimeout(saveTimer);window.removeEventListener('message',message);desktop.unregister(dialog.id);if(frame)frame.src='about:blank';dialog.remove();});
+  dialog.addEventListener('close',()=>{disposed=true;finishLoading();clearTimeout(saveTimer);window.removeEventListener('message',message);desktop.unregister(dialog.id);if(frame)frame.src='about:blank';dialog.remove();});
   dialog.workspaceState=async()=>{if(!ready||busy||pending)throw Error('Office ist noch beschäftigt. Bitte kurz warten.');if(!node?.temporary&&!node?.workingCopy)return {type:'office-file',id:node.id,kind};if(grant?.writable)await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Office hat den Arbeitsstand nicht bestätigt.')),22000);flush(()=>{clearTimeout(timeout);resolve();});});const saved=await api('/api/office-checkpoint',{id:node.id});return {type:'office',kind,checkpoint:saved.id,dirty};};
-  desktop.show(dialog.id);Promise.resolve(node?load(node):fresh()).then(()=>{if(resumeState.dirty){dirty=true;updateTitle();status.textContent='Geändert';}}).catch(e=>{status.textContent=e.message;toast(e.message);});return dialog;
+  desktop.show(dialog.id);Promise.resolve(node?load(node):fresh()).then(()=>{if(resumeState.dirty){dirty=true;updateTitle();status.textContent='Geändert';}}).catch(e=>{finishLoading();status.textContent=e.message;toast(e.message);});return dialog;
  }
  return {open};
 }

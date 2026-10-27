@@ -11,7 +11,7 @@ export function createCMD({ getNodes, home, print, launch, open, publicIP, close
   const pathOf = n => { try { return cmdPath(decodeURIComponent(n.path)); } catch { return cmdPath(n.path); } };
   const find = value => { const path = cmdPath(value, cwd).toLowerCase(); return getNodes().find(n => pathOf(n).toLowerCase() === path); };
   const directory = path => /^\/[a-z]$/i.test(path) || getNodes().some(n => (n.kind === 'folder' && pathOf(n).toLowerCase() === path.toLowerCase()) || pathOf(n).toLowerCase().startsWith(path.toLowerCase() + '/'));
-  const apps = { cmd:'terminal',terminal:'terminal',explorer:'explorer',notepad:'editor','notepad++':'editor',word:'office-text',winword:'office-text',writer:'office-text',excel:'office-sheet',powerpoint:'office-presentation',powerpnt:'office-presentation',vlc:'media',media:'media',fotoanzeige:'photo',photo:'photo',browser:'browser',iexplore:'browser','internet-explorer':'browser',taskmgr:'task-manager','task-manager':'task-manager' };
+  const apps = { control:'control-panel',systemsteuerung:'control-panel', cmd:'terminal',terminal:'terminal',explorer:'explorer',notepad:'editor','notepad++':'editor',word:'office-text',winword:'office-text',writer:'office-text',excel:'office-sheet',powerpoint:'office-presentation',powerpnt:'office-presentation',vlc:'media',media:'media',fotoanzeige:'photo',photo:'photo',browser:'browser',iexplore:'browser','internet-explorer':'browser',taskmgr:'task-manager','task-manager':'task-manager' };
   return { get cwd() { return cwd; }, set cwd(value) { cwd=cmdPath(value); }, async execute(command) {
     command=command.replace(/^cd(?=\.\.|[\\/])/i,'cd ');
     let args = command.match(/"[^"]*"|[^\s"]+/g)?.map(v => v.replace(/^"|"$/g,'')) || [];
