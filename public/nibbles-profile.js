@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+import{normalizeSettings,defaultSettings}from'./nibbles-engine.js';
+export function updateNibblesProfile(previous,data,username,now=new Date().toISOString()){
+if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Ungültige Nibbles-Daten.');const profile={settings:normalizeSettings(previous?.settings),scores:Array.isArray(previous?.scores)?previous.scores.filter(s=>s&&Number.isInteger(s.score)&&s.score>0&&s.score<=1e9&&typeof s.id==='string'&&typeof s.name==='string'&&s.name.length<=180&&Number.isInteger(s.speed)&&s.speed>=1&&s.speed<=4&&typeof s.fakes==='boolean'&&typeof s.date==='string').slice(0,80):[]};
+if(data.settings!==undefined){const input=data.settings;if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Ungültige Einstellungen.');const normalized=normalizeSettings(input);for(const k of Object.keys(defaultSettings()))if(JSON.stringify(input[k])!==JSON.stringify(normalized[k]))throw Error('Ungültige Nibbles-Einstellung: '+k);profile.settings=normalized;}
+if(data.score!==undefined){const s=data.score;if(!s||typeof s.id!=='string'||s.id.length<1||s.id.length>100||!Number.isInteger(s.score)||s.score<=0||s.score>1e9||!Number.isInteger(s.speed)||s.speed<1||s.speed>4||typeof s.fakes!=='boolean'||s.humans!==1||s.startLevel!==1)throw Error('Ungültiger Bestenlisten-Eintrag.');if(!profile.scores.some(x=>x.id===s.id))profile.scores.push({id:s.id,score:s.score,speed:s.speed,fakes:s.fakes,name:username,date:now});}
+profile.scores.sort((a,b)=>b.score-a.score||a.date.localeCompare(b.date));const counts={};profile.scores=profile.scores.filter(s=>{const key=s.speed+'.'+Number(s.fakes);counts[key]=(counts[key]||0)+1;return counts[key]<=10;});return profile;
+}
