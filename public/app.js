@@ -1,4 +1,4 @@
-import{transferDialog,uploadFile,copyWithProgress}from'/file-transfer.js';
+import{transferDialog,uploadFile,copyWithProgress,streamOperation}from'/file-transfer.js';
 import{createDesktopPreloader}from'/desktop-preload.js';
 import{showBusy,hideBusy,waitForDesktopAssets}from'/session-loading.js';
 import{showContextMenu}from'/context-menu.js';
@@ -79,7 +79,7 @@ function originalOpen(n){if(n.kind==='folder'){go(n.id);if(shell)desktop.show('e
 function context(n,x,y){
  const writable=state.authenticated&&n.writable!==false,ordinary=!n.virtual&&!n.system;
  if(!selection.has(n.id)){selection.clear();selection.add(n.id);selected=n.id;paintSelection();}
- const actions=[['Öffnen',()=>open(n)]];
+ const actions=[...(writable&&n.kind==='file'&&/\.zip$/i.test(n.name)?[['Hier entpacken',()=>archive(n,true)],null]:[]),['Öffnen',()=>open(n)]];
  if(n.desktopShortcut){if(writable)actions.push(null,['Umbenennen',()=>nameDialog(n)],['Löschen',()=>deleteNode(n)]);return showContextMenu({clientX:x,clientY:y},actions);}
  if(selection.size>1&&writable)return showContextMenu({clientX:x,clientY:y},[['Ausschneiden',cutSelection],['Kopieren',copySelection],null,['Löschen',deleteSelection]]);
  if(n.kind==='file'&&/\.(png|jpe?g|gif|bmp|webp|avif|ico)$/i.test(n.name))actions.push(['Mit Paint bearbeiten',()=>editImage(n)]);
@@ -88,8 +88,8 @@ function context(n,x,y){
  if(n.kind==='link'&&writable)actions.push(['Verknüpfung bearbeiten …',()=>editLink(n)]);
  if(n.id==='@network'&&state.role==='admin'&&state.authenticated&&!state.readonly)actions.push(['Netzlaufwerk verbinden …',openNetworkDialog]);
  if(n.kind==='link'&&shell&&writable)actions.push(shell.pinAction('link:'+n.id));
- if(!['@favorites','@homegroup'].includes(n.id)&&(shell||isolatedApp==='explorer')&&state.authenticated)actions.push(null,['Senden an',[['Desktop (Verknüpfung erstellen)',()=>isolatedApp==='explorer'?parent.postMessage({type:'explorer-shortcut',id:n.id},location.origin):shell.createShortcut(n)]]]);
- if(writable&&ordinary){actions.push(null,['Ausschneiden',cutSelection],['Kopieren',copySelection]);const archiveActions=[['ZIP-Archiv erstellen …',()=>archive(n,false)]];if(n.name.toLowerCase().endsWith('.zip'))archiveActions.push(['Hier entpacken …',()=>archive(n,true)]);actions.push(['Archiv',archiveActions],null,['Löschen',()=>deleteNode(n)],['Umbenennen',()=>nameDialog(n)]);}
+ if(!['@favorites','@homegroup'].includes(n.id)&&(shell||isolatedApp==='explorer')&&state.authenticated){const send=[['Desktop (Verknüpfung erstellen)',()=>isolatedApp==='explorer'?parent.postMessage({type:'explorer-shortcut',id:n.id},location.origin):shell.createShortcut(n)]];if(writable&&ordinary)send.push(['ZIP-komprimierter Ordner',()=>archive(n,false)]);actions.push(null,['Senden an',send]);}
+ if(writable&&ordinary){actions.push(null,['Ausschneiden',cutSelection],['Kopieren',copySelection]);actions.push(null,['Löschen',()=>deleteNode(n)],['Umbenennen',()=>nameDialog(n)]);}
  if(writable&&n.kind==='folder'&&clipboardIds().length&&dropFolder(n.id))actions.push(['Einfügen',()=>pasteSelection(n.id)]);
  if(!n.driveRoot){const entry=n.virtual?nodes.find(root=>root.system&&root.space===n.id.slice(1)):n;if(entry)actions.push(null,['Eigenschaften',()=>folderProperties.open(entry).catch(error=>toast(error.message))]);}
  showContextMenu({clientX:x,clientY:y},actions);
@@ -161,7 +161,7 @@ form.onsubmit=async e=>{e.preventDefault();const command=input.value.trim();if(!
 input.onkeydown=e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();cursor=Math.max(0,Math.min(history.length,cursor+(e.key==='ArrowUp'?-1:1)));input.value=history[cursor]||'';}if(e.ctrlKey&&e.key.toLowerCase()==='l'){e.preventDefault();print(null);}};screen.addEventListener('click',e=>{if(!e.target.closest('.cmd-nano'))input.focus();});close.onclick=async()=>{const draft=nanoSession?.();if(draft&&draft.content!==draft.original&&!await confirmAction('Ungespeicherte Nano-Änderungen verwerfen?','Ungespeicherte Änderungen',{confirmLabel:'OK',cancelLabel:'Abbrechen'}))return;dialog.close();};
 return{run(command){this.open();input.value=command;form.requestSubmit();},open(){if(!cmd||account!==state.home){account=state.home;output.textContent='';history=[];cmd=createCMD({getNodes:()=>nodes,home:state.home,print,launch,open,mkdir:async path=>{await api('/api/folder',destination(path));await load();},rename:async(node,name)=>{await api('/api/rename',{id:node.id,name});await load();},remove:async node=>{await api('/api/delete',{id:node.id});await load();print('Datei in den Papierkorb verschoben.');},edit:nano,publicIP:async()=> (await api('/api/public-ip')).ip,close:()=>dialog.close()});print('Microsoft Windows [Version 6.1.7601]\nCopyright (c) 2009 Microsoft Corporation. Alle Rechte vorbehalten.\n');}if(!dialog.open)dialog.show();desktop.show(dialog.id);update();input.focus();}};
 })();
-function archive(n,unpack){operation={type:unpack?'unzip':'zip',node:n};$('operationtitle').textContent=unpack?'ZIP entpacken':'ZIP erstellen';$('operationname').value=unpack?n.name.replace(/\.zip$/i,''):n.name+'.zip';$('operationerror').textContent='';$('operationdialog').showModal();}
+async function archive(n,unpack){const progress=transferDialog({verb:unpack?'ZIP entpacken':'ZIP erstellen',count:1,from:n.name,to:unpack?(get(n.parent)?.name||'Aktueller Ordner'):n.name+'.zip'});try{await streamOperation('/api/'+(unpack?'unzip':'zip'),{id:n.id,...(unpack?{here:true}:{name:n.name+'.zip'})},event=>progress.update({name:event.name,byteMode:event.totalBytes>0,totalBytes:event.totalBytes,loaded:event.loadedBytes}),progress);toast(unpack?'Archiv entpackt':'ZIP erstellt');}catch(error){toast(error.name==='AbortError'?'Archivvorgang abgebrochen.':error.message);}finally{progress.close();await load();}}
 function newTextFile(){operation={type:'new-text'};$('operationtitle').textContent='Neue Textdatei';$('operationname').value='Neues Dokument.txt';$('operationerror').textContent='';$('operationdialog').showModal();}
 $('operationcancel').onclick=()=>$('operationdialog').close();$('operationform').onsubmit=async e=>{e.preventDefault();const button=e.submitter;button.disabled=true;try{const result=await api('/api/'+operation.type,{id:operation.node?.id,parent:realParent(),space:realSpace(),name:$('operationname').value});$('operationdialog').close();await load();toast(operation.type==='unzip'?'Archiv entpackt':operation.type==='zip'?'ZIP erstellt':'Datei erstellt');if(operation.type==='new-text')await openText(get(result.id),true);}catch(e){$('operationerror').textContent=e.message;}finally{button.disabled=false;}};
 window.addEventListener('beforeunload',e=>{if(!workspaceLeaving&&[...editorWindows.values()].some(record=>record.dirty())){e.preventDefault();e.returnValue='';}});
