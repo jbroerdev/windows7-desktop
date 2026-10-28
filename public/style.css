@@ -280,3 +280,5 @@ dialog.explorer-window{width:min(1100px,85vw);height:min(740px,82vh)}
 .start-apps.all-programs{padding:3px 2px}
 .start-apps.all-programs .start-app{min-height:22px;height:22px;padding:1px 4px;gap:5px;border-radius:2px;line-height:18px}
 .start-apps.all-programs .start-app img{width:16px;height:16px}
+
+.inline-rename{box-sizing:border-box;display:block;width:100%;min-width:0;max-height:140px;padding:0 2px!important;margin:0!important;border:1px solid #333!important;border-radius:0!important;background:#fff!important;color:#111!important;box-shadow:none!important;text-shadow:none!important;font:inherit!important;text-align:inherit;line-height:1.2!important;resize:none;overflow:auto;outline:none!important;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text}.desktop-icon .inline-rename{position:relative;z-index:2;text-align:center}.tree-link .inline-rename{flex:1;text-align:left}
