@@ -93,3 +93,5 @@ test('Explorer-Drag-and-drop verschiebt die gesamte Auswahl einschließlich Verk
 test('Teilweise abgeschlossene Verschiebung entfernt nur fertige Elemente aus der Zwischenablage',async()=>{
  const {context:c}=await environment();c.selection.add('a');c.selection.add('c');c.cutSelection();c.api=async(route,body)=>{if(body.ids[0]==='c')throw Error('Ziel nicht erreichbar');return {moved:1};};assert.equal(await c.moveSelection(['a','c'],'target'),false);assert.deepEqual([...c.cutIds],['c']);assert.deepEqual([...c.readClipboard().ids],['c']);
 });
+
+test('Umbenennen markiert den Stamm vor der letzten Dateiendung',async()=>{const {renameSelectionEnd}=await import('./public/inline-rename.js');for(const [name,kind,end]of [['Bericht.txt','file',7],['Archiv.tar.gz','file',10],['README','file',6],['.env','file',4],['Ordner.mit.Punkten','folder',18]])assert.equal(renameSelectionEnd({name,kind}),end,name);});
