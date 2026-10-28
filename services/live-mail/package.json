@@ -1,0 +1,1 @@
+{"name":"windows-live-mail-service","version":"0.1.0","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test test.mjs"},"engines":{"node":">=24.18"},"dependencies":{"fast-xml-parser":"^5.11.2","imapflow":"^2.9.1","mailparser":"^3.7.0","nodemailer":"^10.2.1","sanitize-html":"^2.18.1"}}
