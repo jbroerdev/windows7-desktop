@@ -1,0 +1,17 @@
+// Meter taps never connect microphone/captured media back to the speakers.
+// The original media element continues to own playback and its application volume.
+export function createAudioMeters({media,gains,channel,account,level}){
+ const listeners=new Set(),monitors=new Map(),remote=new Map(),sender=globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2);let frame=0,last=0,remoteUntil=0,heartbeat;
+ const allowed=new Set(['system','media','nibbles','minesweeper']);
+ function send(message){channel()?.postMessage({account:account(),sender,...message});}
+ function stopMonitor(element){const m=monitors.get(element);if(!m)return;m.stream.getTracks().forEach(t=>t.stop());m.context.close().catch(()=>{});monitors.delete(element);}
+ function stop(){cancelAnimationFrame(frame);frame=0;for(const element of monitors.keys())stopMonitor(element);}
+ function peak(analyser,data){analyser.getFloatTimeDomainData(data);let sum=0;for(const sample of data)sum+=sample*sample;return Math.min(1,Math.sqrt(sum/data.length)*3);}
+ function measure(){const values={system:0,media:0,nibbles:0,minesweeper:0};for(const m of gains){if(m.context.state==='running'&&m.analyser)values[m.app]=Math.max(values[m.app]||0,peak(m.analyser,m.data));}
+  const active=new Set();for(const record of media){const element=record.element;if(element.paused||element.ended||element.muted||element.readyState<2)continue;active.add(element);if(!monitors.has(element)){const capture=element.captureStream||element.mozCaptureStream;if(!capture)continue;let context,stream;try{stream=capture.call(element);if(!stream.getAudioTracks().length){stream.getTracks().forEach(t=>t.stop());continue;}context=new AudioContext();const source=context.createMediaStreamSource(stream),analyser=context.createAnalyser();analyser.fftSize=256;source.connect(analyser);monitors.set(element,{stream,context,analyser,data:new Float32Array(256)});context.resume().catch(()=>{});}catch{stream?.getTracks().forEach(t=>t.stop());context?.close().catch(()=>{});}}
+   const m=monitors.get(element);if(m?.context.state==='running')values[record.app]=Math.max(values[record.app]||0,peak(m.analyser,m.data)*record.volume*level(record.app));}
+  for(const element of monitors.keys())if(!active.has(element))stopMonitor(element);return values;}
+ function tick(now){if(!listeners.size&&Date.now()>remoteUntil){stop();return;}if(now-last>75){last=now;const local=measure();send({type:'audio-levels',levels:local});const combined={...local};for(const[id,value]of remote){if(Date.now()-value.time>350){remote.delete(id);continue;}for(const[app,n]of Object.entries(value.levels))combined[app]=Math.max(combined[app]||0,n);}for(const cb of listeners)cb(combined);}frame=requestAnimationFrame(tick);}
+ function start(){if(!frame)frame=requestAnimationFrame(tick);}
+ return{receive(message){if(message.sender===sender)return;if(message.type==='meter-request'){remoteUntil=Date.now()+4000;start();}else if(message.type==='audio-levels'&&message.levels&&typeof message.sender==='string'){const levels=Object.fromEntries(Object.entries(message.levels).filter(([app,n])=>allowed.has(app)&&Number.isFinite(n)&&n>=0&&n<=1));remote.set(message.sender,{time:Date.now(),levels});}},watch(callback){listeners.add(callback);send({type:'meter-request'});start();if(!heartbeat)heartbeat=setInterval(()=>send({type:'meter-request'}),1500);return()=>{listeners.delete(callback);if(!listeners.size){clearInterval(heartbeat);heartbeat=null;stop();}};}};
+}
