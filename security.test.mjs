@@ -9,15 +9,15 @@ test('Security page password change checks the old secret, preserves current log
   assert.equal(cookieSecure('192.168.178.20','https'),true);
   assert.equal(cookieSecure('localhost',undefined,true),true);
   assert.equal(secureSessionCookie({headers:{host:'example.com','x-forwarded-proto':'https'},socket:{}},'0'),true);
-  const credentials={username:'admin',password:'security-original-password'},first=cookie(await req('/api/setup',credentials)),other=cookie(await req('/api/login',credentials));
+  const credentials={username:'admin',password:'x'},first=cookie(await req('/api/setup',credentials)),other=cookie(await req('/api/login',credentials));
   const localLogin=await req('/api/login',credentials);assert.equal(localLogin.status,200);assert.ok(!localLogin.headers.get('set-cookie').includes('; Secure'));
   const httpsLogin=await req('/api/login',credentials,'',{'x-forwarded-proto':'https',host:'explorer.xserverx.app'});assert.equal(httpsLogin.status,200);assert.ok(httpsLogin.headers.get('set-cookie').includes('; Secure'));
-  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:'security-new-password'})).status,401);
-  assert.equal((await req('/api/change-password',{currentPassword:'wrong',newPassword:'security-new-password'},first)).status,401);
-  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:'short'},first)).status,400);
-  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:'security-new-password'},first)).status,200);
+  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:'y'})).status,401);
+  assert.equal((await req('/api/change-password',{currentPassword:'wrong',newPassword:'y'},first)).status,401);
+  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:''},first)).status,400);
+  assert.equal((await req('/api/change-password',{currentPassword:credentials.password,newPassword:'y'},first)).status,200);
   assert.equal((await(await req('/api/session',undefined,first)).json()).authenticated,true);assert.equal((await(await req('/api/session',undefined,other)).json()).authenticated,false);
-  assert.equal((await req('/api/login',credentials)).status,401);assert.equal((await req('/api/login',{...credentials,password:'security-new-password'})).status,200);
+  assert.equal((await req('/api/login',credentials)).status,401);assert.equal((await req('/api/login',{...credentials,password:'y'})).status,200);
   const html=await(await req('/login',undefined,first)).text();for(const id of ['security-lock','security-switch','security-password','security-taskmanager','security-cancel'])assert.ok(html.includes('id="'+id+'"'));
  }finally{await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true});}
 });
