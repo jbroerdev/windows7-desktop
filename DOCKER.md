@@ -95,3 +95,5 @@ docker compose up --build -d
 Der Docker-Build baut den Editor und führt die Integrations- und Dateisystemtests aus. Das Runtime-Image läuft ohne Root-Rechte und hat einen HTTP-Healthcheck. Docker wurde in der aktuellen Entwicklungsumgebung nicht gefunden; ein tatsächlicher Image-Build/Containerstart konnte hier daher nicht überprüft werden.
 
 Der GitHub-Workflow „Docker build and smoke test“ baut das Image bei Änderungen, führt die Tests im Build aus und prüft anschließend den Containerstart samt Healthcheck. Ein erfolgreicher Workflow wird im Actions-Tab angezeigt.
+
+Bei `COOKIE_SECURE=1` bleiben öffentliche Hosts auf Secure-Cookies beschränkt. Direkter HTTP-Zugriff über localhost, private IPv4-/IPv6-Adressen oder `.local`-Namen erhält ein für HTTP nutzbares Sitzungscookie. HTTPS (auch mit `X-Forwarded-Proto: https` vom Reverse-Proxy) verwendet immer Secure. Der Proxy muss diesen Header selbst setzen bzw. überschreiben. Für internen HTTP-Zugriff eine separate LAN-Adresse verwenden; Cookies sind zwischen IP-Adresse und öffentlichem Host getrennt.
