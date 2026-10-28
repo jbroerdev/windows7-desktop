@@ -1,0 +1,1 @@
+{"name":"windows-live-messenger-service","version":"0.1.0","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test test.mjs"},"engines":{"node":">=24.18"},"dependencies":{"discord.js":"^14.24.0"}}

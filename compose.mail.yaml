@@ -1,0 +1,23 @@
+services:
+  explorer:
+    environment:
+      MAIL_SERVICE_URL: http://live-mail:3001
+      MAIL_SERVICE_SECRET: ${MAIL_SERVICE_SECRET:?Set MAIL_SERVICE_SECRET to a random value of at least 32 characters}
+    depends_on:
+      live-mail:
+        condition: service_healthy
+  live-mail:
+    build: ./services/live-mail
+    restart: unless-stopped
+    init: true
+    environment:
+      MAIL_SERVICE_SECRET: ${MAIL_SERVICE_SECRET:?Set MAIL_SERVICE_SECRET}
+      MAIL_DATA_DIR: /mail-data
+    volumes:
+      - live-mail-data:/mail-data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  live-mail-data:

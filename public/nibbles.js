@@ -1,3 +1,4 @@
+import{connectMedia}from'/sound.js';
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * Classic GNOME Nibbles web frontend. Original artwork and sounds are distributed
  * unchanged; credits, upstream version and notices: /nibbles/SOURCES.json.
@@ -19,7 +20,7 @@ const dialog=el('dialog',undefined,'nibbles-window'),bar=el('header'),title=el('
 const ctx=canvas.getContext('2d'),boardCanvas=el('canvas'),boardCtx=boardCanvas.getContext('2d');let assets,game,settings=defaultSettings(),scores=[],tile=7,boardKey='',closed=false,frame=0,previousTime=0,accumulator=0,transitionUntil=0,popup=null,popupDismiss=null,modalDepth=0,ghosts=[],pulses=new Map(),sounds=new Map(),logged=new Set(),profileTask=Promise.resolve(),resumeNotice=false,overlayKey='',statsKey='',ownsFullscreen=false;
 let ready,failed;dialog.whenReady=new Promise((resolve,reject)=>{ready=resolve;failed=reject;});dialog.whenReady.catch(()=>{});
 function button(parent,label,action,cls){const b=el('button',label,cls);b.type='button';b.onclick=()=>Promise.resolve(action()).catch(error=>toast(error.message));parent.append(b);return b;}
-function play(name){if(!game?.settings.sound||closed)return;try{let original=sounds.get(name);if(!original){original=new Audio('/nibbles/'+name+'.ogg');original.preload='none';original.volume=.6;sounds.set(name,original);}const audio=original.cloneNode();audio.volume=.6;audio.play().catch(()=>{});audio.addEventListener('ended',()=>audio.remove(),{once:true});}catch{}}
+function play(name){if(!game?.settings.sound||closed)return;try{let original=sounds.get(name);if(!original){original=new Audio('/nibbles/'+name+'.ogg');original.preload='none';original.volume=.6;sounds.set(name,original);}const audio=connectMedia(original.cloneNode(),'nibbles');audio.volume=.6;audio.play().catch(()=>{});audio.addEventListener('ended',()=>audio.remove(),{once:true});}catch{}}
 function pause(reason=''){if(!game||!['running','level'].includes(game.status))return;game.status='paused';transitionUntil=0;resumeNotice=reason==='restore';previousTime=performance.now();accumulator=0;render(previousTime);}
 function togglePause(){if(!game)return;if(game.status==='running'||game.status==='level')pause();else if(game.status==='paused'){game.status=game.remaining===0?'level':'running';transitionUntil=performance.now()+500;resumeNotice=false;canvas.focus();}}
 function saveProfile(data){if(!getState().authenticated||getState().shareEditing)return Promise.resolve();profileTask=profileTask.catch(()=>{}).then(()=>api('/api/nibbles',data)).then(profile=>{scores=profile.scores||[];}).catch(error=>toast('Nibbles konnte nicht gespeichert werden: '+error.message));return profileTask;}

@@ -487,3 +487,13 @@ Rechtsklick auf den Desktop → Bildschirmauflösung öffnet die Anzeigeeinstell
 Im Titelleisten-Kontextmenü verschiebt Auf Bildschirm 1/2 verschieben ein Fenster mit seinem aktuellen Arbeitsstand. Am Verbindungsrand dockt die obere Ecke (erste 96 Pixel) auf halber Breite an; der Rand darunter übergibt ohne Zusatztaste an den anderen Bildschirm. Ohne Verbindung bleibt das Andocken auf beiden Seiten erhalten. Der obere Rand in der Mitte maximiert. Geschlossene Tabs melden sich ab; zusätzlich überwachen Fensterreferenz und Verbindungskontrolle die Erreichbarkeit. Das Original schließt erst nach bestätigter Wiederherstellung am Ziel. Notepad-Entwürfe, Explorer, CMD und Medienfenster nutzen die vorhandene Zustandssicherung; Webseiten können neu laden und Medien kurz unterbrechen. Office-Fenster werden derzeit nicht übertragen und bleiben am Ausgangsbildschirm geöffnet. Minimisierte Fenster auf dem zweiten Bildschirm können über dessen Desktop-Kontextmenü wieder angezeigt werden. Sperren sammelt die Arbeitsstände beider erreichbaren Bildschirme und sperrt beide Flächen.
 
 Das Desktop-Kontextmenü gruppiert Symboloptionen unter Ansicht und neue Dateien/Ordner unter Neu. Aktualisieren, Bildschirmauflösung, Anpassen und Desktop-Ordner öffnen bleiben direkt erreichbar.
+
+## Windows Live Mail 2012
+
+Optionaler eigener IMAP-/SMTP-Dienst mit benutzerbezogenen, verschlüsselt gespeicherten Mailkonten und einer in die Desktop-Fensterverwaltung integrierten Oberfläche. Start über `/live-mail` oder das Startmenü. Einrichtung und Docker-Start: [LIVE-MAIL.md](LIVE-MAIL.md), Compose-Erweiterung: `compose.mail.yaml`.
+
+## Windows Live Messenger
+
+Optionaler eigener Discord-Bot-Dienst mit Messenger-Oberfläche, Windows-Profilübernahme, getrenntem Share-Gastbereich und eigenen Kanälen für Einzelgespräche. Start über `/messenger` oder das Startmenü. Einrichtung und Docker-Start: [LIVE-MESSENGER.md](LIVE-MESSENGER.md), Compose-Erweiterung: `compose.messenger.yaml`.
+
+Der Windows-Standard verwendet die übernommenen Preview-Soundzuordnungen. Beim ersten Start dieser Version werden die Ereigniszuordnungen auch bestehenden Konten zugewiesen; Lautstärken, Stummschaltung und Audiogeräte bleiben persönlich. Der Startknopf spielt „Navigation starten“, Messenger-Benachrichtigungen standardmäßig „Windows Chimes (klassisch)“. Laufende Anwendungen tragen unabhängig vom aktiven Fenster eine dauerhafte untere Taskleistenmarkierung.
