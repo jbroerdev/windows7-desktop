@@ -15,3 +15,7 @@ artifacts
 
 # Original wallpapers are fetched by a pinned, checksum-verified image-build step.
 public/wallpapers/win7-*.jpg
+
+**/node_modules
+services/live-mail/data
+services/live-messenger/data

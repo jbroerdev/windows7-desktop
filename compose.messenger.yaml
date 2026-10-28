@@ -1,0 +1,27 @@
+services:
+  explorer:
+    environment:
+      MESSENGER_SERVICE_URL: http://live-messenger:3002
+      MESSENGER_SERVICE_SECRET: ${MESSENGER_SERVICE_SECRET:?Set MESSENGER_SERVICE_SECRET to at least 32 random characters}
+      MESSENGER_PUBLIC_URL: ${MESSENGER_PUBLIC_URL:-}
+    depends_on:
+      live-messenger:
+        condition: service_healthy
+  live-messenger:
+    build: ./services/live-messenger
+    restart: unless-stopped
+    init: true
+    environment:
+      MESSENGER_SERVICE_SECRET: ${MESSENGER_SERVICE_SECRET:?Set MESSENGER_SERVICE_SECRET}
+      MESSENGER_DATA_DIR: /messenger-data
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      DISCORD_PERSONAL_CHANNEL_ID: ${DISCORD_PERSONAL_CHANNEL_ID:-}
+      DISCORD_SHARE_CHANNEL_ID: ${DISCORD_SHARE_CHANNEL_ID:-}
+    volumes:
+      - live-messenger-data:/messenger-data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  live-messenger-data:

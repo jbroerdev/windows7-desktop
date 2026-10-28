@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createHmac} from 'node:crypto';
+import {mailGateway} from './mail-gateway.mjs';
+test('mail gateway authenticates Windows users and signs their identity without forwarding browser headers',async()=>{
+ const priorUrl=process.env.MAIL_SERVICE_URL,priorSecret=process.env.MAIL_SERVICE_SECRET,priorFetch=globalThis.fetch,secret='test-secret-at-least-32-characters-long',responses=[],upstream=[];
+ process.env.MAIL_SERVICE_URL='http://mail-service:3001';process.env.MAIL_SERVICE_SECRET=secret;
+ globalThis.fetch=async(url,options)=>{upstream.push({url:String(url),...options});return new Response('{"accounts":[]}',{headers:{'Content-Type':'application/json'}});};
+ const req={method:'POST',headers:{'x-mail-user':'victim',cookie:'private-session'}},url=new URL('http://desktop/api/live-mail/drafts?account=mail'),bytes=Buffer.from('{"subject":"test"}'),args={req,url,body:async()=>bytes,json:(status,value)=>responses.push({status,value}),res:{writeHead(status,headers){responses.push({status,headers});},end(bytes){responses.push({bytes});}}};
+ try{
+  await mailGateway({...args,user:null});assert.equal(responses.pop().status,401);await mailGateway({...args,user:{id:'alice',shareEditing:true}});assert.equal(responses.pop().status,401);assert.equal(upstream.length,0);await mailGateway({...args,user:{id:'alice'},url:new URL('http://desktop/api/live-mail//evil.invalid/path')});assert.equal(responses.pop().status,404);assert.equal(upstream.length,0);
+  await mailGateway({...args,user:{id:'alice'}});const call=upstream[0];assert.equal(call.url,'http://mail-service:3001/drafts?account=mail');assert.equal(call.headers['X-Mail-User'],'alice');assert.equal(call.headers.cookie,undefined);const expected=createHmac('sha256',secret).update(['alice',call.headers['X-Mail-Time'],'POST','/drafts?account=mail'].join('\n')).update('\n').update(bytes).digest('hex');assert.equal(call.headers['X-Mail-Signature'],expected);assert.equal(responses[0].status,200);
+  delete process.env.MAIL_SERVICE_URL;responses.length=0;await mailGateway({...args,user:{id:'alice'}});assert.equal(responses[0].status,503);
+ }finally{globalThis.fetch=priorFetch;if(priorUrl===undefined)delete process.env.MAIL_SERVICE_URL;else process.env.MAIL_SERVICE_URL=priorUrl;if(priorSecret===undefined)delete process.env.MAIL_SERVICE_SECRET;else process.env.MAIL_SERVICE_SECRET=priorSecret;}
+});
+
+test('published CalDAV reads are anonymous, signed as the public route and cannot write or impersonate a Windows user',async()=>{
+ const priorUrl=process.env.MAIL_SERVICE_URL,priorSecret=process.env.MAIL_SERVICE_SECRET,priorFetch=globalThis.fetch,calls=[],responses=[];process.env.MAIL_SERVICE_URL='http://mail:3001';process.env.MAIL_SERVICE_SECRET='test-secret-with-at-least-32-characters';globalThis.fetch=async(url,options)=>{calls.push({url:String(url),options});return new Response('<multistatus/>',{status:207,headers:{'Content-Type':'application/xml','DAV':'1, calendar-access','ETag':'"test"'}});};
+ const bytes=Buffer.from('<propfind/>'),args={url:new URL('https://desktop/caldav/test-token/'),req:{method:'PROPFIND',headers:{depth:'1','x-mail-user':'victim',cookie:'private'}},user:null,body:async()=>bytes,json:(status,value)=>responses.push({status,value}),res:{writeHead(status,headers){responses.push({status,headers});},end(){}}};
+ try{await mailGateway(args);assert.equal(calls[0].url,'http://mail:3001/caldav/test-token/');assert.equal(calls[0].options.headers['X-Mail-User'],'caldav');assert.equal(calls[0].options.headers['X-Mail-Depth'],'1');assert.equal(calls[0].options.headers.cookie,undefined);assert.equal(responses[0].headers.dav,'1, calendar-access');await mailGateway({...args,req:{method:'PUT',headers:{}}});assert.equal(responses.at(-1).status,405);assert.equal(calls.length,1);await mailGateway({...args,url:new URL('https://desktop/api/live-mail/calendars'),req:{method:'GET',headers:{}}});assert.equal(responses.at(-1).status,401);}finally{globalThis.fetch=priorFetch;if(priorUrl===undefined)delete process.env.MAIL_SERVICE_URL;else process.env.MAIL_SERVICE_URL=priorUrl;if(priorSecret===undefined)delete process.env.MAIL_SERVICE_SECRET;else process.env.MAIL_SERVICE_SECRET=priorSecret;}
+});
