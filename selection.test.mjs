@@ -31,7 +31,7 @@ async function environment() {
     get:id=>nodes.find(n=>n.id===id),$:id=>fields[id],make:()=>element(),updateStatus(){},toast(){},
     document:{querySelector:selector=>selector==='.content'?content:null,querySelectorAll:()=>[],
       addEventListener(){},body:element()},clearTimeout,setTimeout,
-    api:async()=>({moved:1}),load:async()=>{}});
+    transferDialog:()=>({cancelled:false,update(){},close(){}}),api:async()=>({moved:1}),load:async()=>{}});
   vm.runInContext(source.slice(source.indexOf('function visibleIds()')),context);
   return {context,nodes,list,content};
 }
@@ -51,12 +51,11 @@ test('Explorer-Auswahl: Strg, Umschalt, Ausschneiden und gültige Ziele',async()
   assert.equal(c.canDrop(['a'],'c'),false);
   assert.equal(c.canDrop(['a','c'],'target'),true);
   assert.deepEqual([...c.moveRoots(['b','child'])],['b']);
-  let request;
-  c.api=async(route,data)=>{request={route,data};return {moved:2};};
+  const requests=[];
+  c.api=async(route,data)=>{requests.push({route,data});return {moved:1};};
   await c.pasteSelection('target');
-  assert.equal(request.route,'/api/move');
-  assert.deepEqual([...request.data.ids],['b','c']);
-  assert.equal(request.data.parent,'target');assert.equal(c.cutIds.length,0);
+  assert.equal(requests.length,2);assert.ok(requests.every(r=>r.route==='/api/move'&&r.data.parent==='target'));
+  assert.deepEqual(requests.flatMap(r=>[...r.data.ids]),['b','c']);assert.equal(c.cutIds.length,0);
 });
 
 test('Explorer-Ziehrahmen wählt Treffer und ergänzt vorhandene Auswahl mit Strg',async()=>{
@@ -81,12 +80,16 @@ test('Explorer-Drag-and-drop verschiebt die gesamte Auswahl einschließlich Verk
   const data={setData(){}};
   source.listeners.dragstart({dataTransfer:data,preventDefault(){}});
   assert.equal(data.effectAllowed,'move');assert.deepEqual([...c.dragIds],['a','c']);
-  let accepted=false,request;
+  let accepted=false;const requests=[];
   target.listeners.dragover({dataTransfer:data,preventDefault(){accepted=true;},stopPropagation(){}});
   assert.equal(accepted,true);assert.equal(data.dropEffect,'move');
-  c.api=async(route,body)=>{request={route,body};return {moved:2};};
+  c.api=async(route,body)=>{requests.push({route,body});return {moved:1};};
   target.listeners.drop({preventDefault(){},stopPropagation(){}});
   await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(request.route,'/api/move');assert.deepEqual([...request.body.ids],['a','c']);
-  assert.equal(request.body.parent,'target');assert.equal(c.dragIds.length,0);
+  assert.equal(requests.length,2);assert.ok(requests.every(r=>r.route==='/api/move'&&r.body.parent==='target'));assert.deepEqual(requests.flatMap(r=>[...r.body.ids]),['a','c']);
+  assert.equal(c.dragIds.length,0);
+});
+
+test('Teilweise abgeschlossene Verschiebung entfernt nur fertige Elemente aus der Zwischenablage',async()=>{
+ const {context:c}=await environment();c.selection.add('a');c.selection.add('c');c.cutSelection();c.api=async(route,body)=>{if(body.ids[0]==='c')throw Error('Ziel nicht erreichbar');return {moved:1};};assert.equal(await c.moveSelection(['a','c'],'target'),false);assert.deepEqual([...c.cutIds],['c']);assert.deepEqual([...c.readClipboard().ids],['c']);
 });

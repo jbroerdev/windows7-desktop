@@ -1,7 +1,10 @@
+import {createReadStream,createWriteStream} from 'node:fs';
+import {Transform} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 import {promises as fs} from 'node:fs';
 export function createFileOperations({db,storage,id,get,owned,readable,target,creationOwner=(user)=>user.id,duplicate,spaceOf,filePath,rootFor,save,fail}){
   function subtree(root){const entries=[],seen=new Set();function visit(node){if(seen.has(node.id))fail('Zyklischer Ordnerpfad.');seen.add(node.id);entries.push(node);for(const child of db.nodes.filter(n=>n.parent===node.id))visit(child);}visit(root);return entries;}
-  async function copy(user,data){
+  async function copy(user,data,{onProgress,signal}={}){
     if(!Array.isArray(data.ids)||!data.ids.length||data.ids.length>100)fail('Bitte 1–100 Einträge auswählen.');
     const destination=target(user,data.parent),selected=new Set(data.ids),source=[...selected].map(get);
     if(source.some(n=>!n||n.system||!readable(n,user)))fail('Datei oder Ordner nicht gefunden.',404);
@@ -9,8 +12,12 @@ export function createFileOperations({db,storage,id,get,owned,readable,target,cr
     const created=[],written=[];const reserved=new Set();
     function nameFor(name){let candidate=name,index=1;const dot=name.lastIndexOf('.'),stem=dot>0?name.slice(0,dot):name,extension=dot>0?name.slice(dot):'';while(duplicate(destination.id,candidate,undefined,user.id)||reserved.has(candidate.toLowerCase()))candidate=stem+' - Kopie'+(index++>1?' ('+(index-1)+')':'')+extension;reserved.add(candidate.toLowerCase());return candidate;}
     for(const root of roots){let p=destination;while(p){if(p.id===root.id)fail('Ein Ordner kann nicht in sich selbst kopiert werden.');p=get(p.parent);}const entries=subtree(root);if(entries.some(n=>!readable(n,user)))fail('Nicht alle enthaltenen Dateien sind lesbar.',403);if(created.length+entries.length>10000)fail('Maximal 10000 Einträge je Kopiervorgang.',413);const mapping=new Map(entries.map(n=>[n.id,id()]));for(const original of entries){const node={...original,id:mapping.get(original.id),owner:creationOwner(user,destination),parent:original===root?destination.id:mapping.get(original.parent),name:original===root?nameFor(original.name):original.name,space:destination.id?spaceOf(destination):'home',shared:!!user.shareEditing,shareBlocked:false,created:new Date().toISOString()};delete node.proxyEnabled;delete node.system;delete node.programRoot;delete node.driveRoot;delete node.personalPrograms;created.push({node,original});}}
+    let totalBytes=0,loadedBytes=0,completedItems=0;
+    if(onProgress)for(const {original}of created)if(original.kind==='file')totalBytes+=(await fs.stat(filePath(original))).size;
+    const progress=name=>{signal?.throwIfAborted();onProgress?.({name,totalBytes,loadedBytes,totalItems:created.length,completedItems});};
+    progress(roots[0]?.name||'');
     storage.register(created.map(e=>e.node));
-    try{for(const {node,original} of created){if(node.kind==='folder'){await fs.mkdir(filePath(node),{recursive:false});written.push(node);}else if(node.kind==='file'){await fs.copyFile(filePath(original),filePath(node),fs.constants.COPYFILE_EXCL);written.push(node);}}db.nodes.push(...created.map(e=>e.node));await save();return {ok:true,copied:roots.length};}
+    try{for(const {node,original} of created){if(node.kind==='folder'){await fs.mkdir(filePath(node),{recursive:false});written.push(node);}else if(node.kind==='file'){if(onProgress){const output=createWriteStream(filePath(node),{flags:'wx'});output.once('open',()=>written.push(node));const meter=new Transform({transform(chunk,encoding,callback){try{signal?.throwIfAborted();loadedBytes+=chunk.length;progress(original.name);callback(null,chunk);}catch(error){callback(error);}}});await pipeline(createReadStream(filePath(original)),meter,output,{signal});}else{await fs.copyFile(filePath(original),filePath(node),fs.constants.COPYFILE_EXCL);written.push(node);}}completedItems++;progress(original.name);}db.nodes.push(...created.map(e=>e.node));await save();return {ok:true,copied:roots.length};}
     catch(error){for(const node of written.reverse())await fs.rm(filePath(node),{recursive:node.kind==='folder',force:true}).catch(()=>{});throw error;}
     finally{storage.release(created.map(e=>e.node));}
   }
