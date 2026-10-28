@@ -1,0 +1,65 @@
+{
+  "source": "https://github.com/clrgia/windows-live-messenger/tree/main/public/assets",
+  "files": [
+    {
+      "file": "public/icons/messenger/away.png",
+      "sha256": "61909b324bcbdbb11f63729a0f18be484331835e78501e0076071b1aad38a011"
+    },
+    {
+      "file": "public/icons/messenger/busy.png",
+      "sha256": "b9e1443160af16e552aabcd3b65f08d9580905009f85c0113bfa0ac2814894b8"
+    },
+    {
+      "file": "public/icons/messenger/chat-header.png",
+      "sha256": "1d5fe1c05df2494d7f3ce275aca0d0ae60e934df3ec718d67d17f3e631ccd8cd"
+    },
+    {
+      "file": "public/icons/messenger/chat-navbar.png",
+      "sha256": "5549404e59d54ba81d6897ce8f29543c744fb94211390a31e40b5a5724832b7d"
+    },
+    {
+      "file": "public/icons/messenger/chat.png",
+      "sha256": "83d009e615db7e6a65851e109ff6739ba12ddfa02b1f4000afb0e0028c532a32"
+    },
+    {
+      "file": "public/icons/messenger/edit-header.png",
+      "sha256": "cf3f26be3f78ac61c710678f2ebc5a0b0ca867b78a0f29593d052a3021b15ef4"
+    },
+    {
+      "file": "public/icons/messenger/emoticon.png",
+      "sha256": "bba1e8040c4a1ef41621cc9ff45b1306d6e1be43e4945e2f5a57a30a680c0216"
+    },
+    {
+      "file": "public/icons/messenger/frame.png",
+      "sha256": "aa12538c66b003186ff66c63384e2df6e71e99ae4ab5e2f3bec31909bea22c25"
+    },
+    {
+      "file": "public/icons/messenger/header.png",
+      "sha256": "466e691ead18f26c654f5553bf10ae04ef44bab886132d60bd0df7671e6ddeef"
+    },
+    {
+      "file": "public/icons/messenger/layout.png",
+      "sha256": "9877f44f9058e4534b1084faf5aa409f8a23cdc659b7ca6fbdfce5fea09fdc11"
+    },
+    {
+      "file": "public/icons/messenger/logo.png",
+      "sha256": "47d5ef1d6110cdba72eee6871e6493f57d8365fe605e276e5b4e3694b5cc6a80"
+    },
+    {
+      "file": "public/icons/messenger/navbar.png",
+      "sha256": "012bf03c6fc19f88cae15d3a19d0b190d9d2c02767c6af341a5179dba189a885"
+    },
+    {
+      "file": "public/icons/messenger/offline.png",
+      "sha256": "66e7ef0a8b0734175479222f6cee04b452497e5da5e0b5579ac7ab2f16fe8c2f"
+    },
+    {
+      "file": "public/icons/messenger/online.png",
+      "sha256": "70c25e29f6745a546a9ca699696bde49d0239e2f2345501ad3194c7db23cff21"
+    },
+    {
+      "file": "public/icons/messenger/toolbar.png",
+      "sha256": "6d035bf9c3a9b91b497761a977848cbd6f8177f3fe895f1aeb35d413c0fa57e5"
+    }
+  ]
+}
