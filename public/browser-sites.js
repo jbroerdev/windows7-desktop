@@ -1,0 +1,4 @@
+export const YOUTUBE_SITE='/api/youtube/site';
+const hosts=new Set(['youtube.com','www.youtube.com','m.youtube.com','youtu.be']);
+export function browserFrameUrl(value,origin){const url=new URL(value,origin);if(!['http:','https:'].includes(url.protocol)||!hosts.has(url.hostname)||url.username||url.password||url.port)return url.href;let route=url.pathname,params=new URLSearchParams(url.search);if(url.hostname==='youtu.be'){params.set('v',route.slice(1));route='/watch';}if(/^\/shorts\/[A-Za-z0-9_-]{11}/.test(route)){params.set('v',route.split('/')[2]);route='/watch';}return YOUTUBE_SITE+route+(params.size?'?'+params:'')+url.hash;}
+export function browserVisibleUrl(value,origin){const url=new URL(value,origin);if(url.origin===origin&&(url.pathname===YOUTUBE_SITE||url.pathname.startsWith(YOUTUBE_SITE+'/')))return'https://www.youtube.com'+(url.pathname.slice(YOUTUBE_SITE.length)||'/')+url.search+url.hash;return url.href;}

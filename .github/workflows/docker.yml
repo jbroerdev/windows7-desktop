@@ -13,6 +13,7 @@ jobs:
     env:
       RDP_SERVICE_SECRET: ci-only-rdp-service-secret-not-for-production
       MESSENGER_SERVICE_SECRET: ci-only-messenger-service-key-not-for-production
+      YOUTUBE_SERVICE_SECRET: ci-only-youtube-service-key-not-for-production
     steps:
       - uses: actions/checkout@v6
       - name: Validate upgrade helper
@@ -25,6 +26,8 @@ jobs:
         run: docker compose -f compose.yaml -f compose.messenger.yaml config --quiet
       - name: Validate optional RDP Compose
         run: docker compose -f compose.yaml -f compose.rdp.yaml config --quiet
+      - name: Validate optional YouTube Compose
+        run: docker compose -f compose.yaml -f compose.youtube.yaml config --quiet
       - name: Build RDP service and run its isolation tests
         run: docker compose -f compose.yaml -f compose.rdp.yaml build remote-desktop
       - name: Verify real RDP in an isolated Docker network
