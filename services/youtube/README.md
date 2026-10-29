@@ -21,3 +21,9 @@ Die Wiedergabe verwendet standardmäßig Modern/SABR mit aktiviertem HD und bevo
 Basis: [ftde0/yt2009](https://github.com/ftde0/yt2009), Apache-2.0, Version 1.32.4. Der Build prüft das SHA-256 des Quellarchivs. Änderungen an YouTube können Suche oder Videowiedergabe beeinträchtigen; ein gesunder Container allein bestätigt keine erfolgreiche Wiedergabe. Nach Updates daher Suche, Watch-Seite und tatsächlichen Videostream testen. Keine Google-Zugangsdaten oder Cookies in die Konfiguration übernehmen.
 
 Prüfungen: `node --test youtube.test.mjs`.
+
+## Persönliche Kanäle und Empfehlungen
+
+„Kanäle“ zeigt die eigenen Abos und erlaubt das Beenden eines Abonnements. Die Startseite lädt aktuelle Uploads aus den Abos und von häufig angesehenen Kanälen. Angesehene Kanäle werden nach Anzahl und Aktualität der angesehenen Videos gewichtet; Abos erhalten zusätzlich ein Grundgewicht. Bereits angesehene Videos werden ausgeblendet. Es werden höchstens 15 Quellkanäle pro Feed geladen.
+
+Der Verlauf umfasst maximal 100 unterschiedliche Videos und liegt ausschließlich im jeweiligen Desktop-Profil. Ein Video zählt nach mindestens fünf Sekunden sichtbarer Wiedergabe. Es werden keine Google-Kontodaten verwendet. Ohne Abos oder Verlauf zeigt die Startseite eine passende leere Ansicht statt historischer Standardvideos.
