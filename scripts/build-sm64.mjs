@@ -1,0 +1,12 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {spawn} from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'..'),source=process.argv[2];
+if(!source)throw Error('Aufruf: node scripts/build-sm64.mjs /pfad/baserom.eu.z64');
+const rom=await fs.readFile(path.resolve(source));if(createHash('sha1').update(rom).digest('hex')!=='4ac5721683d0e0b6bbb561b58a71740845dceea9')throw Error('Die Datei ist nicht die unterstützte EU-ROM.');
+const context=path.join(root,'.asset-cache','sm64-build'),output=path.join(root,'services','sm64','build');await fs.mkdir(path.join(context,'integration'),{recursive:true});await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(context,'baserom.eu.z64'),rom);
+const response=await fetch('https://github.com/sm64pc/sm64ex/archive/refs/heads/master.zip');if(!response.ok)throw Error('Quellarchiv nicht erreichbar');const archive=Buffer.from(await response.arrayBuffer());if(createHash('sha256').update(archive).digest('hex')!=='5eeb09ec0d524aa915fbcad980ef85921a9060fa912762bf4d6e059540daa586')throw Error('Das Quellarchiv hat sich geändert. Pin vor dem Bau prüfen.');await fs.writeFile(path.join(context,'source.zip'),archive);
+for(const name of ['patch-source.py','shell.html'])await fs.copyFile(path.join(root,'services','sm64',name),path.join(context,'integration',name));await fs.copyFile(path.join(root,'services','sm64','Dockerfile.build'),path.join(context,'Dockerfile'));
+const run=args=>new Promise((resolve,reject)=>{const child=spawn('docker',args,{stdio:'inherit'});child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error('Docker-Bau fehlgeschlagen: '+code)));});
+await run(['build','-t','windows7-sm64-build:eu',context]);await run(['run','--rm','-v',output+':/output','windows7-sm64-build:eu']);await fs.writeFile(path.join(output,'index.html'),(await fs.readFile(path.join(root,'services','sm64','shell.html'),'utf8')).replace('{{{ SCRIPT }}}','<script src="sm64.eu.f3dex2e.js"></script>'));console.log('EU-Webbuild bereit:',output);
