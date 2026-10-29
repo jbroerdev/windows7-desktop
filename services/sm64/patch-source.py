@@ -1,0 +1,10 @@
+from pathlib import Path
+p=Path('/src/Makefile')
+s=p.read_text()
+s=s.replace('-O2 -g4 --source-map-base http://localhost:8080/', '-O2')
+s=s.replace('-lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'callMain\']"', '-O2 -lm -s USE_SDL=2 -s ALLOW_MEMORY_GROWTH=1 -s INITIAL_MEMORY=33554432 -s EXPORTED_RUNTIME_METHODS=callMain,dynCall -s INVOKE_RUN=0 --shell-file /integration/shell.html')
+p.write_text(s)
+p=Path('/src/src/pc/ultra_reimplementation.c');s=p.read_text().replace('localStorage.sm64_save_file', 'Module.desktopSave');s=s.replace('Module.desktopSave = btoa(str);','Module.desktopSave = btoa(str); Module.desktopSaved(Module.desktopSave);');p.write_text(s)
+p=Path('/src/src/pc/pc_main.c');s=p.read_text().replace('    time *= 0.03;', '    if (EM_ASM_INT({return !!Module.desktopPaused;})) { request_anim_frame(on_anim_frame); return; }\n    time *= 0.03;');p.write_text(s)
+p=Path('/src/src/game/save_file.c');s=p.read_text().replace('return gSaveBuffer.menuData[0].language;', 'return LANGUAGE_GERMAN;');p.write_text(s)
+p=Path('/src/src/menu/file_select.c');s=p.read_text().replace('static s8 sLanguageMode = LANGUAGE_ENGLISH;', 'static s8 sLanguageMode = LANGUAGE_GERMAN;');p.write_text(s)

@@ -1,0 +1,10 @@
+FROM emscripten/emsdk:2.0.34
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential bsdmainutils python3 libaudiofile-dev libglew-dev libsdl2-dev unzip && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+COPY source.zip /tmp/source.zip
+RUN echo "5eeb09ec0d524aa915fbcad980ef85921a9060fa912762bf4d6e059540daa586  /tmp/source.zip" | sha256sum -c - && unzip -q /tmp/source.zip -d /tmp && cp -a /tmp/sm64ex-master/. /src/
+COPY baserom.eu.z64 /src/baserom.eu.z64
+RUN echo "4ac5721683d0e0b6bbb561b58a71740845dceea9  baserom.eu.z64" | sha1sum -c -
+COPY integration /integration
+RUN python3 /integration/patch-source.py && make -j2 VERSION=eu TARGET_WEB=1 DEBUG=0
+CMD ["sh", "-c", "cp build/eu_web/*.js build/eu_web/*.wasm /output/ && cp build/eu_web/*.html /output/index.html"]

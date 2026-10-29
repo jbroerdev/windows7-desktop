@@ -16,3 +16,10 @@ compose.drives.yaml
 services/live-messenger/data/
 
 services/remote-desktop/data/
+
+# Private game input and generated Nintendo assets
+*.z64
+*.n64
+*.v64
+services/sm64/build/
+services/sm64/data/
