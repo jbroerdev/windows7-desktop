@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
+      RDP_SERVICE_SECRET: ci-only-rdp-service-secret-not-for-production
       MESSENGER_SERVICE_SECRET: ci-only-messenger-service-key-not-for-production
     steps:
       - uses: actions/checkout@v6
@@ -22,6 +23,22 @@ jobs:
         run: docker compose -f compose.yaml -f compose.office.yaml config --quiet
       - name: Validate optional Messenger Compose
         run: docker compose -f compose.yaml -f compose.messenger.yaml config --quiet
+      - name: Validate optional RDP Compose
+        run: docker compose -f compose.yaml -f compose.rdp.yaml config --quiet
+      - name: Build RDP service and run its isolation tests
+        run: docker compose -f compose.yaml -f compose.rdp.yaml build remote-desktop
+      - name: Verify real RDP in an isolated Docker network
+        run: |
+          trap 'docker compose -p rdp-integration -f compose.rdp-test.yaml logs --no-color; docker compose -p rdp-integration -f compose.rdp-test.yaml down' EXIT
+          docker compose -p rdp-integration -f compose.rdp-test.yaml up -d --build
+          for attempt in 1 2 3; do
+            if docker compose -p rdp-integration -f compose.rdp-test.yaml exec -T remote-desktop node --input-type=module < scripts/rdp-smoke.mjs; then
+              docker compose -p rdp-integration -f compose.rdp-test.yaml exec -T test-rdp grep -q 'Session started successfully for user rdptest' /var/log/xrdp-sesman.log
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
       - name: Prepare host bind directory
         run: sudo install -d -o 1000 -g 1000 /Explorer
       - name: Build and run integration tests
