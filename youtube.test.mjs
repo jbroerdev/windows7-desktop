@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
-import {createYoutubeProfiles,youtubeChannel} from './youtube-profile.mjs';
+import {createYoutubeProfiles,youtubeChannel,youtubeRecommendations} from './youtube-profile.mjs';
 import {youtubeGateway,youtubeSignature,rewriteYoutubeText} from './youtube-gateway.mjs';
 import {browserFrameUrl,browserVisibleUrl} from './public/browser-sites.js';
 test('YouTube navigation preserves the visible address without matching unrelated hosts',()=>{
@@ -36,9 +36,17 @@ test('Gateway rewrites resources and location but preserves JavaScript string op
  const source='<head></head><a href="/watch?v=x">x</a><script>location.href="/watch"; x.split("/")</script>';
  const out=rewriteYoutubeText(source);assert.match(out,/href="\/api\/youtube\/site\/watch/);assert.match(out,/window\.__desktopYoutubeLocation.href/);assert.match(out,/x.split\("\/"\)/);
 });
+test('Actual watched videos personalize recommendations within the owning profile',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youtube-history-'));
+ try{const store=createYoutubeProfiles(dir),sub={url:'/channel/UCsub',name:'Abo'},watched={url:'/channel/UCwatched',name:'Gesehen'};
+ await store.change('alice','subscribe',sub);await store.change('alice','watch',watched,'jNQXAC9IVRw');await store.change('alice','watch',watched,'aqz-KE-bpKQ');
+ const profile=await createYoutubeProfiles(dir).read('alice');assert.equal(profile.watched.length,2);assert.equal(youtubeRecommendations(profile)[0].url,watched.url);assert.equal((await store.read('bob')).watched.length,0);
+ await store.change('alice','watch',watched,'jNQXAC9IVRw');assert.equal((await store.read('alice')).watched.length,2);await assert.rejects(store.change('alice','watch',watched,'invalid'));
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
 test('Gateway signs requests, strips desktop cookies and streams media ranges',async()=>{
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youtube-stream-')),secret='test-secret-'.repeat(4);
- const upstream=http.createServer((req,res)=>{assert.equal(req.headers.cookie,'desktop=1; lang=de; global_flags=watch_modern_features; watch_flags=exp_sabr:hd_1080:watch_modern_features; playback_quality=2; saber_playback_mode_picked=1');const actor=req.headers['x-youtube-actor'],time=req.headers['x-youtube-time'];assert.equal(req.headers['x-youtube-signature'],youtubeSignature(secret,actor,time,req.method,req.url,Buffer.alloc(0)));
+ const upstream=http.createServer((req,res)=>{assert.equal(req.headers.cookie,'desktop=1; lang=de; global_flags=watch_modern_features; watch_flags=exp_sabr:hd_1080:watch_modern_features; playback_quality=2; saber_playback_mode_picked=1; homepage_picked=');const actor=req.headers['x-youtube-actor'],time=req.headers['x-youtube-time'];assert.equal(req.headers['x-youtube-signature'],youtubeSignature(secret,actor,time,req.method,req.url,Buffer.alloc(0)));
  if(req.url==='/sabr_playback'){res.writeHead(200,{'Content-Type':'application/x-yt2009-saber','x-part-count':'2','x-yt2009-video-mime':'video/mp4; codecs=avc1.640028','x-yt2009-used-itag':'137'});res.end('SABER-START///');}else if(req.url==='/media'){assert.equal(req.headers.range,'bytes=2-4');res.writeHead(206,{'Content-Type':'video/mp4','Content-Range':'bytes 2-4/6','Content-Length':'3'});res.end('cde');}else{res.writeHead(200,{'Content-Type':'text/html','Set-Cookie':'bad=1'});res.end('<html><head></head><body><a href="/watch?v=x">video</a></body></html>');}});
  await new Promise(r=>upstream.listen(0,'127.0.0.1',r));
  const server=http.createServer(async(req,res)=>{try{await youtubeGateway({req,res,url:new URL(req.url,'http://test'),user:{id:'a'},metadataDir:dir,endpoint:'http://127.0.0.1:'+upstream.address().port,secret,json:(status,data)=>{res.writeHead(status);res.end(JSON.stringify(data));}});}catch(e){res.writeHead(500);res.end(e.message);}});await new Promise(r=>server.listen(0,'127.0.0.1',r));
