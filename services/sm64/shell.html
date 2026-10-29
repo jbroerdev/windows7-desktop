@@ -1,5 +1,7 @@
 <!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Super Mario 64</title><style>html,body{margin:0;width:100%;height:100%;background:#000;overflow:hidden}canvas{width:100%;height:100%;object-fit:contain;display:block;outline:none}#status{position:absolute;left:20px;top:20px;color:white;font:14px Segoe UI,sans-serif}</style><canvas id="canvas" tabindex="0" oncontextmenu="event.preventDefault()"></canvas><div id="status">Spiel wird geladen …</div><script>
 var desktopStarted=false;
+var desktopCanvas=document.getElementById('canvas'),desktopGetContext=desktopCanvas.getContext;
+desktopCanvas.getContext=function(kind,attributes){if(kind==='webgl'||kind==='webgl2'||kind==='experimental-webgl')attributes=Object.assign({},attributes,{preserveDrawingBuffer:true});return desktopGetContext.call(this,kind,attributes)};
 window.desktopAudioContexts=[];
 var desktopAudioOriginal=AudioNode.prototype.connect;
 AudioNode.prototype.connect=function(target){if(target instanceof AudioDestinationNode&&window.desktopAudioConnect&&!this.context.desktopRouting){var context=this.context;var output=context.desktopOutput;if(!output){window.desktopAudioContexts.push(context);context.desktopRouting=true;try{context.desktopOutput=window.desktopAudioConnect(context);}finally{context.desktopRouting=false;}output=context.desktopOutput;}return desktopAudioOriginal.call(this,output);}return desktopAudioOriginal.apply(this,arguments);};
