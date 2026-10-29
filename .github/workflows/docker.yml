@@ -30,7 +30,7 @@ jobs:
       - name: Verify real RDP in an isolated Docker network
         run: |
           trap 'docker compose -p rdp-integration -f compose.rdp-test.yaml logs --no-color; docker compose -p rdp-integration -f compose.rdp-test.yaml down' EXIT
-          docker compose -p rdp-integration -f compose.rdp-test.yaml up -d --build
+          docker compose -p rdp-integration -f compose.rdp-test.yaml up -d --build --wait --wait-timeout 90
           for attempt in 1 2 3; do
             if docker compose -p rdp-integration -f compose.rdp-test.yaml exec -T remote-desktop node --input-type=module < scripts/rdp-smoke.mjs; then
               docker compose -p rdp-integration -f compose.rdp-test.yaml exec -T test-rdp grep -q 'Session started successfully for user rdptest' /var/log/xrdp-sesman.log
