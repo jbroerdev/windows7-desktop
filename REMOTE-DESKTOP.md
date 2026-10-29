@@ -52,3 +52,5 @@ docker compose -p rdp-integration -f compose.rdp-test.yaml up -d --build
 docker compose -p rdp-integration -f compose.rdp-test.yaml exec -T remote-desktop node --input-type=module < scripts/rdp-smoke.mjs
 docker compose -p rdp-integration -f compose.rdp-test.yaml down
 ```
+
+Validiert am 29.10.2026: 114 Desktop-Tests, fünf RDP-Diensttests und 25 Mail-/Messenger-Tests erfolgreich. Zusätzlich erfolgreicher Login gegen den isolierten xrdp-Testserver über Guacamole 1.6.0, Bildschirm-Synchronisierung und Tastatureingabe. Ein echter Windows-Zielrechner stand für den Test nicht zur Verfügung.
