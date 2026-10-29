@@ -1,0 +1,29 @@
+services:
+  explorer:
+    environment:
+      YOUTUBE_SERVICE_URL: http://youtube:3005
+      YOUTUBE_SERVICE_SECRET: ${YOUTUBE_SERVICE_SECRET:?Set YOUTUBE_SERVICE_SECRET}
+    depends_on:
+      youtube:
+        condition: service_healthy
+  youtube:
+    image: windows7-youtube:local
+    build: ./services/youtube
+    restart: unless-stopped
+    environment:
+      YOUTUBE_SERVICE_SECRET: ${YOUTUBE_SERVICE_SECRET:?Set YOUTUBE_SERVICE_SECRET}
+      YOUTUBE_CACHE_GB: ${YOUTUBE_CACHE_GB:-2}
+    volumes:
+      - youtube-data:/data
+      - youtube-assets:/yt2009/assets
+      - youtube-cache:/yt2009/back/cache_dir
+    networks:
+      - default
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  youtube-data:
+  youtube-assets:
+  youtube-cache:
