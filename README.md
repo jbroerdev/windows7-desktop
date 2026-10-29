@@ -497,3 +497,7 @@ Optionaler eigener IMAP-/SMTP-Dienst mit benutzerbezogenen, verschlüsselt gespe
 Optionaler eigener Discord-Bot-Dienst mit Messenger-Oberfläche, Windows-Profilübernahme, getrenntem Share-Gastbereich und eigenen Kanälen für Einzelgespräche. Start über `/messenger` oder das Startmenü. Einrichtung und Docker-Start: [LIVE-MESSENGER.md](LIVE-MESSENGER.md), Compose-Erweiterung: `compose.messenger.yaml`.
 
 Der Windows-Standard verwendet die übernommenen Preview-Soundzuordnungen. Beim ersten Start dieser Version werden die Ereigniszuordnungen auch bestehenden Konten zugewiesen; Lautstärken, Stummschaltung und Audiogeräte bleiben persönlich. Der Startknopf spielt „Navigation starten“, Messenger-Benachrichtigungen standardmäßig „Windows Chimes (klassisch)“. Laufende Anwendungen tragen unabhängig vom aktiven Fenster eine dauerhafte untere Taskleistenmarkierung.
+
+## Remotedesktopverbindung
+
+Optionaler eigener RDP-Dienst mit Guacamole und einer Oberfläche im Windows-7-Stil. Start über `/rdp` oder das Startmenü. Verschlüsselte Profile pro Konto, Vollbild, Tastatur/Maus und Text-Zwischenablage. Einrichtung: [REMOTE-DESKTOP.md](REMOTE-DESKTOP.md), Compose-Erweiterung: `compose.rdp.yaml`.

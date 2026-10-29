@@ -1,0 +1,43 @@
+services:
+  explorer:
+    environment:
+      RDP_SERVICE_URL: http://remote-desktop:3003
+      RDP_SERVICE_SECRET: ${RDP_SERVICE_SECRET:?Set RDP_SERVICE_SECRET to at least 32 random characters}
+    depends_on:
+      remote-desktop:
+        condition: service_healthy
+  remote-desktop:
+    build: ./services/remote-desktop
+    networks:
+      - default
+      - rdp
+    restart: unless-stopped
+    init: true
+    environment:
+      RDP_SERVICE_SECRET: ${RDP_SERVICE_SECRET:?Set RDP_SERVICE_SECRET}
+      RDP_ALLOWED_TARGETS: ${RDP_ALLOWED_TARGETS:-}
+      RDP_DATA_DIR: /rdp-data
+      GUACD_HOST: guacd
+      GUACD_PORT: 4822
+    volumes:
+      - remote-desktop-data:/rdp-data
+    depends_on:
+      - guacd
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+  guacd:
+    image: guacamole/guacd:1.6.0
+    networks:
+      - rdp
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  remote-desktop-data:
+networks:
+  rdp:

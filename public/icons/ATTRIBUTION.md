@@ -54,3 +54,5 @@ Die Original-ICO-Dateien in `filetypes/` stammen aus [visnalize/resources – Wi
 Das Website-Favicon (`public/favicon.ico`) ist das unveränderte `Shell32.dll/shell32_18.ico` aus [visnalize/resources](https://raw.githubusercontent.com/Visnalize/resources/main/icons/win7/Shell32.dll/shell32_18.ico).
 
 Der animierte Ladeindikator `session-spinner.gif` wurde auf Nutzerwunsch unverändert von [Tenor](https://media.tenor.com/ggWF2p1Xu_IAAAAi/loading-windows.gif) übernommen.
+
+Remotedesktopverbindung: apps/tsclient.png aus dem oben genannten B00merang-Artwork/Windows-7-Referenzbestand; Originalgrafik und auf 16 Pixel verkleinerte Variante.
