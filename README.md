@@ -501,3 +501,7 @@ Der Windows-Standard verwendet die übernommenen Preview-Soundzuordnungen. Beim 
 ## Remotedesktopverbindung
 
 Optionaler eigener RDP-Dienst mit Guacamole und einer Oberfläche im Windows-7-Stil. Start über `/rdp` oder das Startmenü. Verschlüsselte Profile pro Konto, Vollbild, Tastatur/Maus und Text-Zwischenablage. Einrichtung: [REMOTE-DESKTOP.md](REMOTE-DESKTOP.md), Compose-Erweiterung: `compose.rdp.yaml`.
+
+## Super Mario 64
+
+Optionaler WebAssembly-Webport der EU-Version mit deutscher Sprache, eigenem Desktop-Fenster und privaten Spielständen pro Benutzer. Einrichtung: [SM64.md](SM64.md), Compose-Erweiterung: `compose.sm64.yaml`. ROM und erzeugte Spieldaten werden ausschließlich privat gebaut und nicht mit dem Quellcode veröffentlicht.

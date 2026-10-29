@@ -1,0 +1,18 @@
+services:
+  explorer:
+    environment:
+      SM64_SERVICE_URL: http://sm64:3004
+    depends_on:
+      sm64:
+        condition: service_healthy
+  sm64:
+    build: ./services/sm64
+    restart: unless-stopped
+    volumes:
+      - ${SM64_BUILD_DIR:-./services/sm64/build}:/game:ro
+    networks:
+      - default
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
