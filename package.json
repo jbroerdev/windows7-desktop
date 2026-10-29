@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test messenger-notifications.test.mjs messenger-gateway.test.mjs mail-render.test.mjs mail-providers.test.mjs mail-gateway.test.mjs sound.test.mjs calculator.test.mjs archive.test.mjs minesweeper.test.mjs nibbles.test.mjs paint.test.mjs image-file.test.mjs desktop-preload.test.mjs session-loading.test.mjs file-icons.test.mjs test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
+    "test": "node --test rdp-tunnel.test.mjs rdp-gateway.test.mjs messenger-notifications.test.mjs messenger-gateway.test.mjs mail-render.test.mjs mail-providers.test.mjs mail-gateway.test.mjs sound.test.mjs calculator.test.mjs archive.test.mjs minesweeper.test.mjs nibbles.test.mjs paint.test.mjs image-file.test.mjs desktop-preload.test.mjs session-loading.test.mjs file-icons.test.mjs test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
     "build": "node scripts/build-editor.mjs",
+    "test:rdp": "node --test services/remote-desktop/test.mjs rdp-gateway.test.mjs rdp-tunnel.test.mjs",
     "test:mail": "node --test services/live-mail/test.mjs",
     "test:messenger": "node --test services/live-messenger/test.mjs"
   },

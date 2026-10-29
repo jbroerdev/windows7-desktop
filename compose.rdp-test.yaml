@@ -1,0 +1,18 @@
+# Disposable, isolated integration test. Does not modify the production desktop.
+services:
+  remote-desktop:
+    build: ./services/remote-desktop
+    environment:
+      RDP_SERVICE_SECRET: isolated-test-only-service-secret-000000000
+      RDP_ALLOWED_TARGETS: test-rdp
+      GUACD_HOST: guacd
+    networks: [test]
+  guacd:
+    image: guacamole/guacd:1.6.0
+    networks: [test]
+  test-rdp:
+    build: ./services/remote-desktop/test-server
+    networks: [test]
+networks:
+  test:
+    internal: true

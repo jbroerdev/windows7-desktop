@@ -19,3 +19,5 @@ public/wallpapers/win7-*.jpg
 **/node_modules
 services/live-mail/data
 services/live-messenger/data
+
+services/remote-desktop/data
