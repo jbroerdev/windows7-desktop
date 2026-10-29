@@ -8,6 +8,9 @@ services:
         condition: service_healthy
   remote-desktop:
     build: ./services/remote-desktop
+    networks:
+      - default
+      - rdp
     restart: unless-stopped
     init: true
     environment:
@@ -26,6 +29,8 @@ services:
       - ALL
   guacd:
     image: guacamole/guacd:1.6.0
+    networks:
+      - rdp
     restart: unless-stopped
     init: true
     security_opt:
@@ -34,3 +39,5 @@ services:
       - ALL
 volumes:
   remote-desktop-data:
+networks:
+  rdp:
