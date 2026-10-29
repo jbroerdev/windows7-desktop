@@ -9,6 +9,11 @@ services:
     networks: [test]
   guacd:
     image: guacamole/guacd:1.6.0
+    healthcheck:
+      interval: 10s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
     networks: [test]
   test-rdp:
     build: ./services/remote-desktop/test-server
