@@ -1,0 +1,114 @@
+{
+  "url": "http://127.0.0.1:4184/",
+  "scope": "Actual production-base Control Panel + bundled renderers; synthetic GET API and desktop host shim; not a full production desktop session",
+  "checks": [
+    {
+      "case": "network-host-layout",
+      "hostSidebarHidden": true,
+      "ownButtons": [
+        "Startseite der Systemsteuerung"
+      ],
+      "padding": "0px"
+    },
+    {
+      "case": "network-home",
+      "moduleAbsent": true,
+      "padding": "22px 72px 24px"
+    },
+    {
+      "case": "system-ready",
+      "enabled": [
+        "Startseite der Systemsteuerung"
+      ],
+      "hostSidebarHidden": true,
+      "hostVisible": true,
+      "logo": [
+        {
+          "height": 16,
+          "srcData": true,
+          "width": 16
+        },
+        {
+          "height": 16,
+          "srcData": true,
+          "width": 16
+        },
+        {
+          "height": 16,
+          "srcData": true,
+          "width": 16
+        },
+        {
+          "height": 16,
+          "srcData": true,
+          "width": 16
+        },
+        {
+          "height": 151,
+          "srcData": true,
+          "width": 157
+        },
+        {
+          "height": 16,
+          "srcData": true,
+          "width": 16
+        }
+      ],
+      "padding": "0px"
+    },
+    {
+      "case": "readonly-immediate",
+      "text": "Startseite der Systemsteuerung\nGeräte-Manager\nRemoteeinstellungen\nComputerschutz\nErweiterte Systemeinstellungen\n\nSiehe auch\n\nWartungscenter\nWindows Update\nLeistungsinformationen und -tools\nBasisinformationen über den Computer anzeigen\nWindows-Edition\n\nWindows-7-Webdesktop\n\nWeboberfläche im Stil von Windows 7.\n\nBetriebssystem: Nicht verfügbar\n\nSystemdaten sind in dieser Ansicht nicht freigegeben.\n\nSystem\nKlassifikation:\nKeine Windows-Leistungsbewertung verfügbar\nProzessor:\nNicht verfügbar\nArbeitsspeicher (RAM):\nNicht verfügbar\nSystemtyp:\nNicht verfügbar\nStift- und Fingereingabe:\nVom Server nicht erfasst\nEinstellungen für Computernamen, Domäne und Arbeitsgruppe\nComputername:\nNicht verfügbar\nVollständiger Computername:\nNicht erfasst\nComputerbeschreibung:\nNicht erfasst\nArbeitsgruppe:\nNicht erfasst\nEinstellungen ändern\nWindows-Aktivierung\n\nFür diesen Webdesktop ist kein Windows-Aktivierungsstatus verfügbar."
+    },
+    {
+      "case": "readonly-after-late-response",
+      "leaked": false
+    },
+    {
+      "case": "personal-user-data",
+      "visible": true
+    },
+    {
+      "case": "system-home",
+      "hostClass": "cp-content",
+      "moduleAbsent": true
+    },
+    {
+      "case": "search-after-late-response",
+      "moduleAbsent": true,
+      "query": "Sound"
+    },
+    {
+      "bodyEmpty": true,
+      "case": "close-after-late-response",
+      "open": false
+    },
+    {
+      "case": "network-width-900",
+      "hostSidebarHidden": true,
+      "moduleOverflow": false,
+      "padding": "0px",
+      "rootWidth": 883
+    },
+    {
+      "case": "network-width-620",
+      "hostSidebarHidden": true,
+      "moduleOverflow": false,
+      "padding": "0px",
+      "rootWidth": 603
+    },
+    {
+      "case": "network-width-440",
+      "hostSidebarHidden": true,
+      "moduleOverflow": false,
+      "padding": "0px",
+      "rootWidth": 423
+    },
+    {
+      "adapterLeaked": false,
+      "case": "logout-after-late-response",
+      "hostLeaked": false
+    }
+  ],
+  "logs": []
+}

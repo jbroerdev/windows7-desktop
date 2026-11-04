@@ -1,0 +1,31 @@
+{
+  "basis": "production-release-base only; no current root control-panel.js/css",
+  "inputs": {
+    ".asset-cache/production-release-base/public/control-panel.js": "c8bc56fb90d7d355d4e677bfc7fffb4b6c7634370a4566f6cce5aef7fac79da5",
+    ".asset-cache/production-release-base/public/control-panel.css": "07b131c3da55a52194a27367d39c2afeec96973fd83229eba7f9266f3fc10a05",
+    "public/control-panel-network.js": "5b6d13d962789412a9d94f6b4dda3f99620786aead8eacc5588bbcef19761b61",
+    "public/control-panel-network.css": "2478161b39eb605bf446e3f26c62123b6c941caa75fa6096c091723cb23f3b72",
+    "public/control-panel-system.js": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d",
+    "public/control-panel-system.css": "568e8915abf208bf104706d5fb6cbe918f09f94ef75d38d91be24383f7e15c90",
+    "frame-verification/worker3-system-logo-1050.png": "00ddf499d3b3acdebe2a53452107a437d474e2e0efac54abff1c823c4e3274d5",
+    "frame-verification/worker3-uac-pack-16-32bit.png": "3f098bcd2d0e0cd1a1134149e0433ffd5e6697f026847a55d23b17eb5e8e18d7"
+  },
+  "outputs": {
+    "control-panel.js": "d440be865f2c0be5a684f60cac2b025f75ac4872c0bdefd5cb37ae78f5691a3b",
+    "control-panel.css": "2479733964836765fe7e49c42eedc616b518f82abbf3228a5b5ca7dc24d83f34"
+  },
+  "externalImports": [
+    "/notification-area-properties.js",
+    "/taskbar-properties.js",
+    "/date-time.js"
+  ],
+  "newBackendRoutes": [],
+  "activeModuleTargets": [
+    "home"
+  ],
+  "sourceFreeze": {
+    "network": "8a8a9cb",
+    "systemJS": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d"
+  },
+  "assetTransforms": "Original logo1050 and explicit32bit16px UAC embedded unchanged as data URLs; no new requests"
+}

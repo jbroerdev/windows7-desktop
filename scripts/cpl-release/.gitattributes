@@ -1,0 +1,3 @@
+# These immutable source snapshots are checked by their original byte hashes.
+sources/** -text -eol
+control-panel.css -text -eol
