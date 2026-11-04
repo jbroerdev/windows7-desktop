@@ -1,9 +1,13 @@
 import{test}from'node:test';
 import assert from'node:assert/strict';
-import{mkdtemp,rm,readFile,stat,writeFile,mkdir}from'node:fs/promises';
+import{mkdtemp,rm,readFile,stat,writeFile,mkdir,utimes}from'node:fs/promises';
 import os from'node:os';import path from'node:path';
 import{createStorage}from'./storage.mjs';
 import{scanStorage}from'./storage-scan.mjs';
+test('filesystem refresh reports actual file and folder modification times including same-size edits',async()=>{
+const temp=await mkdtemp(path.join(os.tmpdir(),'explorer-times-'));
+try{const root=path.join(temp,'Explorer'),metadataDir=path.join(temp,'meta'),db={users:[{id:'u',username:'alice'}],nodes:[]},storage=createStorage({root,metadataDir,db});storage.initialize();const folder=path.join(root,'Users','alice','Dates');await mkdir(folder);const file=path.join(folder,'Data.txt');await writeFile(file,'one');await utimes(file,new Date('2020-01-02T03:04:00Z'),new Date('2020-01-02T03:04:00Z'));storage.refresh();const n=db.nodes.find(n=>n.name==='Data.txt'),d=db.nodes.find(n=>n.name==='Dates');assert.equal(n.modified,(await stat(file)).mtime.toISOString());assert.equal(d.modified,(await stat(folder)).mtime.toISOString());await writeFile(file,'two');await utimes(file,new Date('2021-05-06T07:08:00Z'),new Date('2021-05-06T07:08:00Z'));assert.equal(storage.refresh(),true);assert.equal(n.size,3);assert.equal(n.modified,(await stat(file)).mtime.toISOString());assert.equal(storage.refresh(),false);}finally{await rm(temp,{recursive:true,force:true});}
+});
 
 test('Dateiabgleich im Worker lässt den Hauptthread frei und verändert nur den Snapshot',async()=>{
 const temp=await mkdtemp(path.join(os.tmpdir(),'explorer-worker-'));

@@ -3,7 +3,7 @@ WORKDIR /app
 RUN npm install --global pnpm@11.25.0
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile --ignore-workspace
-COPY core.mjs server.mjs cache.mjs calendar.mjs ./
+COPY core.mjs server.mjs cache.mjs calendar.mjs subscriptions.mjs ./
 RUN mkdir /mail-data && chown node:node /mail-data
 USER node
 ENV MAIL_PORT=3001 MAIL_DATA_DIR=/mail-data

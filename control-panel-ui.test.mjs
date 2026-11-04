@@ -1,0 +1,16 @@
+import test from'node:test';import assert from'node:assert/strict';import{readFile}from'node:fs/promises';
+// Date/time rendering is independent of category navigation and is tested elsewhere.
+const source=(await readFile(new URL('./public/control-panel.js',import.meta.url),'utf8')).replace(/import\s*\{\s*renderDateTimePage\s*\}\s*from\s*['"]\/date-time\.js['"];?/,'const renderDateTimePage=()=>()=>{};').replace(/from\s*['"]\/(notification-area-properties|taskbar-properties)\.js['"]/g,(_,name)=>'from '+JSON.stringify(new URL('./public/'+name+'.js',import.meta.url).href));
+const{createControlPanel}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+function fixture(role='admin',authenticated=true){
+ const prior={document:globalThis.document,innerWidth:globalThis.innerWidth,innerHeight:globalThis.innerHeight},elements=[];
+ class Element{constructor(tag){this.tag=tag;this.children=[];this.style={};this.dataset={};this.attributes={};this.value='';this.open=false;this.classList={toggle(){}};elements.push(this);}append(...nodes){for(const n of nodes){n.parentElement=this;this.children.push(n);}}replaceChildren(...nodes){this.children=[];this.append(...nodes);}setAttribute(k,v){this.attributes[k]=v;}addEventListener(){}}
+ globalThis.document={createElement:tag=>new Element(tag),head:new Element('head'),body:new Element('body')};globalThis.innerWidth=1280;globalThis.innerHeight=902;
+ const routes=[],sizes=[];const app=createControlPanel({desktop:{register(){},show(id){elements.find(e=>e.id===id).open=true;},applyWorkspaceGeometry:(id,value)=>sizes.push(value)},getState:()=>({role,authenticated,desktop:{}}),reload:async()=>{},accounts:{setHost(){},dispose(){},renderInto:async(container,page)=>routes.push(page)},users(){},display(){},programs:()=>[]});
+ const dialog=app.open(),all=e=>[e,...e.children.flatMap(all)];
+ return{dialog,routes,sizes,all:()=>all(dialog),restore(){for(const[key,value]of Object.entries(prior))if(value===undefined)delete globalThis[key];else globalThis[key]=value;}};
+}
+test('Control Panel category overview has eight native categories in column order',()=>{const f=fixture();try{assert.deepEqual(f.all().filter(e=>e.className==='cp-category-title').map(e=>e.textContent),['System und Sicherheit','Netzwerk und Internet','Hardware und Sound','Programme','Benutzerkonten und Jugendschutz','Darstellung und Anpassung','Zeit, Sprache und Region','Erleichterte Bedienung']);assert.equal(f.sizes[0].width,800/1280);}finally{f.restore();}});
+test('category links preserve existing personalization routing',()=>{const f=fixture();try{f.all().find(e=>e.textContent==='Design ändern').onclick();assert.deepEqual(f.routes,['background']);}finally{f.restore();}});
+test('native category presentation does not bypass existing administrator restrictions',()=>{const f=fixture('user');try{for(const label of ['Lokale Benutzer und Gruppen','Ordnerberechtigungen','Öffentlicher Desktop'])assert.equal(f.all().find(e=>e.textContent===label).disabled,true);}finally{f.restore();}});
+test('anonymous category links retain the existing login requirement',()=>{const f=fixture('user',false);try{for(const label of ['Design ändern','Desktophintergrund ändern','Bildschirmauflösung anpassen'])assert.equal(f.all().find(e=>e.textContent===label).disabled,true);}finally{f.restore();}});

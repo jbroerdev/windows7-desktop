@@ -82,3 +82,10 @@ Adressen mit `@gmail.com` oder `@googlemail.com` werden automatisch erkannt. Fü
 Gmail erfordert hier ein App-Passwort statt des normalen Google-Kennworts. Dafür muss die Bestätigung in zwei Schritten aktiv sein; nicht alle verwalteten oder besonders geschützten Konten erlauben App-Passwörter. Die Option „Dieses Kennwort speichern“ steuert weiterhin die dauerhafte verschlüsselte Speicherung. Google widerruft App-Passwörter beim Ändern des Google-Kennworts.
 
 Quellen: [Google: App-Passwörter](https://support.google.com/mail/answer/185833?hl=de), [Google: IMAP und SMTP](https://developers.google.com/workspace/gmail/imap/imap-smtp).
+# Kalender-Abonnements
+
+Unter „Kalender abonnieren“ lassen sich öffentliche HTTPS-iCalendar-Feeds und webcal-Adressen hinzufügen. Abos sind pro Desktop-Profil gespeichert und schreibgeschützt; neue Termine werden weiterhin in einem eigenen Kalender erstellt. Während der Kalender geöffnet ist und beim erneuten Öffnen werden fällige Abos alle 15 Minuten aktualisiert. „Abo aktualisieren“ lädt sofort neu. Bei einem Fehler bleiben die gespeicherten Termine sichtbar. „Abo entfernen“ entfernt nur das lokale Abonnement.
+
+Unterstützt werden ganztägige Termine, Zeitzonen und begrenzte Wiederholungsserien einschließlich Ausnahmen. Das Anzeigefenster umfasst das vorherige, aktuelle und die beiden folgenden Kalenderjahre. Feed-Adressen werden verschlüsselt gespeichert; interne Netzwerkadressen sind als Feed-Ziel gesperrt. Grenzen: 4 MB je Feed, 5.000 Termine und insgesamt 20 Kalender pro Profil.
+
+Abo-Kalender bieten eine eigene Farbeinstellung. Kontextmenüs stehen für Kalender, Tage, Termine, Mailordner und Nachrichten zur Verfügung. Bei ganztägigen Terminen ist das Enddatum im Dialog einschließlich: 4.–4. November bedeutet einen Tag, 4.–5. November zwei Tage. Die iCalendar-Ausgabe behält das standardkonforme exklusive Enddatum bei.

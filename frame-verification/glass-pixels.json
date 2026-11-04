@@ -1,0 +1,46 @@
+{
+  "calculator-left-rail-over-paint": {
+    "xy": [
+      803,
+      260
+    ],
+    "rgb": [
+      188,
+      215,
+      232
+    ]
+  },
+  "calculator-right-rail-over-wallpaper": {
+    "xy": [
+      1023,
+      260
+    ],
+    "rgb": [
+      52,
+      136,
+      208
+    ]
+  },
+  "taskbar-left": {
+    "xy": [
+      340,
+      704
+    ],
+    "rgb": [
+      43,
+      129,
+      154
+    ]
+  },
+  "taskbar-right": {
+    "xy": [
+      1000,
+      704
+    ],
+    "rgb": [
+      25,
+      90,
+      154
+    ]
+  }
+}

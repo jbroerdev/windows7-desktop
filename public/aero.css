@@ -2,17 +2,17 @@
 dialog.desktop-window{background-image:url('/icons/aero/titlebar-focused-middle.png'),linear-gradient(115deg,#c4dceac9,#a8c7dfb8 48%,#c5dceacf)!important;background-position:left -4px,left top!important;background-size:auto 68px,100% 100%!important;background-repeat:repeat-x,no-repeat!important;border:1px solid #617c91!important;border-radius:6px!important;box-shadow:inset 0 0 0 1px #ffffff80,0 5px 18px #0005!important;backdrop-filter:blur(12px) saturate(1.12)}
 dialog.desktop-window:not(.active-window){background-image:url('/icons/aero/titlebar-unfocused-middle.png'),linear-gradient(#d0dee9d9,#bacddde0)!important;border-color:#8296a7!important;box-shadow:inset 0 0 0 1px #ffffffa8,0 4px 15px #0004!important}
 dialog.desktop-window::before{display:none!important}
-dialog.desktop-window .desktop-titlebar{display:flex;align-items:center;height:31px!important;min-height:31px!important;gap:0!important;padding:0 0 0 3px!important;margin:0!important;background:transparent!important;overflow:visible}
+dialog.desktop-window .desktop-titlebar{display:flex;align-items:center;height:var(--window-caption-height,28px)!important;min-height:var(--window-caption-height,28px)!important;gap:0!important;padding:0 0 0 3px!important;margin:0!important;background:transparent!important;overflow:visible}
 .desktop-window .desktop-titlebar{--control-fill:linear-gradient(#ffffff9c,#ffffff60 45%,#748d9c40 49%,#adcad66b 95%)}
 .desktop-titlebar>img{width:16px;height:16px;margin-right:5px}.desktop-titlebar>span{flex:1;min-width:0;font:12px 'Segoe UI',Tahoma,sans-serif;text-shadow:0 0 5px #fff,0 1px #fff;color:#101820}
-dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize,.window-close){align-self:flex-start;width:28px!important;min-width:28px!important;height:20px!important;min-height:20px!important;margin:0!important;padding:0!important;border:1px solid #526a7d!important;border-right-width:0!important;border-top:0!important;border-radius:0!important;box-shadow:inset 0 0 0 1px #f7fcff91!important;background-image:var(--glyph),var(--control-fill)!important;background-color:transparent!important;background-position:var(--glyph-position,center),center,center!important;background-size:auto,100% 100%!important;background-repeat:no-repeat!important;font-size:0!important;transition:box-shadow 100ms}
-dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize,.window-close):is(:hover,:active,:focus-visible){background-image:var(--glyph),var(--control-fill)!important;background-color:transparent!important;background-position:var(--glyph-position,center),center,center!important;background-size:auto,100% 100%,100% 100%!important;background-repeat:no-repeat!important}
+dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize,.window-close){align-self:flex-start;width:28px!important;min-width:28px!important;height:var(--window-control-height,19px)!important;min-height:var(--window-control-height,19px)!important;margin:0!important;padding:0!important;border:1px solid #526a7d!important;border-right-width:0!important;border-top:0!important;border-radius:0!important;box-shadow:inset 0 0 0 1px #f7fcff91!important;background-image:var(--glyph),var(--control-fill)!important;background-color:transparent!important;background-position:var(--glyph-position,center),center,center!important;background-size:auto,100% 100%!important;background-repeat:no-repeat!important;font-size:0!important;transition:box-shadow 100ms}
+dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize,.window-close):not(:disabled):is(:hover,:active,:focus-visible){background-image:var(--glyph),var(--control-fill)!important;background-color:transparent!important;background-position:var(--glyph-position,center),center,center!important;background-size:auto,100% 100%,100% 100%!important;background-repeat:no-repeat!important}
 dialog.desktop-window .desktop-titlebar>button.window-minimize{--glyph:url('/icons/aero/caption-minimize.png');border-bottom-left-radius:4px!important;--glyph-position:center 10px}
 dialog.desktop-window .desktop-titlebar>button.window-maximize{--glyph:url('/icons/aero/caption-maximize.png')}
 dialog.desktop-window .desktop-titlebar>button.window-close{--glyph:url('/icons/aero/caption-close.png');--control-fill:linear-gradient(#dfb1a9f2,#cc796af2 48%,#b94c35 50%,#ce7252);width:47px!important;min-width:47px!important;border-right-width:1px!important;border-bottom-right-radius:4px!important;border-color:#744b40!important}
-dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize):hover{--control-fill:radial-gradient(ellipse at bottom,#40e6f0a1,transparent 72%),linear-gradient(#b2daec 48%,#176a9b 50%,#3b9dca);box-shadow:inset 0 0 0 1px #fff9,0 0 7px #36a8e6!important}
+dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize):hover:not(:disabled){--control-fill:radial-gradient(ellipse at bottom,#40e6f0a1,transparent 72%),linear-gradient(#b2daec 48%,#176a9b 50%,#3b9dca);box-shadow:inset 0 0 0 1px #fff9,0 0 7px #36a8e6!important}
 dialog.desktop-window .desktop-titlebar>button.window-close:hover{--control-fill:radial-gradient(ellipse at bottom,#ffdf8b99,transparent 80%),linear-gradient(#eda38e 48%,#b6250c 50%,#e0642e);box-shadow:inset 0 0 0 1px #fff9,0 0 8px #e95935!important}
-dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize):active{--control-fill:linear-gradient(#5d9dbe 48%,#164966 50%,#327799)}
+dialog.desktop-window .desktop-titlebar>button:is(.window-minimize,.window-maximize):active:not(:disabled){--control-fill:linear-gradient(#5d9dbe 48%,#164966 50%,#327799)}
 dialog.desktop-window .desktop-titlebar>button.window-close:active{--control-fill:linear-gradient(#c76d55 48%,#86210c 50%,#b23c17)}
 dialog.desktop-window:not(.active-window) .desktop-titlebar>button:not(:hover){--control-fill:linear-gradient(#e4edf166,#a4bbcf6b);border-color:#8b9da9!important}
 dialog.desktop-window .desktop-titlebar>button::before{display:none!important}
@@ -99,7 +99,7 @@ dialog.desktop-window.desktop-maximized,dialog.desktop-window.desktop-snapped{bo
 
 .wallpaper-own-entry{display:flex;flex-direction:column;align-items:stretch;min-width:0}.wallpaper-own-entry>.wallpaper-tile{flex:1}.wallpaper-remove{border:1px solid transparent;background:transparent;color:#176397;padding:5px 2px;font-size:11px}.wallpaper-remove:hover{border-color:#bdccd9;background:#edf5fc;text-decoration:underline}.wallpaper-remove:disabled{opacity:.5}
 
-.confirm-window{width:440px;max-width:90vw;padding:0 7px 8px;border-radius:5px}.confirm-window::backdrop{background:#10233766}.confirm-window>.desktop-titlebar{display:flex;height:31px;align-items:center}.confirm-window>.desktop-titlebar>span{flex:1}.confirm-window>p{margin:0;padding:24px 18px;background:#fff;line-height:20px;color:#253f56}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px;background:#f0f3f7}.confirm-actions button{min-width:78px;padding:5px 12px;border:1px solid #879aab;border-radius:3px;background:linear-gradient(#fff,#dce6ef)}.confirm-actions button:focus{outline:1px solid #66b3e5;outline-offset:1px}.trash-window{width:740px;height:480px;padding:0 6px 6px;display:flex;flex-direction:column}.trash-content{flex:1;min-height:0;overflow:auto;background:#fff;padding:12px}.trash-entry{display:grid;grid-template-columns:minmax(120px,1fr) 130px auto auto;gap:8px;align-items:center;border-bottom:1px solid #e1e8ef;padding:9px 3px}.trash-entry small{color:#63798b}.trash-entry button{padding:4px 7px}.trash-status{margin:0;background:#f0f4f8;padding:7px;color:#31536d}
+.confirm-window{width:440px;max-width:90vw;padding:0 7px 8px;border-radius:5px}.confirm-window::backdrop{background:#10233766}.confirm-window>.desktop-titlebar{display:flex;height:31px;align-items:center}.confirm-window>.desktop-titlebar>span{flex:1}.confirm-window>p{white-space:pre-line;overflow-wrap:anywhere;max-height:60vh;overflow:auto;margin:0;padding:24px 18px;background:#fff;line-height:20px;color:#253f56}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px;background:#f0f3f7}.confirm-actions button{min-width:78px;padding:5px 12px;border:1px solid #879aab;border-radius:3px;background:linear-gradient(#fff,#dce6ef)}.confirm-actions button:focus{outline:1px solid #66b3e5;outline-offset:1px}.trash-window{width:740px;height:480px;padding:0 6px 6px;display:flex;flex-direction:column}.trash-content{flex:1;min-height:0;overflow:auto;background:#fff;padding:12px}.trash-entry{display:grid;grid-template-columns:minmax(120px,1fr) 130px auto auto;gap:8px;align-items:center;border-bottom:1px solid #e1e8ef;padding:9px 3px}.trash-entry small{color:#63798b}.trash-entry button{padding:4px 7px}.trash-status{margin:0;background:#f0f4f8;padding:7px;color:#31536d}
 
 
 .trash-window:not([open]){display:none}
@@ -116,14 +116,17 @@ body.desktop-shell dialog.desktop-window.confirm-window[open]{left:50%!important
 
 /* Aero Glass: tint and blur belong to the frame; application surfaces stay opaque. */
 :root{--aero-rgb:105 164 201;--aero-dark-rgb:45 71 86;--aero-alpha:.46;--aero-shell-alpha:.575;--aero-blur:14px;--aero-edge:#324f60}
-body.desktop-shell dialog.desktop-window{background-color:transparent!important;background-image:linear-gradient(128deg,#ffffff40 0%,#ffffff09 23%,#ffffff35 24%,#ffffff05 37%,transparent 38%,#ffffff22 67%,transparent 68%),linear-gradient(to bottom,rgb(var(--aero-rgb) / var(--aero-alpha)),rgb(var(--aero-rgb) / var(--aero-alpha)))!important;background-size:100% 100%,100% 100%!important;background-position:0 0,0 0!important;background-repeat:no-repeat!important;border-color:var(--aero-edge)!important;backdrop-filter:blur(var(--aero-blur)) saturate(1.3);-webkit-backdrop-filter:blur(var(--aero-blur)) saturate(1.3);box-shadow:inset 0 0 0 1px #ffffff90,0 5px 18px #0006!important}
-body.desktop-shell dialog.desktop-window:not(.active-window){background-image:linear-gradient(128deg,#ffffff70,#ffffff20 30%,#ffffff40 45%,transparent 46%),linear-gradient(rgb(var(--aero-rgb) / var(--aero-alpha)),rgb(var(--aero-rgb) / var(--aero-alpha)))!important;box-shadow:inset 0 0 0 1px #ffffffa0,0 4px 13px #0004!important}
-body.desktop-shell #desktop-taskbar{background:linear-gradient(to bottom,#ffffff45 0,#ffffff15 45%,#00000018 49%,#ffffff08 100%),rgb(var(--aero-dark-rgb) / var(--aero-shell-alpha))!important;backdrop-filter:blur(var(--aero-blur)) saturate(1.4);-webkit-backdrop-filter:blur(var(--aero-blur)) saturate(1.4);border-top:1px solid #ffffffa0;box-shadow:0 -1px 0 var(--aero-edge),inset 0 1px #ffffff20}
+/* Glass is the sampled backdrop plus tint. Hard diagonal bands obscure it. */
+body.desktop-shell dialog.desktop-window{background-color:rgb(var(--aero-rgb) / var(--aero-alpha))!important;background-image:linear-gradient(180deg,#ffffff24 0,#ffffff0a 28px,#ffffff04 44px,#ffffff08 100%),linear-gradient(118deg,transparent 15%,#ffffff0c 38%,#ffffff06 55%,transparent 70%)!important;background-size:100% 100%,100% 100%!important;background-position:0 0,0 0!important;background-repeat:no-repeat!important;border-color:var(--aero-edge)!important;backdrop-filter:blur(var(--aero-blur)) saturate(1.25);-webkit-backdrop-filter:blur(var(--aero-blur)) saturate(1.25);box-shadow:inset 0 1px 0 #ffffff80,inset 1px 0 0 #ffffff28,inset -1px 0 0 #ffffff24,inset 0 -1px 0 #ffffff30,0 0 1px 1px #00000038,2px 3px 10px 4px #000000a6!important}
+body.desktop-shell dialog.desktop-window:not(.active-window){background-image:linear-gradient(180deg,#ffffff20,#ffffff0a 32px,#ffffff08)!important;box-shadow:inset 0 1px 0 #ffffff60,inset 1px 0 0 #ffffff20,inset -1px 0 0 #ffffff18,inset 0 -1px 0 #ffffff20,0 0 1px 1px #00000018,2px 1px 6px 1px #00000060!important}
+/* Inactive transparent Aero glass loses the active colorization. */
+:root[data-aero-transparency=true] body.desktop-shell dialog.desktop-window:not(.active-window){background-color:rgb(255 255 255/.07)!important;background-image:linear-gradient(180deg,#ffffff06,#ffffff03 32px,#ffffff02)!important;backdrop-filter:blur(var(--aero-blur));-webkit-backdrop-filter:blur(var(--aero-blur))}
+body.desktop-shell #desktop-taskbar{background-color:rgb(var(--aero-dark-rgb) / var(--aero-shell-alpha))!important;background-image:linear-gradient(180deg,#ffffff18,transparent 45%,#00000010)!important;background-size:100% 100%!important;background-position:0 0!important;background-repeat:no-repeat!important;backdrop-filter:blur(var(--aero-blur)) saturate(1.3);-webkit-backdrop-filter:blur(var(--aero-blur)) saturate(1.3);border-top:1px solid #00000070!important;box-shadow:inset 0 1px 0 #ffffff48,0 -1px 4px #00000030!important}
 body.desktop-shell .system-tray{background:transparent;border-left-color:#ffffff35}
 body.desktop-shell .start-menu.win7-start{background:linear-gradient(125deg,#ffffff2b,transparent 38%,#ffffff0b 62%,transparent 63%),linear-gradient(to bottom,rgb(var(--aero-dark-rgb) / var(--aero-shell-alpha)),rgb(var(--aero-dark-rgb) / var(--aero-shell-alpha)))!important;border-color:var(--aero-edge);backdrop-filter:blur(var(--aero-blur)) saturate(1.4);-webkit-backdrop-filter:blur(var(--aero-blur)) saturate(1.4);box-shadow:inset 0 0 0 1px #ffffff70,0 0 13px #0008}
-body.desktop-shell #desktop-taskbar>button:not(.start-orb){background:transparent;border:1px solid transparent;box-shadow:none}
-body.desktop-shell #desktop-taskbar>button:not(.start-orb):hover{background:radial-gradient(ellipse at bottom,#ffffff75,transparent 80%),linear-gradient(#ffffff30,#ffffff10);border-color:#ffffff70;box-shadow:inset 0 0 0 1px #0003}
-body.desktop-shell #desktop-taskbar>button:not(.start-orb).active,body.desktop-shell #desktop-taskbar>.pinned-task.running{background:linear-gradient(#ffffff60,#ffffff20 48%,#ffffff08 50%,#ffffff40);border-color:var(--aero-edge);box-shadow:inset 0 0 0 1px #ffffff80}
+body.desktop-shell #desktop-taskbar>button:not(.start-orb){background:transparent;border:0;box-shadow:none}
+body.desktop-shell #desktop-taskbar>button:not(.start-orb):hover{background:radial-gradient(ellipse at bottom,#ffffff75,transparent 80%),url('/icons/taskbar/InactivePointerOver.png') center/100% 100% no-repeat;border-color:transparent;box-shadow:none}
+body.desktop-shell #desktop-taskbar>button:not(.start-orb).active,body.desktop-shell #desktop-taskbar>.pinned-task.running{background:transparent url('/icons/taskbar/ActiveNormal.png') center/100% 100% no-repeat;border-color:transparent;box-shadow:none}
 body.desktop-shell .start-power-group button{background-color:rgb(var(--aero-rgb) / .15)}
 /* Preserve the unframed app inside the parent window. */
 body.app-instance dialog.desktop-window,body.explorer-instance dialog.desktop-window{backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -166,4 +169,73 @@ dialog :is(.cp-actions,.cm-buttons,.cm-member-buttons,.picker-actions,.confirm-a
 dialog :is(.cp-actions,.cm-buttons,.cm-member-buttons,.picker-actions,.confirm-actions,.display-actions,.personalization-actions,.aero-color-actions,.actions,.tm-actions) button:focus-visible{outline:1px dotted #34546b;outline-offset:-4px}
 dialog :is(.cp-actions,.cm-buttons,.cm-member-buttons,.picker-actions,.confirm-actions,.display-actions,.personalization-actions,.aero-color-actions,.actions,.tm-actions) button:disabled{color:#888;border-color:#b7b7b7;background:linear-gradient(#f6f6f6,#e8e8e8);box-shadow:none}
 
-body.desktop-shell #desktop-taskbar>button.running:not(.start-orb){position:relative;border-color:var(--aero-edge);background:linear-gradient(#ffffff40,#ffffff15);box-shadow:inset 0 0 0 1px #ffffff55}body.desktop-shell #desktop-taskbar>button.running:not(.start-orb)::after{content:"";position:absolute;left:7px;right:7px;bottom:0;height:3px;border-radius:2px;background:#d3f3ff;box-shadow:0 0 4px #59c3ff}body.desktop-shell #desktop-taskbar>button.running.active:not(.start-orb){background:linear-gradient(#ffffff88,#ffffff35);box-shadow:inset 0 0 0 1px #fff9}body.desktop-shell #desktop-taskbar>button.task-attention:not(.start-orb){position:relative;background:linear-gradient(#ffd895bb,#f3a226b0);border:1px solid #ffc65f;animation:desktop-task-attention 1s ease-in-out 6}body.desktop-shell #desktop-taskbar>button>.task-unread{position:absolute;right:1px;top:0;display:grid;place-items:center;min-width:15px;height:15px;padding:0 3px;border:1px solid white;border-radius:8px;background:#b52f24;color:white;font:bold 10px Segoe UI,sans-serif;line-height:15px;box-shadow:0 1px 3px #0006;z-index:1}body.desktop-shell #desktop-taskbar>button>.task-unread[hidden]{display:none}@keyframes desktop-task-attention{0%,100%{filter:brightness(1);box-shadow:inset 0 0 0 1px #fff6}50%{filter:brightness(1.5);box-shadow:0 0 10px #ffce60,inset 0 0 0 1px #fff}}@media(prefers-reduced-motion:reduce){body.desktop-shell #desktop-taskbar>button.task-attention:not(.start-orb){animation:none}}
+body.desktop-shell #desktop-taskbar>button.running:not(.start-orb){position:relative;border-color:transparent;background:transparent url('/icons/taskbar/InactiveNormal.png') center/100% 100% no-repeat;box-shadow:none}body.desktop-shell #desktop-taskbar>button.running:not(.start-orb)::after{content:"";position:absolute;left:7px;right:7px;bottom:0;height:1px;border-radius:0;background:#d3f3ffaa;box-shadow:none}body.desktop-shell #desktop-taskbar>button.running.active:not(.start-orb){background:transparent url('/icons/taskbar/ActiveNormal.png') center/100% 100% no-repeat;box-shadow:none}body.desktop-shell #desktop-taskbar>button.task-attention:not(.start-orb){position:relative;background:linear-gradient(#ffd895bb,#f3a226b0);border:1px solid #ffc65f;animation:desktop-task-attention 1s ease-in-out 6}body.desktop-shell #desktop-taskbar>button>.task-unread{position:absolute;right:1px;top:0;display:grid;place-items:center;min-width:15px;height:15px;padding:0 3px;border:1px solid white;border-radius:8px;background:#b52f24;color:white;font:bold 10px Segoe UI,sans-serif;line-height:15px;box-shadow:0 1px 3px #0006;z-index:1}body.desktop-shell #desktop-taskbar>button>.task-unread[hidden]{display:none}@keyframes desktop-task-attention{0%,100%{filter:brightness(1);box-shadow:inset 0 0 0 1px #fff6}50%{filter:brightness(1.5);box-shadow:0 0 10px #ffce60,inset 0 0 0 1px #fff}}@media(prefers-reduced-motion:reduce){body.desktop-shell #desktop-taskbar>button.task-attention:not(.start-orb){animation:none}}
+
+/* Shared Windows 7 caption typography, independent of the application's body font. */
+dialog.desktop-window > .desktop-titlebar > :is(span,.desktop-caption) {
+ font: 400 12px/1.25 "Segoe UI", Tahoma, sans-serif !important;
+ letter-spacing: normal;
+ color: #000 !important;
+ text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px #ffffffcc !important;
+}
+dialog.desktop-window:not(.active-window) > .desktop-titlebar > :is(span,.desktop-caption) {
+ color: #000 !important;
+ text-shadow: 0 0 4px #ffffffdd, 0 0 8px #ffffffbb !important;
+}
+/* Form-control defaults must not shrink typed CMD text relative to its output. */
+dialog.terminal-window .cmd-screen > form > input {
+ font: inherit !important;
+ letter-spacing: inherit;
+ color: inherit !important;
+}
+.desktop-titlebar > .desktop-caption { flex: 1; min-width: 0; }
+.desktop-titlebar > .desktop-caption :is(span,strong) { font: inherit !important; color: inherit !important; text-shadow: inherit !important; }
+
+/* Native menu metrics and keyboard selection share the pointer highlight. */
+#context button { min-height:22px; padding:2px 16px 2px 30px; line-height:16px; position:relative; }
+#context button:focus-visible:not(:disabled) { outline:0; border-color:#aecff7; background:linear-gradient(#eef7ff,#d7e8fc); border-radius:3px; }
+#context button:disabled { color:#6d6d6d; text-shadow:0 1px #fff; background:transparent; border-color:transparent; }
+#context .desktop-menu-shortcut { float:right; margin-left:24px; }
+
+/* Small-display fallback: fixed tools retain their native control dimensions.
+   Scroll only when the working area is physically smaller than the tool. */
+dialog.desktop-window.viewport-constrained{overflow:auto!important;overscroll-behavior:contain;scrollbar-gutter:stable}
+dialog.desktop-window.viewport-constrained>.desktop-titlebar{position:sticky;top:0;z-index:3;flex-shrink:0}
+
+/* Maximized Aero removes the sizing border; its caption is 23 px. */
+body.desktop-shell dialog.desktop-window.desktop-maximized,dialog.desktop-window.desktop-maximized{--window-caption-height:23px;border-width:0!important;padding:0!important;box-shadow:none!important}
+dialog.desktop-window.desktop-maximized>.desktop-titlebar{padding:0 3px!important}
+/* Taskbar layout adapter states: geometry is provided by taskbar-layout.js. */
+body[data-taskbar-position] :is(#desktop-taskbar,.system-tray){transition:transform 140ms ease-out}
+body[data-taskbar-position=bottom].taskbar-auto-hidden :is(#desktop-taskbar,.system-tray){transform:translateY(calc(100% - 2px))}
+body[data-taskbar-position=top].taskbar-auto-hidden :is(#desktop-taskbar,.system-tray){transform:translateY(calc(-100% + 2px))}
+body[data-taskbar-position=left].taskbar-auto-hidden :is(#desktop-taskbar,.system-tray){transform:translateX(calc(-100% + 2px))}
+body[data-taskbar-position=right].taskbar-auto-hidden :is(#desktop-taskbar,.system-tray){transform:translateX(calc(100% - 2px))}
+body.taskbar-peeking dialog.desktop-window{opacity:0!important;pointer-events:none}
+body[data-taskbar-position=bottom] #desktop-taskbar>#start-button{left:0!important;bottom:-6px!important}
+body[data-taskbar-position=top] #desktop-taskbar>#start-button{left:0!important;top:-6px!important}
+body[data-taskbar-small=true][data-taskbar-position=bottom] #desktop-taskbar>#start-button{bottom:-12px!important}
+body[data-taskbar-small=true][data-taskbar-position=top] #desktop-taskbar>#start-button{top:-12px!important}
+body.desktop-shell #desktop-taskbar>button.task-with-label{width:160px;min-width:60px;max-width:160px;flex:0 1 160px;justify-content:flex-start;gap:8px;padding:3px 8px}
+body.desktop-shell #desktop-taskbar>button.task-with-label>span{display:block;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;text-shadow:0 1px 2px #123;font:12px "Segoe UI",Tahoma,sans-serif}
+body[data-taskbar-small=true] #desktop-taskbar>button:not(.start-orb){height:28px;width:46px;min-width:46px;max-width:46px;padding:2px}
+body[data-taskbar-small=true] #desktop-taskbar>button:not(.start-orb)>img{width:16px;height:16px}
+body[data-taskbar-small=true] #desktop-taskbar>button.task-with-label{width:160px;max-width:160px;flex-basis:160px;padding:2px 8px}
+body[data-taskbar-small=true] .system-tray time{height:28px;padding-top:0;padding-bottom:0;font-size:10px;line-height:12px}
+body[data-taskbar-small=true] .show-desktop{height:29px}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) #desktop-taskbar{padding:59px 0 112px;align-items:center;gap:3px;overflow:hidden}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) #desktop-taskbar>button:not(.start-orb){flex:none;width:calc(100% - 4px);min-width:0;max-width:none;height:40px;padding:3px}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) #desktop-taskbar>button.task-with-label>span{display:none}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) .system-tray{padding:4px 0 0;gap:2px;align-items:center}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) .system-tray time{width:100%;margin:0;height:38px;padding:0 2px;font-size:10px}
+body:is([data-taskbar-position=left],[data-taskbar-position=right]) .show-desktop{width:100%;height:8px;min-height:8px;margin-top:2px}
+body[data-taskbar-small=true]:is([data-taskbar-position=left],[data-taskbar-position=right]) #desktop-taskbar{padding-top:48px;padding-bottom:96px}
+body[data-taskbar-small=true]:is([data-taskbar-position=left],[data-taskbar-position=right]) #desktop-taskbar>button:not(.start-orb){height:28px}
+@media(prefers-reduced-motion:reduce){body[data-taskbar-position] :is(#desktop-taskbar,.system-tray){transition:none}}
+
+body[data-taskbar-small=true]:is([data-taskbar-position=left],[data-taskbar-position=right]) .system-tray time>span:last-child{display:none}
+
+/* Rear window edges stay within the task button's allocated slot. */
+body.desktop-shell #desktop-taskbar>button.running.grouped:not(.start-orb){background-size:calc(100% - 5px) 100%;background-position:left center;overflow:visible}
+body.desktop-shell #desktop-taskbar>button.running.grouped:not(.start-orb)::before{content:"";position:absolute;pointer-events:none;right:0;top:3px;bottom:2px;width:5px;border:1px solid #263c50aa;border-left:0;border-radius:0 3px 3px 0;background:linear-gradient(#ffffff8c,#b0d1ec55 45%,#6797bc66 46%,#d4e9fa88);box-shadow:inset -1px 0 #ffffff8c,inset -3px 0 #4c6c8577}
+body.desktop-shell #desktop-taskbar>button.running.grouped.active:not(.start-orb)::before{background:linear-gradient(#ffffffb0,#b6def399 45%,#7eb7d8aa 46%,#d4effbcc)}

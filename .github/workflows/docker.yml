@@ -14,6 +14,8 @@ jobs:
       RDP_SERVICE_SECRET: ci-only-rdp-service-secret-not-for-production
       MESSENGER_SERVICE_SECRET: ci-only-messenger-service-key-not-for-production
       YOUTUBE_SERVICE_SECRET: ci-only-youtube-service-key-not-for-production
+      BROWSER_SERVICE_SECRET: ci-only-browser-service-secret-not-for-production
+      SPOTIFY_SERVICE_SECRET: ci-only-spotify-service-key-not-for-production
     steps:
       - uses: actions/checkout@v6
       - name: Validate upgrade helper
@@ -28,6 +30,16 @@ jobs:
         run: docker compose -f compose.yaml -f compose.rdp.yaml config --quiet
       - name: Validate optional YouTube Compose
         run: docker compose -f compose.yaml -f compose.youtube.yaml config --quiet
+      - name: Validate optional Spotify Compose
+        run: docker compose -f compose.yaml -f compose.spotify.yaml config --quiet
+      - name: Validate optional Browser Compose
+        run: docker compose -f compose.yaml -f compose.browser.yaml config --quiet
+      - name: Build Browser service and verify Chromium profiles
+        run: |
+          docker compose -f compose.yaml -f compose.browser.yaml build browser
+          docker compose -f compose.yaml -f compose.browser.yaml run --rm --no-deps -e BROWSER_TEST_RECEIVER_MODULE=./browser-downloads.mjs -v "$(pwd)/browser-downloads.mjs:/app/browser-downloads.mjs:ro" -v "$(pwd)/services/browser/smoke.mjs:/app/smoke.mjs:ro" browser node --test /app/smoke.mjs
+      - name: Build Spotify service
+        run: docker compose -f compose.yaml -f compose.spotify.yaml build spotify
       - name: Build RDP service and run its isolation tests
         run: docker compose -f compose.yaml -f compose.rdp.yaml build remote-desktop
       - name: Verify real RDP in an isolated Docker network

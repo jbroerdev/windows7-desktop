@@ -1,0 +1,57 @@
+{
+  "frame": {
+    "height": 322,
+    "width": 227
+  },
+  "rectangles": [
+    {
+      "height": 28,
+      "selector": ".desktop-titlebar",
+      "width": 213,
+      "x": 8,
+      "y": 1
+    },
+    {
+      "height": 20,
+      "selector": ".calc-menu",
+      "width": 211,
+      "x": 8,
+      "y": 29
+    },
+    {
+      "height": 50,
+      "selector": ".calc-display",
+      "width": 190,
+      "x": 19,
+      "y": 60
+    },
+    {
+      "height": 27,
+      "selector": "[data-key=\"MC\"]",
+      "width": 34,
+      "x": 19,
+      "y": 115
+    },
+    {
+      "height": 27,
+      "selector": "[data-key=\"digit:7\"]",
+      "width": 34,
+      "x": 19,
+      "y": 179
+    },
+    {
+      "height": 27,
+      "selector": "[data-key=\"digit:0\"]",
+      "width": 73,
+      "x": 19,
+      "y": 275
+    },
+    {
+      "height": 59,
+      "selector": "[data-key=\"=\"]",
+      "width": 34,
+      "x": 175,
+      "y": 243
+    }
+  ]
+}

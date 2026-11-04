@@ -2,6 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
+import {randomUUID} from 'node:crypto';
+import {isHostId} from './public/host-files.js';
 
 function element(id, rect={left:0,top:0,width:0,height:0}) {
   const classes=new Set(), listeners={};
@@ -26,8 +28,8 @@ async function environment() {
     element('c',{left:120,top:180,width:30,height:30})];
   const content=element('content',{left:100,top:100,width:500,height:500});
   const fields={list,count:element(),context:{hidden:true}};
-  const context=vm.createContext({selection:new Set(),selected:null,selectionAnchor:null,cutIds:[],dragIds:[],
-    dragHoverTimer:null,dragHoverId:null,marquee:null,current:'docs',nodes,state:{authenticated:true},
+  const context=vm.createContext({crypto:{randomUUID},isHostId,selection:new Set(),selected:null,selectionAnchor:null,cutIds:[],dragIds:[],
+    dragHoverTimer:null,dragHoverId:null,marquee:null,current:'docs',nodes,state:{authenticated:true},hostFiles:{enabled:()=>false},
     get:id=>nodes.find(n=>n.id===id),$:id=>fields[id],make:()=>element(),updateStatus(){},toast(){},
     document:{querySelector:selector=>selector==='.content'?content:null,querySelectorAll:()=>[],
       addEventListener(){},body:element()},clearTimeout,setTimeout,
@@ -95,3 +97,27 @@ test('Teilweise abgeschlossene Verschiebung entfernt nur fertige Elemente aus de
 });
 
 test('Umbenennen markiert den Stamm vor der letzten Dateiendung',async()=>{const {renameSelectionEnd}=await import('./public/inline-rename.js');for(const [name,kind,end]of [['Bericht.txt','file',7],['Archiv.tar.gz','file',10],['README','file',6],['.env','file',4],['Ordner.mit.Punkten','folder',18]])assert.equal(renameSelectionEnd({name,kind}),end,name);});
+
+
+test('Host drop targets require an enabled admin adapter and a real writable folder',async()=>{
+ const {context:c,nodes}=await environment();assert.equal(c.dropFolder('host:/tmp'),null);
+ c.hostFiles.enabled=()=>true;assert.equal(c.dropFolder('host:/tmp'),null);nodes.push({id:'host:/tmp',kind:'folder',writable:true});assert.equal(c.dropFolder('host:/tmp'),'host:/tmp');nodes.at(-1).writable=false;assert.equal(c.dropFolder('host:/tmp'),null);
+});
+test('profile selections use the profile endpoint and retain unfinished cut entries',async()=>{
+ const {context:c}=await environment(),seen=[];c.state.profileTransfersEnabled=true;c.cutIds=['a','c'];c.saveClipboard('cut',['a','c']);c.rawAPI=async()=>({});c.confirmAction=async()=>true;c.transferHostEntry=async options=>{assert.equal(options.route,'/api/profile-transfer');return options.execute({id:options.id,parent:options.parent});};c.streamOperation=async(route,data)=>{seen.push(route);if(data.id==='c')throw Error('unavailable');return{ok:true};};
+ assert.equal(await c.moveSelection(['a','c'],'target'),false);assert.deepEqual([...c.readClipboard().ids],['c']);assert.ok(seen.every(route=>route==='/api/profile-transfer'));
+});
+
+test('Explorer sends one recycle action for a profile selection and retains the legacy fallback',async()=>{
+ const {context:c}=await environment(),source=await readFile(new URL('./public/app.js',import.meta.url),'utf8'),calls=[];
+ vm.runInContext(source.slice(source.indexOf('async function recycleProfileSelection('),source.indexOf('async function recycleFiles(')),c);
+ c.state.profileRecycleBatchEnabled=true;c.api=async(route,data)=>{calls.push({route,data});};await c.recycleProfileSelection(['a','c']);
+ assert.equal(calls.length,1);assert.equal(calls[0].route,'/api/recycle-batch');assert.equal(calls[0].data.action,'delete');assert.deepEqual([...calls[0].data.ids],['a','c']);
+ calls.length=0;c.state.profileRecycleBatchEnabled=false;await c.recycleProfileSelection(['a','c']);assert.deepEqual(calls.map(call=>call.route),['/api/delete','/api/delete']);
+});
+
+
+test('one Explorer transfer selection shares its group token across previews and executions',async()=>{
+ const {context:c}=await environment(),tokens=[];c.state.profileTransfersEnabled=true;c.rawAPI=async(route,data)=>{tokens.push(data.batch);return{};};c.confirmAction=async()=>true;c.transferHostEntry=async options=>{await options.request(options.route,{id:options.id});return options.execute({id:options.id,parent:options.parent});};c.streamOperation=async(route,data)=>{tokens.push(data.batch);return{ok:true};};
+ await c.transferSelection(['a','c'],'target','copy');assert.equal(tokens.length,4);assert.match(tokens[0],/^[a-f0-9-]{36}$/);assert.ok(tokens.every(token=>token===tokens[0]));const first=tokens[0];tokens.length=0;await c.transferSelection(['a'],'target','copy');assert.notEqual(tokens[0],first);
+});

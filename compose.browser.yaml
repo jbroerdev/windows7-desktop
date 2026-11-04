@@ -1,0 +1,42 @@
+services:
+  explorer:
+    environment:
+      BROWSER_SERVICE_URL: http://browser:3008
+      BROWSER_SERVICE_SECRET: ${BROWSER_SERVICE_SECRET:?Set BROWSER_SERVICE_SECRET}
+    networks:
+      - default
+      - browser-api
+    depends_on:
+      browser:
+        condition: service_healthy
+  browser:
+    image: windows7-browser:local
+    build: ./services/browser
+    init: true
+    restart: unless-stopped
+    environment:
+      BROWSER_SERVICE_SECRET: ${BROWSER_SERVICE_SECRET:?Set BROWSER_SERVICE_SECRET}
+      BROWSER_DESKTOP_URL: http://explorer:3000
+      NODE_OPTIONS: --max-old-space-size=128
+      BROWSER_MAX_USERS: ${BROWSER_MAX_USERS:-1}
+    volumes:
+      - browser-profiles:/data
+    shm_size: 128mb
+    mem_limit: 512m
+    memswap_limit: 768m
+    cpus: 1.0
+    pids_limit: 512
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=./services/browser/seccomp.json
+    cap_drop:
+      - ALL
+    networks:
+      - browser-api
+      - browser-egress
+networks:
+  browser-api:
+    internal: true
+  browser-egress: {}
+volumes:
+  browser-profiles:

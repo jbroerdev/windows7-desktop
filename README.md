@@ -2,7 +2,9 @@
 
 Ein Desktop im Stil von Windows 7 für den Browser: mit Startmenü, Taskleiste, Explorer, Fotoanzeige, VLC-artigem Medienplayer und Notepad++-artigem Editor. Benutzer können Dateien hochladen, verwalten und öffentlich freigeben. Dieses eigenständige Projekt basiert auf [Explorer Share](https://github.com/jbroerdev/explorer-share); das ursprüngliche Repository bleibt separat bestehen.
 
-**Die Anwendung läuft mit Docker Compose.** Docker baut das Image direkt aus diesem Repository. Node.js und pnpm musst du auf deinem Server nicht zusätzlich installieren.
+**Der Desktop kann direkt als Linux-Systemdienst laufen; die Apps bleiben in Docker.** Einrichtung und Migration vorhandener Installationen stehen in [HOST-INSTALL.md](HOST-INSTALL.md). Der Installer setzt Linux mit systemd, Python 3 und Docker voraus; Ubuntu ist die bisher geprüfte Host-Plattform. Weitere Distributionen und ARM64 sind noch nicht separat abgenommen.
+
+Alternativ läuft auch der Desktop mit Docker Compose. Docker baut das Image direkt aus diesem Repository; dafür musst du Node.js und pnpm nicht zusätzlich auf dem Server installieren. Die folgenden Compose-Anleitungen beschreiben diesen Betriebsmodus.
 
 Schon Explorer Share installiert? Siehe [Umstieg mit Übernahme der Daten](#von-explorer-share-umsteigen).
 

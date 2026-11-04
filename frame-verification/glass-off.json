@@ -1,0 +1,11 @@
+{
+  "taskbar": {
+    "background": "rgb(69, 85, 95)",
+    "blur": "blur(0px) saturate(1.3)"
+  },
+  "transparency": "false",
+  "window": {
+    "background": "rgb(161, 198, 221)",
+    "blur": "blur(0px) saturate(1.25)"
+  }
+}

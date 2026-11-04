@@ -1,0 +1,19 @@
+{
+  "source": "frame-verification\\notification-system-icons-vm.png",
+  "sha256": "08fe4ce09ab57df58fba8f799cf54eba292e21659d06ea4e83464d76bf2e7df4",
+  "kind": "user-provided Windows 7 VM screenshot crop; opaque white background",
+  "crops": {
+    "notification-clock": [
+      132,
+      208,
+      148,
+      224
+    ],
+    "notification-volume": [
+      132,
+      257,
+      148,
+      273
+    ]
+  }
+}

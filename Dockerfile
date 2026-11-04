@@ -1,5 +1,6 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*
 RUN npm install --global pnpm@11.25.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -17,7 +18,7 @@ RUN mkdir -p /Explorer/Users /Explorer/.explorer && chown -R node:node /Explorer
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/public ./public
-COPY --from=build --chown=node:node /app/package.json /app/image-file.mjs /app/server.mjs /app/backend.mjs /app/mail-gateway.mjs /app/messenger-gateway.mjs /app/rdp-gateway.mjs /app/sm64-gateway.mjs /app/youtube-gateway.mjs /app/youtube-profile.mjs /app/computer-management.mjs /app/folder-properties.mjs /app/storage.mjs /app/media-transcode.mjs /app/host-monitor.mjs /app/storage-scan.mjs /app/disk-space.mjs /app/archive-operations.mjs /app/file-operations.mjs /app/office.mjs /app/php-worker.mjs ./
+COPY --from=build --chown=node:node /app/package.json /app/image-file.mjs /app/server.mjs /app/backend.mjs /app/mail-gateway.mjs /app/messenger-gateway.mjs /app/rdp-gateway.mjs /app/sm64-gateway.mjs /app/youtube-gateway.mjs /app/youtube-profile.mjs /app/spotify-gateway.mjs /app/browser-gateway.mjs /app/browser-downloads.mjs /app/computer-management.mjs /app/folder-properties.mjs /app/storage.mjs /app/media-transcode.mjs /app/host-monitor.mjs /app/host-command.mjs /app/host-files.mjs /app/host-transfer.mjs /app/host-tree-route.mjs /app/host-tree-transfer.mjs /app/storage-scan.mjs /app/disk-space.mjs /app/archive-operations.mjs /app/file-operations.mjs /app/file-history.mjs /app/profile-transfer.mjs /app/transfer-receipts.mjs /app/transfer-replay.mjs /app/office.mjs /app/php-worker.mjs ./
 COPY --from=build --chown=node:node /app/scripts/setup-admin.mjs ./scripts/setup-admin.mjs
 COPY --from=build --chown=node:node /app/scripts/docker-smoke.mjs ./scripts/docker-smoke.mjs
 USER node

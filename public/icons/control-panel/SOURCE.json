@@ -1,0 +1,73 @@
+{
+  "source": "Owner-provided German Windows 7 Home Premium SP1 VM screenshot, control-panel.png",
+  "sourceSha256": "9fe698a6cc68e39b9ecb9caa441afed93fa95bc2ab80c40a79494bed3756beec",
+  "method": "Unscaled 48x48 crops from the already captured original category overview; white matte retained for the white category surface. No invented symbols or claim of DLL extraction.",
+  "rectangles": {
+    "system": [
+      310,
+      304,
+      48,
+      48
+    ],
+    "network": [
+      310,
+      389,
+      48,
+      48
+    ],
+    "hardware": [
+      310,
+      462,
+      48,
+      48
+    ],
+    "programs": [
+      310,
+      529,
+      48,
+      48
+    ],
+    "accounts": [
+      631,
+      304,
+      48,
+      48
+    ],
+    "appearance": [
+      631,
+      386,
+      48,
+      48
+    ],
+    "region": [
+      631,
+      462,
+      48,
+      48
+    ],
+    "access": [
+      631,
+      516,
+      48,
+      48
+    ]
+  },
+  "themeFooter": {
+    "source": "frame-verification/vm-personalization-624.png",
+    "sha256": "b03eaa3f2731265df80b397120f94cf809bbb4840c48572b944af14da0af2b66",
+    "rectangles": {
+      "theme-sound": [
+        440,
+        600,
+        48,
+        48
+      ],
+      "theme-screensaver": [
+        530,
+        600,
+        48,
+        48
+      ]
+    }
+  }
+}
