@@ -23,3 +23,5 @@ services/remote-desktop/data/
 *.v64
 services/sm64/build/
 services/sm64/data/
+
+__pycache__/

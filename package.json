@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test youtube.test.mjs sm64-gateway.test.mjs rdp-tunnel.test.mjs rdp-gateway.test.mjs messenger-notifications.test.mjs messenger-gateway.test.mjs mail-render.test.mjs mail-providers.test.mjs mail-gateway.test.mjs sound.test.mjs calculator.test.mjs archive.test.mjs minesweeper.test.mjs nibbles.test.mjs paint.test.mjs image-file.test.mjs desktop-preload.test.mjs session-loading.test.mjs file-icons.test.mjs test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
+    "test": "node --test notification-area-properties.test.mjs notification-area.test.mjs notification-area-state.test.mjs notification-area-api.test.mjs cmd-input.test.mjs taskbar-properties.test.mjs cmd-output.test.mjs taskbar-layout.test.mjs control-panel-ui.test.mjs personalization-ui.test.mjs taskbar-state.test.mjs taskbar-api.test.mjs cmd-compare.test.mjs cmd-transfer.test.mjs transfer-replay.test.mjs transfer-receipts.test.mjs file-history-batch.test.mjs file-history-recycle.test.mjs file-history.test.mjs profile-transfer.test.mjs profile-transfer-recovery.test.mjs host-tree-api.test.mjs host-tree-transfer.test.mjs host-transfer-api.test.mjs host-transfer.test.mjs host-upload.test.mjs host-files.test.mjs host-terminal.test.mjs host-command.test.mjs services/browser/downloads.test.mjs browser-downloads.test.mjs services/browser/test.mjs services/spotify/test.mjs youtube.test.mjs sm64-gateway.test.mjs rdp-tunnel.test.mjs rdp-gateway.test.mjs messenger-notifications.test.mjs messenger-gateway.test.mjs mail-render.test.mjs mail-providers.test.mjs mail-gateway.test.mjs sound.test.mjs calculator.test.mjs calculator-ui.test.mjs archive.test.mjs minesweeper.test.mjs nibbles.test.mjs paint.test.mjs image-file.test.mjs desktop-preload.test.mjs session-loading.test.mjs file-icons.test.mjs test.mjs storage.test.mjs selection.test.mjs windows.test.mjs desktop.test.mjs operations.test.mjs links.test.mjs office.test.mjs office-window.test.mjs cmd.test.mjs host-monitor.test.mjs media-transcode.test.mjs media-playlist.test.mjs computer-management.test.mjs folder-properties.test.mjs workspace.test.mjs appearance.test.mjs security.test.mjs screens.test.mjs",
     "build": "node scripts/build-editor.mjs",
     "test:rdp": "node --test services/remote-desktop/test.mjs rdp-gateway.test.mjs rdp-tunnel.test.mjs",
     "test:mail": "node --test services/live-mail/test.mjs",
-    "test:messenger": "node --test services/live-messenger/test.mjs"
+    "test:messenger": "node --test services/live-messenger/test.mjs",
+    "test:spotify": "node --test services/spotify/test.mjs",
+    "test:browser": "node --test services/browser/test.mjs"
   },
   "engines": {
     "node": ">=24.18"
