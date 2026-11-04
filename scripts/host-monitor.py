@@ -66,6 +66,17 @@ def snapshot(previous):
         docker_available = True
     except (OSError, ValueError, subprocess.SubprocessError):
         pass
+    services = []
+    services_available = False
+    try:
+        for line in run(['systemctl', 'list-units', '--type=service', '--all', '--no-legend', '--plain', '--no-pager']).splitlines()[:1000]:
+            fields = line.split(None, 4)
+            if len(fields) >= 4:
+                name, load, active, sub = fields[:4]
+                services.append(dict(name=name, state=active, status=sub, description=fields[4] if len(fields)>4 else ''))
+        services_available = True
+    except (OSError, ValueError, subprocess.SubprocessError):
+        pass
     return dict(version=1, generatedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(), scope='host',
                 host=dict(hostname=platform.node(), platform=platform.system(), arch=platform.machine(), cpus=os.cpu_count(), cpuPercent=usage[0], cpuPerCore=usage[1:],
                           totalMemory=total, freeMemory=available, usedMemory=max(0, total-available), cachedMemory=memory.get('Cached', 0),
@@ -73,7 +84,7 @@ def snapshot(previous):
                           kernelPaged=memory.get('SReclaimable', 0), kernelNonpaged=memory.get('SUnreclaim', 0),
                           committedMemory=memory.get('Committed_AS', 0), commitLimit=memory.get('CommitLimit', 0),
                           uptime=float(pathlib.Path('/proc/uptime').read_text().split()[0]), threads=sum(p['threads'] for p in processes)),
-                processes=processes, interfaces=interfaces, containers=containers, dockerAvailable=docker_available), current
+                services=services, servicesAvailable=services_available, processes=processes, interfaces=interfaces, containers=containers, dockerAvailable=docker_available), current
 
 
 def main():

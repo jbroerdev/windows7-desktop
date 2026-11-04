@@ -1,0 +1,3 @@
+import http from 'node:http';
+// Only an internal Docker callback bridge; authentication remains in the host desktop.
+http.createServer((req,res)=>{const upstream=http.request({host:'host.docker.internal',port:Number(process.env.DESKTOP_PORT||3000),path:req.url,method:req.method,headers:req.headers},response=>{res.writeHead(response.statusCode,response.headers);response.pipe(res);});upstream.on('error',()=>{if(!res.headersSent)res.writeHead(502);res.end('Desktop host unavailable');});req.on('aborted',()=>upstream.destroy());res.on('close',()=>upstream.destroy());req.pipe(upstream);}).listen(3000,'0.0.0.0');
