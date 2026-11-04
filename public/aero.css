@@ -235,3 +235,7 @@ body[data-taskbar-small=true]:is([data-taskbar-position=left],[data-taskbar-posi
 
 body[data-taskbar-small=true]:is([data-taskbar-position=left],[data-taskbar-position=right]) .system-tray time>span:last-child{display:none}
 
+/* Rear window edges stay within the task button's allocated slot. */
+body.desktop-shell #desktop-taskbar>button.running.grouped:not(.start-orb){background-size:calc(100% - 5px) 100%;background-position:left center;overflow:visible}
+body.desktop-shell #desktop-taskbar>button.running.grouped:not(.start-orb)::before{content:"";position:absolute;pointer-events:none;right:0;top:3px;bottom:2px;width:5px;border:1px solid #263c50aa;border-left:0;border-radius:0 3px 3px 0;background:linear-gradient(#ffffff8c,#b0d1ec55 45%,#6797bc66 46%,#d4e9fa88);box-shadow:inset -1px 0 #ffffff8c,inset -3px 0 #4c6c8577}
+body.desktop-shell #desktop-taskbar>button.running.grouped.active:not(.start-orb)::before{background:linear-gradient(#ffffffb0,#b6def399 45%,#7eb7d8aa 46%,#d4effbcc)}
