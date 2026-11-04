@@ -153,3 +153,18 @@ test('when-full grouping uses actual row sizes and button gaps',()=>{
  assert.equal(groupTaskbarWindows('when-full',5,180,0,{runningSize:40,pinnedSize:40,gap:3}),true);
  assert.equal(groupTaskbarWindows('when-full',5,160,0,{runningSize:28,pinnedSize:28,gap:3}),false);
 });
+
+test('pinned multi-window tasks expose stack count and clear it after closing',async()=>{
+ const {readFile}=await import('node:fs/promises'),source=await readFile('./public/window-manager.js','utf8'),start=source.indexOf('  function syncPins(){'),end=source.indexOf('  function setPins(',start);
+ const classes=new Map(),attributes=new Map(),button={classList:{toggle:(k,v)=>classes.set(k,v)},setAttribute:(k,v)=>attributes.set(k,v)},record=id=>({appId:'editor',el:{id,open:true,hidden:false,classList:{contains:()=>false}},title:{textContent:id}}),a=record('first'),b=record('second'),records=new Map([['first',a],['second',b]]);
+ const sync=new Function('records','pins','pinButtons','grouping',source.slice(start,end)+';return syncPins;')(records,[{id:'editor',name:'Editor'}],new Map([['editor',button]]),()=>true);
+ sync();assert.equal(classes.get('grouped'),true);assert.equal(attributes.get('data-window-count'),'2');assert.equal(attributes.get('aria-label'),'Editor (2 Fenster)');b.el.open=false;sync();assert.equal(classes.get('grouped'),false);assert.equal(attributes.get('data-window-count'),'1');assert.equal(classes.get('running'),true);
+});
+
+test('minimizing foreground activates the top visible window without reviving minimized windows',async()=>{
+ const {readFile}=await import('node:fs/promises'),source=await readFile('./public/window-manager.js','utf8'),start=source.indexOf('  function minimize(id)'),end=source.indexOf('  function maximize(id)',start);let focused=null,active=null,sounds=0;
+ const record=(id,z,hidden=false)=>({el:{id,open:true,hidden,style:{zIndex:z},classList:{contains:()=>id===active,remove(){}},focus:()=>focused=id}}),a=record('a',1),b=record('b',2),c=record('c',3,true),records=new Map([['a',a],['b',b],['c',c]]);
+ const minimize=new Function('records','window','CustomEvent','activate','syncPins',source.slice(start,end)+';return minimize;')(records,{dispatchEvent:()=>sounds++},class{},r=>active=r.el.id,()=>{});
+ active='b';minimize('b');assert.equal(b.el.hidden,true);assert.equal(active,'a');assert.equal(focused,'a');assert.equal(c.el.hidden,true);assert.equal(sounds,1);minimize('b');assert.equal(sounds,1);
+ b.el.hidden=false;active='b';focused=null;minimize('a');assert.equal(active,'b');assert.equal(focused,null);
+});

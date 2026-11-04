@@ -1,6 +1,6 @@
 import test from'node:test';import assert from'node:assert/strict';import{readFile}from'node:fs/promises';
 // Date/time rendering is independent of category navigation and is tested elsewhere.
-const source=(await readFile(new URL('./public/control-panel.js',import.meta.url),'utf8')).replace("import{renderDateTimePage}from'/date-time.js';",'const renderDateTimePage=()=>()=>{};').replace("from'/notification-area-properties.js'",'from'+JSON.stringify(new URL('./public/notification-area-properties.js',import.meta.url).href)).replace("from'/taskbar-properties.js'",'from'+JSON.stringify(new URL('./public/taskbar-properties.js',import.meta.url).href));
+const source=(await readFile(new URL('./public/control-panel.js',import.meta.url),'utf8')).replace(/import\s*\{\s*renderDateTimePage\s*\}\s*from\s*['"]\/date-time\.js['"];?/,'const renderDateTimePage=()=>()=>{};').replace(/from\s*['"]\/(notification-area-properties|taskbar-properties)\.js['"]/g,(_,name)=>'from '+JSON.stringify(new URL('./public/'+name+'.js',import.meta.url).href));
 const{createControlPanel}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 function fixture(role='admin',authenticated=true){
  const prior={document:globalThis.document,innerWidth:globalThis.innerWidth,innerHeight:globalThis.innerHeight},elements=[];

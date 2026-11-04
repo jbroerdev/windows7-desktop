@@ -612,3 +612,31 @@ Native aktive/inaktive Schatten, neutral inaktives transparentes Glas, schwarze 
 ### RDP live22:31
 
 Kompaktentwurf1c730c3 nach unabhängiger Freeze-Funktionsprüfung separat veröffentlicht; genauJS/CSS, unveränderteHashes, Backup/var/tmp/rdp-native-before-1c730c3.tar.gz, keinRestart. Frischer eigenerLivetest420×260/Computer210×22/Form113×113, kompletter Servicehinweis, leereHistory+Escape, Optionen/Erweitert/Collapse erfolgreich. Rohbild.asset-cache/rdp-native-live-20261104.png. Neue unabhängigeLiveprüfung durchQM angefordert; keine vollständige mstsc-/Pixelidentität behauptet. GitHubveröffentlichung bleibt wegen deutlich ältererMain-Basis separat offen.
+
+### Lokale Nacharbeit22:57
+
+Snipping-Tool-Menüfehler gezielt korrigiert: vier Aufnahmearten im450×155-Fenster sichtbar und per Maus/Tastatur erreichbar, Randpositionierung und Fokus geprüft; zehn gezielte Tests bestanden. Commit7e09243, unabhängiger Abschlussbericht noch ausstehend, noch nicht live. Taskleisten-Gruppenpaket01f557f separat vom Sprunglisten-UI vorbereitet und mit drei Rechnerinstanzen geprüft; native echte Vorschaubilder/Peek und40px-Geometrie bleiben offen. Quelle/Hashes/Eigenbelege stehen in AUSTAUSCH; keine Gesamtfertigmeldung.
+
+### Snipping-Menü live23:01
+
+Popup-Clipping und fehlende Menü-Tastaturbedienung ausQM-SNIP001 separat veröffentlicht (7e09243, nurJS+Fokus-CSS), ohne Neustart. Frischer Produktivtest bestätigt vier sichtbare/hit-testbare Aufnahmearten im450×155-Fenster, erster Menüfokus, End und Tab zurück zu Optionen. Backup /var/tmp/snipping-popup-before-7e09243.tar.gz. Keine Aufnahme angefordert und keine Bild-/Lockzustandslogik geändert. Raw.asset-cache/snipping-popup-live.png; unabhängiger Live-Nachtest noch offen. Github-Branch muss dieses Zusatzpaket nach dem eingefrorenen Basisupload separat erhalten.
+
+### Taskleistengruppen live23:12
+
+Paketb51ca66 nach eigenem und unabhängigem Freeze-Nachtest separat veröffentlicht: sichtbare Stapelkante und korrekte Zählung für mehrere angeheftete/nicht angeheftete Instanzen, Übergabe beim Minimieren und einzelne Schließung. Frischer Produktivtest mit drei Rechnerfenstern sowie aktivem Snipping Tool bestätigt3→2 und weiter inaktive laufende Gruppe. Keine Pins im Produktivprofil verändert. Backup /var/tmp/taskbar-group-before-b51ca66.tar.gz, kein Neustart. Raw.asset-cache/taskbar-groups-live.png. Echte Miniaturvorschauen/Peek,40px-Geometrie und übrige Taskleisten-Nativeabnahme bleiben offen.
+
+### Mailstatus live23:24
+
+Geprüfter Stand68011324877A45608C21EC6A57724F8E8304C9E35AF73C387B8AD4B6BEB587CA separat als einzige Datei veröffentlicht. Quelle/Laufzeit/öffentliche Antwort stimmen überein, Dienst aktiv, kein Neustart. Backup /var/tmp/mail-status-before-680113.tar.gz. Eigener frischer Live-Test: Online → Kalender – Lokal → Online sowie Offline → Kalender – Lokal → Offline; anschließend wieder online gestellt und eigenes Testfenster geschlossen. Keine Nachricht geöffnet/versandt oder Kalenderdaten geändert. Screenshot .asset-cache/mail-status-live-680113.png. Verzögerte Sync-Race zusätzlich unabhängig im isolierten Fixture geprüft; keine künstliche Verzögerung im Produktivsystem. GitHub-Zusatzpaket noch ausstehend.
+
+### Original-Mailicons live23:30
+
+Nur die zwei Konten-Ribbon-Zuordnungen und zwei unveränderte Original-PNGs veröffentlicht: live-mail.js B650305E13FB57914A417568BB7AAF0D9F116F7A7E2F77412D2EA8C07981656F; account-add-original.png E40CB06B3A81348DAF8F21401DBF44FB8673D9C3E12EDF304217AEF7401CF489; account-properties-original.png 268740AB13A61B6916F3B81DCA05A0BC4BA129C49BE27698F6B77BFF86E78BDE. Unabhängige Originalbyte-/Ribbonprüfung bestanden. Eigener frischer Produktivtab bestätigt alle drei geladenen32pxRibbonbilder, Konten-Symbol unverändert; Screenshot .asset-cache/mail-original-icons-live.png enthält nur Ribbon, keine Postfachinhalte. Testfenster geschlossen. Backup /var/tmp/mail-icons-before-b650305e.tar.gz, kein Restart. Bestehender unschöner Zeilenumbruch von Eigenschaften und28pxDarstellungsgröße bleiben gesonderte Originaltreue-Restpunkte.
+
+### System-/Netzwerkseiten live23:34
+
+Abgenommener reproduzierbarer Zweidateienbuild separat veröffentlicht: control-panel.js d440be865f2c0be5a684f60cac2b025f75ac4872c0bdefd5cb37ae78f5691a3b; CSS2479733964836765fe7e49c42eedc616b518f82abbf3228a5b5ca7dc24d83f34. Quellen/Build unter scripts/cpl-release, Originalassets als unveränderte DatenURLs. Quelle/Laufzeit gleich, Backup /var/tmp/cpl-before-d440be86.tar.gz, Dienst aktiv, kein Neustart/keine neue Backendroute. Unabhängige isolierte Kontext-/Request-/Close-Races bestanden; eigener frischer Produktivdesktop bestätigt Kategorien, echte Hostgrunddaten, Originalgrafik157px, Padding0/kein horizontaler Überhang,19Hostschnittstellenzeilen, Home/Suche/Schließen. Screenshots .asset-cache/cpl-system-live-d440be86.png und cpl-network-live-d440be86.png. Unabhängiger Produktivnachtest angefragt. Nicht verfügbare Betriebssystemcontroller bleiben deaktiviert; keine vollständige Systemsteuerungs- oder native Pixelabnahme. Release-Kandidat301Tests/300pass/1Plattformskip/0fail.
+
+### Unabhängiger CPL-Produktivnachtest
+
+QM-CPL-002 bestätigt öffentliche HTTP200/Hashgleichheit d440be…/247973…, integrierte Systemseite mit Originalkugel, Home-Rückkehr, Netzwerksuche/Ansicht und explizit unbekannte Windows-Netzwerke/deaktivierte fehlende Aufgaben. KeineHost-/Profiländerungen, eigeneFenster/Tabgeschlossen. Nachweis frame-verification/qm-cpl-production-retest-2026-11-04.json. Enger Liveumfang bestanden; gesamte Windows-7-ToDo weiterhin offen.
