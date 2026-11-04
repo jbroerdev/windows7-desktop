@@ -3,3 +3,49 @@
 .calculator-window .calc-program-options label,.calculator-window .calc-angles label{margin:0!important;padding:0!important;line-height:16px;white-space:nowrap}.calculator-window .calc-program-options input,.calculator-window .calc-angles input{width:13px!important;min-width:13px!important;height:13px!important;min-height:0!important;flex:0 0 13px!important;padding:0!important;margin:0 3px 0 0!important}.calculator-window .calc-program-options fieldset{box-sizing:border-box;height:91px;gap:4px;grid-template-rows:repeat(4,16px)}.calc-bit-position{grid-column:span 2;color:#6b7c8b;font-size:10px;line-height:8px}.calculator-window .calc-extra label{margin:8px 0 4px}.calculator-window .calc-extra input{min-width:0}.calculator-window .calc-angles{gap:8px}
 
 .calculator-window .calc-date-fields label{margin:0 0 2px}.calculator-window .calc-date-result label{margin:5px 0 3px}.calculator-window .calc-date-result output{padding:2px 4px}.calculator-window .calc-extra:has(.calc-date-fields)>select{margin-bottom:6px}.calculator-window .calc-date-fields input{margin:3px 0 0}.calculator-window .calc-extra .calc-calculate{margin-top:7px}
+
+/* Standard geometry measured against German Windows 7 SP1 at 100% scaling.
+   Keep this local: other applications own their frame metrics. */
+dialog.calculator-window.desktop-window{box-sizing:border-box;padding:0 7px 7px!important;overflow:visible}
+dialog.calculator-window.desktop-window .desktop-titlebar{height:28px!important;min-height:28px!important;padding:0!important;margin:0 -2px 0 0!important}
+dialog.calculator-window.desktop-window .desktop-titlebar>button{height:19px!important;min-height:19px!important}
+dialog.calculator-window.desktop-window .desktop-titlebar>.window-maximize:disabled{opacity:.5;cursor:default}
+dialog.calculator-window.desktop-window .calc-body{height:calc(100% - 48px);padding:11px 10px 12px 11px;flex-shrink:0}
+.calculator-window .calc-menu>button[aria-expanded=true]{background:#d9ebfc;box-shadow:inset 0 0 0 1px #83b2df;border-radius:2px}
+.calculator-window .calc-popup{min-width:272px;padding:2px;box-sizing:border-box;background:linear-gradient(to right,#f0f0f0 28px,#ddd 28px,#fff 29px,#f0f0f0 30px)}
+.calculator-window .calc-popup button{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:0;height:22px;padding:0 11px 0 0;white-space:nowrap}
+.calculator-window .calc-menu-check{text-align:center;color:#111;font-size:16px}
+.calculator-window .calc-menu-shortcut{padding-left:24px}
+.calculator-window .calc-popup button:focus-visible{outline:none;border-color:#9ac9ee;background:#dcecf8}
+.calculator-window .calc-popup button:disabled{color:#888;background:none;border-color:transparent}
+.calculator-window .calc-popup hr{margin:3px 0 3px 29px}
+
+/* Scientific/programmer share the 422 px native frame and 385 px client grid. */
+.calculator-window .calc-science{width:190px}
+.calculator-window .calc-angles{height:27px;margin:0 0 5px;gap:0;justify-content:space-between;border:1px solid #94a7bd;border-radius:2px;box-sizing:border-box;padding:0 7px;font:11px "Segoe UI",sans-serif}
+.calculator-window .calc-angles label{gap:0}
+.calculator-window[data-mode=scientific] .calc-display{margin-bottom:5px}
+.calculator-window .calc-science-grid{grid-template-columns:repeat(5,34px)}
+.calculator-window .calc-program-options{width:73px;gap:5px}
+.calculator-window .calc-program-options fieldset{padding:6px;gap:4px}
+.calculator-window .calc-program-block{width:112px}
+.calculator-window .calc-program-keys{width:73px;grid-template-rows:repeat(6,27px)}
+.calculator-window .calc-hex{width:34px;grid-template-rows:repeat(6,27px)}
+.calculator-window .calc-bits{box-sizing:border-box;height:60px;padding:3px 6px;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(4,12px);gap:1px 7px;margin-bottom:6px;font:12px Consolas,"Lucida Console",monospace}
+.calculator-window .calc-bit-position{font-size:11px;line-height:12px}
+.calculator-window .calc-bit-start{grid-column:span 4}
+.calculator-window .calc-bit-middle{grid-column:span 3}
+.calculator-window .calc-bit-end{grid-column:span 1;text-align:right}
+.calculator-window .calc-bit-disabled{color:#8196ad}
+
+/* Statistics reference: German Windows 7 SP1, 227 x 422 at 100%. */
+.calculator-window[data-mode=statistics] .calc-display{height:150px}
+.calculator-window[data-mode=statistics] .calc-expression{visibility:hidden}
+.calculator-window[data-mode=statistics] .calc-display>output{position:absolute;bottom:5px;left:5px;right:5px}
+.calc-stat-data{position:absolute;left:4px;right:4px;top:4px;height:111px;color:#182c49;font:11px "Segoe UI",sans-serif}
+.calc-stat-arrows{height:20px;display:flex;justify-content:flex-end;gap:3px;border-bottom:1px solid #fff}
+.calculator-window .calc-stat-arrows button{padding:0;width:17px;height:16px;min-height:0;line-height:12px;font-size:10px;color:#516b86;border:1px solid #c5d4e3;border-radius:2px;background:linear-gradient(#fff,#e1eaf5)}
+.calc-stat-list{height:72px;overflow-y:auto;border-bottom:1px solid #ccd8e4;outline:none}
+.calculator-window .calc-stat-list button{display:block;box-sizing:border-box;width:100%;height:18px;min-height:0;padding:0 3px;text-align:right;font:11px "Segoe UI",sans-serif;border:1px solid transparent;background:transparent;color:#182c49}
+.calculator-window .calc-stat-list button[aria-selected=true]{background:#d5e7f7;border-color:#9fc5e5}
+.calc-stat-count{display:block;padding-top:3px;font-size:10px}

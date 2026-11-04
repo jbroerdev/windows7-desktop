@@ -2,8 +2,32 @@
 
 .rdp-actions[hidden]{display:none!important}.rdp-credentials .classic-dialog-body{min-width:320px;padding:18px}.rdp-credentials input{margin:8px 0 18px}.rdp-credentials button{margin-right:8px}
 
+
 .rdp-window [hidden]{display:none!important}.rdp-banner{height:70px;gap:12px;padding:0 18px;background:linear-gradient(#dce8f6,#fff 82%,#f4f4f4)}.rdp-banner-title{color:#174574;line-height:21px}.rdp-banner-title span{display:block;font-size:20px}.rdp-banner-title strong{display:block;font-size:23px;font-weight:700;line-height:23px}.rdp-window:not(.rdp-expanded) .rdp-form{padding:14px 12px 0;overflow:hidden}.rdp-window:not(.rdp-expanded) .rdp-row{grid-template-columns:70px 1fr;gap:0;margin-bottom:8px}.rdp-window:not(.rdp-expanded) input[aria-label="Benutzername"]{background:transparent;border:1px solid transparent;padding-left:0;height:21px}.rdp-window:not(.rdp-expanded) input[aria-label="Benutzername"]:focus{background:white;border-color:#7f9db9;padding-left:5px}.rdp-window:not(.rdp-expanded) .rdp-note{margin:5px 0;font-size:11px;line-height:15px}.rdp-actions{border-top:0;padding:8px 10px}.rdp-option-arrow{display:inline-flex;align-items:center;justify-content:center;border:1px solid #9aaec3;border-radius:50%;height:15px;width:15px;background:linear-gradient(#fff,#dce6f0);margin-right:3px;font-size:13px}.rdp-status:empty{display:none}.rdp-banner-title strong{max-width:none}
 
 .rdp-window .rdp-row{margin:0 0 12px}.rdp-window input,.rdp-window select{margin:0}.rdp-window:not(.rdp-expanded) .rdp-row{grid-template-columns:90px 1fr;margin:0 0 8px}
 
 .rdp-window .rdp-actions .rdp-expand{display:inline-flex;align-items:center;gap:5px;line-height:20px;color:#174d81}.rdp-option-arrow{position:relative;display:inline-block;box-sizing:border-box;flex:0 0 16px;width:16px;height:16px;margin:0;border:1px solid #a2b2c5;border-radius:50%;background:linear-gradient(#fff,#e5edf7);box-shadow:inset 0 1px #fff;font-size:0}.rdp-option-arrow::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='m4 4.5 3 3 3-3m-6 3 3 3 3-3' fill='none' stroke='%235c7293' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px 14px no-repeat}.rdp-expanded .rdp-option-arrow::before{transform:rotate(180deg)}.rdp-window .rdp-expand:hover .rdp-option-arrow{border-color:#6c94bd;background:linear-gradient(#fff,#d5e9fa)}
+.rdp-window .rdp-form{min-height:0}.rdp-window:not(.rdp-expanded) .rdp-form{overflow:auto}.rdp-window .rdp-status{flex:none;line-height:15px}
+.rdp-window .rdp-banner-title strong{font-size:21px;line-height:26px;font-weight:700;white-space:nowrap;color:#003399}
+.rdp-window:not(.rdp-expanded):not(.rdp-session){height:260px}
+.rdp-window:not(.rdp-expanded) .rdp-form{padding:14px 10px 0}
+.rdp-window:not(.rdp-expanded) .rdp-row{grid-template-columns:82px minmax(0,210px);gap:0;margin:0 0 4px}
+.rdp-window:not(.rdp-expanded) input[aria-label="Computer"]{height:22px;font-size:11px;padding-right:18px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='4'%3E%3Cpath d='M0 0h8L4 4z' fill='%23000'/%3E%3C/svg%3E");background-position:right 5px center;background-repeat:no-repeat}
+.rdp-window:not(.rdp-expanded) input[aria-label="Computer"]::placeholder{color:#003399;opacity:1}
+.rdp-window:not(.rdp-expanded) input[aria-label="Computer"]::-webkit-calendar-picker-indicator{opacity:0}
+.rdp-window:not(.rdp-expanded) .rdp-user-status{line-height:18px;margin-bottom:0}
+.rdp-window:not(.rdp-expanded) .rdp-setup-note{margin:0;max-width:300px;line-height:14px}
+.rdp-window .rdp-setup-note.error{color:#a20000}
+.rdp-window:not(.rdp-expanded) .rdp-actions{padding:8px 9px}
+.rdp-window:not(.rdp-expanded) .rdp-actions button{height:22px}
+.rdp-window:not(.rdp-expanded) .rdp-actions button:not(.rdp-expand){min-width:73px;height:22px}
+.rdp-computer-combo{position:relative;min-width:0}
+.rdp-window .rdp-computer-combo input[aria-label="Computer"]{display:block;margin:0;padding-right:21px;background-image:none}
+.rdp-window .rdp-computer-toggle{position:absolute;right:1px;top:1px;bottom:1px;width:18px;padding:0;border:0;border-radius:0;background:transparent}
+.rdp-computer-toggle::after{content:'';display:block;margin:auto;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #111}
+.rdp-window .rdp-computer-toggle:hover{background:linear-gradient(#f4fbff,#cce4f7);outline:1px solid #7eb4ea;outline-offset:-1px}
+.rdp-computer-list{position:absolute;z-index:20;left:0;right:0;top:100%;max-height:90px;overflow:auto;border:1px solid #7f9db9;background:#fff;box-shadow:1px 2px 3px #0004;font:11px 'Segoe UI',Tahoma,sans-serif;color:#111}
+.rdp-computer-option,.rdp-computer-empty{padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rdp-computer-option[aria-selected=true],.rdp-computer-option:hover{background:#3399ff;color:#fff}
+.rdp-computer-empty{color:#666}
