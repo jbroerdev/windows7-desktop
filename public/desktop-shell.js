@@ -84,6 +84,22 @@ function renderMenu(){
   const defaults=el('button','Standardprogramme');defaults.onclick=()=>{allPrograms=true;accessoriesOpen=false;programFolder=null;renderMenu();};const support=el('button','Hilfe und Support');support.onclick=menuAction(help);links.append(defaults,support);
   const personal=state.authenticated&&!state.shareEditing;power.textContent=state.authenticated||state.shareEditing?'Abmelden':'Login';power.onclick=menuAction(state.authenticated||state.shareEditing?logout:()=>location.assign('/login'));powerMore.hidden=!personal;powerGroup.classList.toggle('split',personal);powerMore.setAttribute('aria-expanded','false');powerMore.onclick=e=>{e.stopPropagation();const context=document.getElementById('context');if(!context.hidden&&powerMore.getAttribute('aria-expanded')==='true'){context.hidden=true;powerMore.setAttribute('aria-expanded','false');return;}showContext(e,[['Sperren',()=>{powerMore.setAttribute('aria-expanded','false');menuAction(lock)();}]]);const anchor=powerMore.getBoundingClientRect();context.style.left=Math.max(6,Math.min(anchor.left,innerWidth-context.offsetWidth-6))+'px';context.style.top=Math.max(6,anchor.top-context.offsetHeight-2)+'px';powerMore.setAttribute('aria-expanded','true');};
 }
+// Search keyboard uses the existing result buttons and their guarded actions.
+menu.addEventListener('keydown',event=>{
+ if(menu.hidden||!search.value.trim()||event.isComposing||event.altKey||event.ctrlKey||event.metaKey)return;
+ const buttons=[...apps.querySelectorAll('.start-app:not(:disabled)')].filter(button=>button.getClientRects().length);
+ if(!buttons.length)return;
+ if(event.target===search){
+  if(event.shiftKey||!['ArrowDown','ArrowUp','Enter','Tab'].includes(event.key))return;
+  event.preventDefault();if(event.key==='Enter')buttons[0].click();else buttons[event.key==='ArrowUp'?buttons.length-1:0].focus({preventScroll:false});
+ }else{
+  const current=event.target.closest('.start-app'),index=buttons.indexOf(current);
+  if(index<0)return;
+  if(event.key==='Tab'){if(event.shiftKey&&index===0){event.preventDefault();search.focus();}else if(!event.shiftKey&&index===buttons.length-1){event.preventDefault();user.focus();}return;}
+  if(event.shiftKey||!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+  event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;buttons[next].focus({preventScroll:false});
+ }
+});
 all.onclick=()=>{if(accessoriesOpen)accessoriesOpen=false;else if(programFolder){const parent=getNodes().find(n=>n.id===programFolder)?.parent;programFolder=getNodes().find(n=>n.id===parent&&!n.system&&!n.programRoot)?.id||null;}else allPrograms=!allPrograms;renderMenu();};search.oninput=renderMenu;
 const preferences=()=>getState().readonly?getState().publicDesktop||{}:getState().desktop||{};
 async function saveDesktop(patch){if(!editable())return;const state=getState(),scope=state.shareEditing?'publicDesktop':'desktop';try{const r=await fetch('/api/desktop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...patch,...(state.shareEditing?{scope:'share'}:{})})});const result=await r.json();if(!r.ok)throw Error(result.error);if(getState().userId!==state.userId)return;getState()[scope]=result.desktop;signature='';refresh();await onDesktopChange?.();}catch(error){document.getElementById('toast').textContent=error.message;}}
