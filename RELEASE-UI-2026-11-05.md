@@ -13,4 +13,6 @@ Geprüfte und öffentlich per HTTP200 bytegleich gelieferte Versionen:
 
 Quell- und Laufzeitdateien wurden mit SHA256 kontrolliert, vorher je Paket gesichert. Sicherungen liegen in /var/tmp/height40-e259-20261105 und /var/tmp/himmel-0cad-20261105. Der Desktopdienst blieb aktiv; kein Desktop- oder Appcontainerneustart war erforderlich. Die CP-CSS-Datei blieb für dieses Paket unverändert. Die nachfolgenden Kategorien sind ein separates Paket.
 
-Offene Funktionsbefunde werden ausdrücklich nicht durch diese Geometrieabnahme geschlossen: Startsuche per Tastatur, Editor-internes Dateiöffnen im Dokumentverlauf sowie native Miniaturen/Peek. Vollständige Windows-7-Pixelgleichheit wird nicht behauptet.
+Die unabhängige tatsächliche Websiteprüfung bestätigte anschließend alle vier Taskleistenkanten, CP-Maximieren und Wiederherstellen. Sämtliche geänderten Einstellungen wurden auf die ursprüngliche untere Position zurückgestellt. Danach wurde separat das Kategorienpaket mit CP-JS163735454633af775441abbd9c918e378be99095f84c0541efa16b8c6965c2c4 und CSSda7e8c9a7a39ec04c3ee28b85f5d73f9fc44c1756a2b3a68e086cfe5648e6389 aktiviert; Quelle, Runtime und HTTP stimmen überein. Sicherung: /var/tmp/categories-163735-20261105. Der versionierte Build erzeugt beide Ausgaben bytegenau aus seinen unveränderlichen Quellen. Der separate QM-Consumercheck auf der Website folgt.
+
+Startsuche und Editor-Dateiöffnen wurden anschließend separat korrigiert; siehe RELEASE-FUNCTIONS-2026-11-05.md. Native Miniaturen/Peek und vollständige Windows-7-Pixelgleichheit bleiben offen.
