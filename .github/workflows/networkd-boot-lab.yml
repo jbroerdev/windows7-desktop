@@ -1,0 +1,45 @@
+name: Isolated networkd boot availability
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/networkd-boot-availability-20261105]
+    paths:
+      - .github/workflows/networkd-boot-lab.yml
+      - scripts/networkd-boot-lab-v2.zip
+permissions:
+  contents: read
+concurrency:
+  group: networkd-boot-availability-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  boot-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Verify frozen boot-only package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          archive="$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v2.zip"
+          printf '%s  %s\n' c84c847bed5564e36af42faee7cbe1541fa1d628ae9f347be737d23fb64b3dbb "$archive" | sha256sum -c -
+          lab=$(mktemp -d "$RUNNER_TEMP/networkd-boot.XXXXXXXX")
+          printf 'NETWORKD_BOOT_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
+          unzip -q "$archive" -d "$lab"
+          printf '%s\n' 'Boot availability only. No provider apply, rollback, commit or production access.'
+      - name: Run isolated QEMU TCG guest availability
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$NETWORKD_BOOT_LAB"
+          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v2.zip"
+      - name: Preserve full boot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: networkd-boot-availability-${{ github.run_id }}
+          path: ${{ runner.temp }}/networkd-boot.*/evidence.*
+          if-no-files-found: error
+          retention-days: 14
