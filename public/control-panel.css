@@ -288,6 +288,96 @@ dialog.taskbar-properties-window>.desktop-titlebar{margin-right:-2px!important;p
 .cp-network-page .cp-network-sidebar{width:200px;flex:none;padding:16px 4px 16px 28px;background:linear-gradient(110deg,#eef5fc,#fff);border-right:1px solid #e3eaf2;margin-right:22px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
 .cp-network-page .cp-network-sidebar .cp-network-related{margin-top:auto;padding-top:45px;display:flex;flex-direction:column;gap:7px}
 .cp-network-page .cp-network-related p{color:#555;margin:0 0 2px}
+.cp-network-adapters,.cp-network-adapter-status{box-sizing:border-box;min-height:100%;padding:10px 18px 18px;color:#1b1b1b;background:#fff;font:12px/1.4 "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapters *,.cp-network-adapter-status *{box-sizing:border-box}
+.cp-network-adapter-toolbar{display:flex;align-items:center;gap:6px;margin:0 0 18px;padding:0 0 10px;border-bottom:1px solid #e4e4e4}
+.cp-network-adapter-toolbar button,.cp-network-status-tab,.cp-network-status-actions button{min-height:24px;padding:2px 10px;border:1px solid #b8c4d0;border-radius:2px;background:linear-gradient(#fff,#eaf1f8);color:#1b1b1b;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-toolbar button:enabled,.cp-network-status-tab{cursor:pointer}
+.cp-network-adapter-toolbar button:disabled{color:#808080;background:#f5f5f5}
+.cp-network-adapters h2,.cp-network-adapter-status h2{margin:0 0 10px;color:#003399;font:16px/1.35 "Segoe UI",Tahoma,sans-serif}
+.cp-network-source,.cp-network-limit,.cp-network-unavailable{color:#68737e;font-size:11px}
+.cp-network-adapter-list{display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;min-height:84px;padding:12px;border:1px solid #d5dce3;background:linear-gradient(135deg,#f8fbfe,#fff 58%)}
+.cp-network-adapter-tile{display:flex;align-items:center;gap:9px;width:250px;min-height:52px;padding:6px 8px;border:1px solid transparent;background:transparent;text-align:left;color:#1b1b1b;font:12px/1.3 "Segoe UI",Tahoma,sans-serif;cursor:default}
+.cp-network-adapter-tile:hover,.cp-network-adapter-tile.selected,.cp-network-adapter-tile[aria-selected="true"]{border-color:#9bb7d2;background:linear-gradient(#fafdff,#eaf3fb)}
+.cp-network-adapter-tile:focus-visible,.cp-network-adapter-toolbar button:focus-visible,.cp-network-status-tab:focus-visible{outline:1px dotted #333;outline-offset:1px}
+.cp-network-adapter-icon{position:relative;flex:none;width:32px;height:32px;border:1px solid #97a7b7;border-radius:3px;background:linear-gradient(135deg,#e9f2fa,#b9cbdc 48%,#f8fbfd);box-shadow:inset 0 1px #fff}
+.cp-network-adapter-icon:after{position:absolute;right:-3px;bottom:-2px;width:10px;height:10px;border:1px solid #fff;border-radius:50%;background:#8e9ba7;content:""}
+.cp-network-adapter-tile[data-state="up"] .cp-network-adapter-icon:after{background:#4d9d55}
+.cp-network-adapter-text{display:flex;min-width:0;flex-direction:column;gap:1px}
+.cp-network-adapter-text>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-network-adapter-text>strong{font-weight:600}
+.cp-network-adapters>.cp-network-limit{margin:12px 0 0}
+.cp-network-status-tabs{display:flex;gap:2px;margin:14px 0 0;border-bottom:1px solid #9daec0}
+.cp-network-status-tab{position:relative;margin-bottom:-1px;border-radius:3px 3px 0 0;background:linear-gradient(#f8fbfe,#e4edf6)}
+.cp-network-status-tab[aria-selected="true"]{z-index:1;border-bottom-color:#fff;background:#fff}
+.cp-network-status-panel{min-height:210px;padding:14px 12px;border:1px solid #9daec0;border-top:0;background:#fff}
+.cp-network-status-values{display:grid;grid-template-columns:minmax(138px,auto) minmax(0,1fr);gap:8px 12px;max-width:560px;margin:0}
+.cp-network-status-values dt,.cp-network-status-values dd{min-width:0;margin:0;overflow-wrap:anywhere;white-space:pre-line}
+.cp-network-status-values dt{color:#444}
+.cp-network-status-values dd{color:#111}
+.cp-network-status-actions{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:14px}
+.cp-network-label-form{display:flex;align-items:end;gap:8px;flex-wrap:wrap}
+.cp-network-label-form label{display:flex;flex-direction:column;gap:4px}
+.cp-network-label-form input{width:min(280px,70vw);height:24px;padding:2px 5px;border:1px solid #9daec0;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-diagnostic{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cp-network-status-diagnostic select,.cp-network-status-diagnostic input{height:24px;padding:2px 5px;border:1px solid #9daec0;background:#fff;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-diagnostic input{width:min(260px,65vw)}
+.cp-network-diagnostic-result{max-width:560px;padding:8px 10px;border:1px solid #c8d4e0;background:#f7fafd}
+.cp-network-diagnostic-result h3,.cp-network-diagnostic-result h4{margin:0 0 5px;color:#333;font:bold 12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-diagnostic-result p{margin:4px 0;color:#555}
+.cp-network-diagnostic-result pre{max-height:180px;margin:6px 0;padding:6px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;border:1px solid #e1e6eb;font:11px/1.35 Consolas,monospace}
+.cp-network-status-actions>p{max-width:520px;margin:0;color:#68737e;font-size:11px}
+@media(max-width:520px){.cp-network-adapter-toolbar{flex-wrap:wrap}.cp-network-adapter-list{padding:6px}.cp-network-adapter-tile{width:100%}.cp-network-status-values{grid-template-columns:minmax(100px,auto) minmax(0,1fr)}}
+.cp-network-adapters{min-height:100%;padding:0;overflow:auto}
+.cp-network-adapter-toolbar{height:31px;min-height:31px;margin:0;padding:0 8px;gap:10px;border:0;border-bottom:1px solid #c9d2dc;background:linear-gradient(#f8fafc,#e8eef4);white-space:nowrap}
+.cp-network-adapter-toolbar button{min-height:26px;padding:2px 8px;border:0;border-radius:0;background:transparent;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-toolbar button:enabled{cursor:pointer;color:#1b1b1b}
+.cp-network-adapter-toolbar button:enabled:hover{background:#dce9f5;box-shadow:inset 0 0 0 1px #aec5db}
+.cp-network-adapter-list{display:flex;align-content:flex-start;align-items:flex-start;gap:0;min-height:calc(100% - 31px);padding:6px 0 0 14px;border:0;background:#fff}
+.cp-network-adapter-tile{width:250px;height:52px;min-height:52px;padding:2px 4px;gap:8px;border:1px solid transparent}
+.cp-network-adapter-icon{display:block;position:static;flex:none;width:32px;height:32px;object-fit:contain;border:0;border-radius:0;background:none;box-shadow:none}
+.cp-network-adapter-icon{display:flex;align-items:center;justify-content:center}
+.cp-network-adapter-icon:after{display:none}
+.cp-network-adapter-icon img{width:16px;height:16px;object-fit:contain}
+.cp-network-adapter-text{gap:0;font:12px/14px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-text>*{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-network-adapter-text>span:first-child{color:#111}
+.cp-network-adapter-text>span:nth-child(2){color:#555}
+.cp-network-adapter-text>span:nth-child(3){color:#555}
+.cp-network-adapter-status{min-height:100%;padding:6px 9px 7px;overflow:auto;font:12px/1.25 "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-tabs{height:25px;margin:0;border:0}
+.cp-network-status-tab{height:25px;min-height:25px;margin:0;padding:3px 10px;border:1px solid #9daec0;border-bottom-color:#fff;border-radius:3px 3px 0 0;background:linear-gradient(#fff,#edf3f9);font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-panel{min-height:0;padding:8px 8px 5px;border:1px solid #9daec0;background:#fff}
+.cp-network-status-group{min-width:0;margin:0 0 8px;padding:5px 8px 7px;border:0;border-top:1px solid #aeb9c4}
+.cp-network-status-group legend{padding:0 4px;color:#333}
+.cp-network-status-values{grid-template-columns:minmax(138px,auto) minmax(0,1fr);gap:4px 9px;max-width:none;margin:0 0 5px}
+.cp-network-details-button{display:block;min-width:74px;height:23px;margin:2px 0 0 4px;padding:1px 10px;border:1px solid #aebbc8;border-radius:2px;background:linear-gradient(#fff,#e8eff6);font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-activity{min-height:117px;margin-bottom:0}
+.cp-network-activity-directions,.cp-network-activity-counters{display:grid;grid-template-columns:1fr 48px 1fr;align-items:center;gap:8px;text-align:center}
+.cp-network-activity-directions{min-height:55px}
+.cp-network-activity-icon{display:flex;width:36px;height:36px;align-items:center;justify-content:center}
+.cp-network-activity-icon img{width:16px;height:16px;object-fit:contain}
+.cp-network-activity-counters{padding:0 3px;color:#333}
+.cp-network-activity-counters span:first-child{text-align:left}
+.cp-network-activity-counters span:last-child{text-align:right}
+.cp-network-status-actions{display:flex;flex-direction:row;align-items:center;gap:6px;margin-top:7px}
+.cp-network-status-actions button{min-width:76px;height:24px;padding:2px 9px;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-actions button:disabled{color:#777;background:#f1f1f1}
+.cp-network-status-diagnostic{display:none;margin:5px 0;padding:7px;border:1px solid #b9c6d3;background:#f7fafd}
+.cp-network-status-diagnostic:not([hidden]){display:block}
+.cp-network-status-diagnostic form{display:flex;gap:6px;flex-wrap:wrap}
+.cp-network-status-diagnostic select,.cp-network-status-diagnostic input{height:24px;max-width:100%;padding:2px 5px;border:1px solid #9daec0;background:#fff;font:12px "Segoe UI",Tahoma,sans-serif}
+.cp-network-status-diagnostic input{flex:1 1 140px;min-width:100px}
+.cp-network-alias{margin-top:8px;border-top:1px solid #d4dbe2;padding-top:5px}
+.cp-network-alias summary{color:#0066cc;cursor:pointer}
+.cp-network-adapter-details{max-height:100%;padding:7px 9px;overflow:auto;font:12px/1.3 "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-details>p:first-child{margin:0 0 6px}
+.cp-network-details-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.cp-network-details-table th,.cp-network-details-table td{padding:2px 6px;border-bottom:1px solid #e3e6e9;text-align:left;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}
+.cp-network-details-table thead th{position:sticky;top:0;background:#eef2f6;border-bottom:1px solid #b7c2cd}
+.cp-network-details-table tbody th{width:47%;font-weight:400}
+.cp-network-details-table tbody td{width:53%}
+.cp-network-adapter-details .cp-network-alias{margin-top:8px}
 @container(max-width:520px){
 .cp-network-page .cp-network-active{grid-template-columns:minmax(0,1fr);gap:12px;padding-left:0}
 .cp-network-page .cp-network-active dl{border-left:0;padding-left:0}
@@ -303,6 +393,20 @@ dialog.taskbar-properties-window>.desktop-titlebar{margin-right:-2px!important;p
 .cp-network-page .cp-network-tasks li:has([data-network-target="homegroup"])::before{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAFgElEQVR4nEWVy28cxxGHq3t6XrvLWS3fT/EhilIIxZRkOLJswxEgRDYkIDFkG/LBsgwdIgM+2AHyBwQ5+ZBrLj44iRDoGOTip2xKFpXEsiPKBJiIlESK1L65D+7s7jx7uiuYXcYeDGa6C1W/rqpufE0QXQAKoAAyAACMP4AgZWymFIDsmSUCku4soBB1Qox4irEPQQw7odCJoJ0BRQTsCkHsFkUQcgAGhICigEL/7yoAcW8xgigAZHfJrh7GPgSRIYn9eAiuB54PdRtUDRIJSCUgYYDWWYZ0MgQqWeBJTQcS60uMEya+4KqS4FKoih4I2HpSKeRqhZL9MNvMFxqRz1uNxplTz196a8HQQOlWEgmm6wwoIPCAc1UlEqSqaAJQUbQAoW57XGJhp+SjsZHPzv/0hIrJWqGy9M19QpTLbx9BAkwFoHF9IAQAqH6ICAaCzoEhsGqzEaetUqngqxdOHT95VBihkdG0dFJJJjaz+U+vLwIDSTrbQoDtVN2+wQQXkEqmOcZ9EhKJQtJWLwK0vbZpqRJg/7TB0sF367cYT+9s1YTqelKJN5HGbUdEZqb0IARNBbsJqZ5O8xTCAcLOphopre3s3vju+3+u3GWZIJvbUKO0LdqDU/2/eP4FN4KUFreIEMrMhBLwWOXW0mqhUN94vN0/MvTOu2eYAgFAy2vc+td1LpqzR/p5veAn1Xa5rmp0wITX3nyRhxBwUNS45bTltCqV5uKN5Z8cPmKaIwdnf1YueJcv/aHejE/E59c/mV+YefX8S5OzVrLf6xlwQ/Y4YJt1b63WzHqhVyjVqtWW5wU0mexZXl4bHJyhDIZHDlZ3oVIXtk//9NfPPv7y9vjcxOTUGIdm1XmiJTjTPT0VtoNC2d78ePHvaIKaSuTKtbodUoqwfr9YLomNTXiw0XZ4supAk9Ov7tx5XCs82c3nRXalfs+htuu2AyfY3bUdz5VM3rzztcrMVMbM2Xwj77OQQ7HYaDv3rcxMiInVtQctP6zYjf3D5mYhuzCWWfzH4uRsz+r6f9suqVc8KnpUqvda0/WiZ0sQDpQqTd9AFkmYf2ru2rWvrN4tZvTt1Cq+cP2wPT9/TN9Xv/vvZc2yt/O2lUlHHvgtia7ZnxrsNaddUft2KVfO5mul7Eh/iukGnD598ubtlfUHm77Impa1a5fn5qbOnjtz7z+fZ0uRwqnrh48erE1NPddrWGOTo4PWwZ1tf6TXv/HFSq2YtRJSwyA+2ekM/PrKpbnDY8OjSao4AwPmubOnotB541evKKiur24UHldpmHGrmYx2/OzPrxw7dLoveXjQOlTedrmjei1ArsdChgZPP22eP3/m5Ikjh+dGjz51wHdrMxP9KYCLFy5q0oTQAC+l8TFh943uI2EDhqwDBskQkQjaoEi1Lz3ECIKuQRDCC89OaCpOTvZt5bd7NKkKSYGemH7mL3+8evXah/eWc6boc3Zw9RvIbbdVNJtVX/iwW2uajI2PjhOJ6IXANOACcgW5nc87nhNGXv9wZmA4PTqQEeA2/apujP/2N1eRjw5kphVpBm3YKRVbjaLd2mJK5YMP3o8zSqh7oJsep1MTE482d33u+6FjF0tevdxjmfv2pXSgh6YGl75e8+o+jdJ2TZi67tjtKHSeeW7mwGwf6zI1ZmiHUAgwPZ4JBYRhIGVEFdB1LamrAuCXL5/6/s6aXdsy2FApV9UYM01paPz1188NDQHBSHT5+APkf3i6YxLzGASAJ2DpdvHPH/1t5e7D/eOHWrZtGuR3v3/v2ZOGwvaE4EctjFEfB3dfjKsmCBHG8I/lXLh5Y2t7M7uwsHB0wYrJQ2OKEZQdoe7l0fkJgYQQZc/4Y25RBAKBKp1rA+LrwPPC3l6NYkz7/wHvmuNv/wVmZwAAAABJRU5ErkJggg==")}
 .cp-network-page .cp-network-tasks li:has([data-network-target="network-troubleshoot"])::before{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAFEklEQVR4nJ1V328cVxU+5/6YmTu7a6+9trOxQ+24v0KL4jrFJAEaoBRoCRUq6nOExAttJKS+00ee8hfknVcqpKCCggStABW1BSmlgNzUdmxvnF2vd2e9Mzt35v6sJrTwEiHEp6ujo3vP/XR1vqPvgjbeeS8L47z/7+tfkLL03mdZbm2Vu88O8H4C1gJjVdTaRBGDBwEBjHGUEsRPd7yvYlGUQoTVnRs33kySZDweO+c458aYBxIxikVRcM4RUQghpSSEeO/PnTu3vr7O8lz1er21tbVGoxEEgbX2gSwAkE/S+fn569evX7ly5dq1a1evXr158+b58+dv3bp16tQpFseB1hoRs2zCqHaOOKDgmQcOnrkqUgACACE70emUz377lVFe+9GrPyt9+ZVLlyPu5KRghDIHkOf5l764Dh6sgb09+ZPXfvru+5th1C5kmGakXjshJYow+tbXv1qfaeTMB9PHx+nd1WXx0nPrr7/+yuXnLubZmFEASlzVOQeqBFWW4AA0Hg4GxjaBzikWlxqtER98OHj48VZGnR0WxkN7QZSKXfzyparaOwYgQ6YBS6ToUXM6/u43n7q0sTbJSH9oN7f7/9zqZCotXLTd6Y7KTuEcMC2i4sLnn2nPsJdefOHt3/3CE80ACDIO4ABJLOjsnPjBy99xhh/cGw5Haix97ygdpWWS6a3do27vOOlPkqPuYG/fZ6sRmtNPtn//lrEILIfQYqwKEgQhoKtPNQ1mrdZMc3VGG/AGjhPdPzjcuXfw6IUYmWjCtEomyd3OmYdPyXRXFYserQfKwIOzdJyqKHSUIhecxLwA5YFJIhWoqB2unpxfglYPcge+vCPNPbbxyFkO+mh8V5umR2cJsLgAoslxVowV0IBM83pNxNudj8PpKGwIG0EC6vZkt5+OFtvLw+5gOWwvLS/M6EAeJ63WTJqnljhLbDXZSKy0mTVY6UfZuzsfvvO3P88tL0QLtW456Ktkq7cfBMHoj0n/Vue1yz9un974y3vvgVJfe/6ZkpcWwSMwzSWt6U739sLppUa7/bHu/vwfv7VL4q/Bnf7guAgNa/AxL9Ld/dH2vt0f/31r86mlJ9cubDTDONMpCYhF4hEZZzBMDhfLxbf/8FbrsYf6WPzp/XfKVujnQ3ayLhbq1EGJyGviiS+cEdP2zNnH55YWIh1p7ZQ0HJhzABYZWF7njY2nL053dqdOzimOw7XeR93drdu7g83hMLQ5N0ZgPQja8fTS3IkgoHfu7vTLcIpHshjTjAbICHCmU0WJqPHmI4s8K2Ud+Kvf++Hh8WCQJ4nN94cHH2xvbh7spElSq+MTTz+2cvJ0KAVDzniUHvZ6vb2A0AApK3jsQHhJm2ymEUxxwcejyaxr1oLaItozYuUbixcIAeB449e//BysJNvF6GggfNCaqjtZxFxgqdEUjEWglbFamYmJI5F2j8KaiMPYM6J1WRmD98SjU/bKs9/3PLR02q8E2Tjv7Nw+3NtHNSZGg1Is8vDQ4qwxY8KABEiVKooJMRQo8UAseEeRUM5BLyCRMptQjGbn6nFcC1fOrs7VqPvVG28IGjKk0JgSb/7mRlHkWqkoiiglWmvrPHBqEUrrPEKIUCul95BCYMNYOeAIzYC5PJ2fbYm4ht46KWWWZbnMlFKVjX/myR6qSQOoXIaAu69zJbTFyucAgHqH4ELG4zjGyvoByrJqh7tf+m+i/xHOuSAIPiW6/yX85y3/Bz4BwxPzWktqvMsAAAAASUVORK5CYII=")}
 
+/* Desktop ownership and narrow native dialogs; renderer styles stay isolated. */
+dialog.network-status-window{box-sizing:border-box;margin:0;padding:0 6px 6px;min-width:0;max-width:none;max-height:none;overflow:hidden}
+dialog.network-status-window[open]{display:flex;flex-direction:column}
+dialog.network-status-window::backdrop{background:transparent}
+.network-status-window>.desktop-titlebar{flex:none}
+.network-status-window>.desktop-titlebar>.desktop-caption{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.network-status-content{position:relative;z-index:1;flex:1;min-width:0;min-height:0;overflow:auto;background:#f0f0f0;color:#111}
+.network-status-buttons{box-sizing:border-box;position:relative;z-index:1;flex:none;display:flex;justify-content:flex-end;align-items:center;height:38px;min-height:38px;padding:5px 8px;background:#f0f0f0}
+.network-status-buttons>button{min-width:75px;height:23px;padding:2px 10px;border:1px solid #8e9ba7;border-radius:3px;background:linear-gradient(#fff,#e3e3e3);color:#111;font:12px "Segoe UI",Tahoma,sans-serif}
+.network-status-buttons>button:focus-visible{outline:1px dotted #333;outline-offset:-4px}
+.network-details-window .cp-network-details-table{font-size:11px}
+.network-details-window .cp-network-details-table th,.network-details-window .cp-network-details-table td{overflow-wrap:anywhere;word-break:normal}
+.cp-network-adapters .cp-network-adapter-tile{padding:1px 4px;gap:6px}
+.cp-network-adapters .cp-network-adapter-icon,.cp-network-adapters .cp-network-adapter-icon img{width:48px;height:48px;flex:none}
 
 /* Isolated System/Network integration; host owns all styles. */
 .control-panel-window .cp-content.cp-module-host{padding:0}.control-panel-window .cp-body.cp-module-body{min-height:100%;padding:0}.cp-system-page .cp-system-edition{position:relative}.cp-system-page .cp-system-original-logo{float:right;width:157px;height:151px;object-fit:contain;margin:0 0 8px 12px}.cp-system-page .cp-system-link img{vertical-align:middle;margin-right:4px;flex:none}@container(max-width:620px){.cp-system-page .cp-system-original-logo{float:none;display:block;margin:0 0 10px auto}}
