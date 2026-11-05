@@ -11,7 +11,7 @@ export function attachTaskbarLayout({taskbar,tray,startMenu,showDesktopButton,de
  const clearHide=()=>{if(hideTimer!==null)cancel(hideTimer);hideTimer=null;};
  const hidden=value=>body.classList.toggle('taskbar-auto-hidden',!!value);
  const clearPeek=()=>{if(peekTimer!==null)cancel(peekTimer);peekTimer=null;body.classList.remove('taskbar-peeking');};
- const popups=()=>[...doc.querySelectorAll('.dt-flyout,.sound-flyout,.task-preview,.notification-overflow,#context')].filter(node=>!node.hidden&&node.style?.display!=='none');
+ const popups=()=>[...doc.querySelectorAll('.dt-flyout,.sound-flyout,.task-preview,.notification-overflow,.task-jump-menu,#context')].filter(node=>!node.hidden&&node.style?.display!=='none');
  const protectedUI=()=>hovered.size||drag||pendingPosition||startMenu&&!startMenu.hidden||taskbar.contains(doc.activeElement)||tray?.contains(doc.activeElement)||popups().length;
  function considerHide(){
   if(!prefs.autoHide||protectedUI()){clearHide();hidden(false);return;}
@@ -20,13 +20,13 @@ export function attachTaskbarLayout({taskbar,tray,startMenu,showDesktopButton,de
  }
  function positionPopups(){
   const position=pendingPosition||drag?.position||prefs.position;
-  if(position==='bottom')return;
   for(const popup of popups()){
-   if(popup.id==='context'||popup.classList.contains('notification-overflow'))continue;
+   if(popup.id==='context'||popup.classList.contains('notification-overflow')||popup.classList.contains('task-jump-menu'))continue;
+   if(position==='bottom'&&popup.classList.contains('task-preview'))continue;
    const anchor=popup.classList.contains('task-preview')?lastAnchor||taskbar:popup.classList.contains('dt-flyout')?tray?.querySelector('time')||tray:tray?.querySelector('.sound-tray')||doc.querySelector?.('.notification-overflow .sound-tray')||tray;
    if(!anchor)continue;const rect=anchor.getBoundingClientRect(),width=popup.offsetWidth,height=popup.offsetHeight;
    const x=position==='left'?rect.right+6:position==='right'?rect.left-width-6:rect.right-width;
-   const y=position==='top'?rect.bottom+6:rect.bottom-height;
+   const y=position==='top'?rect.bottom+6:position==='bottom'?rect.top-height-6:rect.bottom-height;
    Object.assign(popup.style,{bottom:'auto',right:'auto',left:Math.max(6,Math.min(win.innerWidth-width-6,x))+'px',top:Math.max(6,Math.min(win.innerHeight-height-6,y))+'px'});
   }
  }
