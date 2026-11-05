@@ -5,7 +5,7 @@ on:
     branches: [codex/networkd-boot-availability-20261105]
     paths:
       - .github/workflows/networkd-phase2-lab.yml
-      - scripts/phase2-lab-v5.zip
+      - scripts/phase2-root-v6.zip
 permissions:
   contents: read
 concurrency:
@@ -19,12 +19,12 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Verify frozen phase2 V5 package
+      - name: Verify frozen phase2 V6 package
         shell: bash
         run: |
           set -Eeuo pipefail
-          archive="$GITHUB_WORKSPACE/scripts/phase2-lab-v5.zip"
-          printf '%s  %s\n' f71b4b792d055d1fa9af10f12ee8bef7d59c7b24a4d4330224953df140fcfb18 "$archive" | sha256sum -c -
+          archive="$GITHUB_WORKSPACE/scripts/phase2-root-v6.zip"
+          printf '%s  %s\n' f6a019742b9d429ed586e21daf067ad27b58f5f003fb24e5405de2f5a8ffa135 "$archive" | sha256sum -c -
           lab=$(mktemp -d "$RUNNER_TEMP/networkd-phase2.XXXXXXXX")
           printf 'NETWORKD_BOOT_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
           unzip -q "$archive" -d "$lab"
@@ -34,7 +34,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           cd "$NETWORKD_BOOT_LAB"
-          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/phase2-lab-v5.zip"
+          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/phase2-root-v6.zip"
       - name: Preserve complete phase2 guest evidence
         if: always()
         uses: actions/upload-artifact@v4
