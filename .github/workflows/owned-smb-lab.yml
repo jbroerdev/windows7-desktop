@@ -5,7 +5,7 @@ on:
     branches: [codex/sharing-smb-lab-20261105]
     paths:
       - .github/workflows/owned-smb-lab.yml
-      - scripts/owned-smb-lab-log-v2.zip
+      - scripts/owned-smb-guest-v3.zip
 permissions:
   contents: read
 concurrency:
@@ -23,8 +23,8 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          archive="$GITHUB_WORKSPACE/scripts/owned-smb-lab-log-v2.zip"
-          printf '%s  %s\n' 0ca2eebd941acf4b02d23cf1aa262b17eae488b84d44c875fba34879d894f5d9 "$archive" | sha256sum -c -
+          archive="$GITHUB_WORKSPACE/scripts/owned-smb-guest-v3.zip"
+          printf '%s  %s\n' 2a6ccd6b0164e9bd279219163c7dbb19386de63bb169e6cd8b84a15835a484d8 "$archive" | sha256sum -c -
           lab=$(mktemp -d "$RUNNER_TEMP/owned-smb-lab.XXXXXXXX")
           printf 'OWNED_SMB_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
           unzip -q "$archive" -d "$lab"
