@@ -244,3 +244,7 @@ body.desktop-shell #desktop-taskbar>button.running.grouped.active:not(.start-orb
 body.desktop-shell[data-taskbar-small=false]:is([data-taskbar-position=top],[data-taskbar-position=bottom]) #desktop-taskbar{height:40px;padding-top:0;padding-bottom:0}
 body.desktop-shell[data-taskbar-small=false]:is([data-taskbar-position=top],[data-taskbar-position=bottom]) #desktop-taskbar>button:not(.start-orb){height:39px}
 body.desktop-shell[data-taskbar-small=false]:is([data-taskbar-position=top],[data-taskbar-position=bottom]) .show-desktop{height:40px}
+
+/* Proposed scoped central aero.css delta; native tracks keep the selected hue. */
+.aero-colors .aero-mixer input[data-color-channel='Sättigung']::-webkit-slider-runnable-track{background:linear-gradient(90deg,#fff,hsl(var(--color-hue,210deg) 100% 50%))}
+.aero-colors .aero-mixer input[data-color-channel='Helligkeit']::-webkit-slider-runnable-track{background:linear-gradient(90deg,#000,hsl(var(--color-hue,210deg) 100% 50%))}

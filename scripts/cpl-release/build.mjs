@@ -32,6 +32,10 @@ base=replace(base,"body.classList.toggle('cp-subpage',page!=='home');","body.cla
 base=replace(base,"dialog.addEventListener('close',()=>{accounts.dispose();disposeDateTime();});","dialog.addEventListener('close',()=>{++request;invalidateModule();if(isModule())body.replaceChildren();accounts.dispose();disposeDateTime();});");
 base=replace(base,"return{open,refresh:()=>notificationAreaProperties.refresh()};","return{open,refresh:()=>{notificationAreaProperties.refresh();if(isModule()){++request;invalidateModule();body?.replaceChildren();if(dialog?.open)render();}}};");
 
+// Release stale appearance-preview ownership before any other profile refresh.
+base=replace(base,"refresh:()=>{notificationAreaProperties.refresh();","refresh:()=>{accounts.refreshAppearance?.();notificationAreaProperties.refresh();");
+base=replace(base,"JSON.stringify([s.userId,!!s.authenticated","JSON.stringify([s.userId,s.actorId,!!s.authenticated");
+
 // Category integration preserves all existing System/Network host guards.
 const categoryCatalog=await read('public/control-panel-category-catalog.js','4e5203af9f74f01a39c01003c3b2b06ab654ab1064b10b1d99eddd4fe9b84c5e');
 let categoryView=(await read('public/control-panel-category-view.js','0b1d8a02ba39fdd7c5f0b54eae7ec327f76c167160ee526607bd8a2d3fbc9809')).toString();

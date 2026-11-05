@@ -15,3 +15,17 @@ export function applyAppearance(value,root=globalThis.document?.documentElement)
 }
 export function hexToHsl(hex){const [r,g,b]=hex.slice(1).match(/../g).map(v=>parseInt(v,16)/255),max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min,l=(max+min)/2;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));h=max===r?((g-b)/d)%6:max===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360;}return [Math.round(h),Math.round(s*100),Math.round(l*100)];}
 export function hslToHex(h,s,l){s/=100;l/=100;const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1)))).toString(16).padStart(2,'0');};return '#'+f(0)+f(8)+f(4);}
+
+// HSB mixer: preserve latent hue/saturation in the controller at gray/black.
+export function hexToHsv(hex){
+ if(typeof hex!=='string'||!/^#[0-9a-f]{6}$/i.test(hex))throw Error('Ungültige Farbe.');
+ const [r,g,b]=hex.slice(1).match(/../g).map(x=>parseInt(x,16)/255),max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+ let h=0;if(d){h=max===r?((g-b)/d)%6:max===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360;}
+ return[h,max?d/max*100:0,max*100];
+}
+export function hsvToHex(h,s,v){
+ if(![h,s,v].every(Number.isFinite)||h<0||h>360||s<0||s>100||v<0||v>100)throw Error('Ungültige Mischfarbe.');
+ h=(h%360)/60;s/=100;v/=100;const c=v*s,x=c*(1-Math.abs(h%2-1)),m=v-c;
+ const rgb=h<1?[c,x,0]:h<2?[x,c,0]:h<3?[0,c,x]:h<4?[0,x,c]:h<5?[x,0,c]:[c,0,x];
+ return'#'+rgb.map(n=>Math.round((n+m)*255).toString(16).padStart(2,'0')).join('');
+}

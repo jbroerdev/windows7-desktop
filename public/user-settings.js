@@ -2,7 +2,8 @@ import{soundSystem}from'/sound.js';
 import{normalizeSound}from'/sound-state.js';
 
 import{renderPersonalization}from'/personalization.js';
-import{aeroColors,normalizeAppearance,applyAppearance,hexToHsl,hslToHex}from'/appearance.js';
+import{normalizeAppearance}from'/appearance.js';
+import{createAppearanceControls}from'/appearance-controls.js';
 export function createUserSettings({desktop,getState,reload}){
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 async function api(url,data){const r=await fetch(url,data===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await r.json();if(!r.ok)throw Error(result.error||'Anfrage fehlgeschlagen.');return result;}
@@ -39,16 +40,22 @@ const actions=el('section',undefined,'personalization-actions');upload('Eigenes 
 async function colors(inline){
  if(inline instanceof Event)inline=null;
  if(!inline){enter('colors',colors,[['Darstellung und Anpassung',overview],['Anpassung',background],['Fensterfarbe und Darstellung',colors]]);heading('Ändern Sie die Farbe der Fensterrahmen, des Startmenüs und der Taskleiste');title.textContent='Fensterfarbe und Darstellung';}
- const state=getState(),shared=state.shareEditing,prefs=shared?state.publicDesktop:state.desktop;let saved=normalizeAppearance(prefs?.appearance),draft={...saved};
- const panel=el('section',undefined,'aero-colors'),grid=el('div',undefined,'aero-color-grid'),current=el('p'),transparentLabel=el('label','Transparenz aktivieren','aero-transparency'),transparent=el('input'),intensityLabel=el('label','Farbintensität:','aero-intensity'),intensity=el('input'),intensityValue=el('output'),mixer=el('details',undefined,'aero-mixer'),summary=el('summary','Farbmixer einblenden'),mixFields=el('div'),actions=el('div',undefined,'aero-color-actions');transparent.type='checkbox';transparent.checked=draft.transparency;transparentLabel.prepend(transparent);intensity.type='range';intensity.min='0';intensity.max='100';intensity.value=draft.intensity;intensity.setAttribute('aria-label','Farbintensität');intensityLabel.append(intensity,intensityValue);mixer.append(summary,mixFields);panel.append(grid,current,transparentLabel,intensityLabel,mixer,actions);if(inline){const details=el('details',undefined,'personalization-color-section');details.append(el('summary','Fensterfarbe und Darstellung'),panel);inline.append(details);}else body.append(panel);
- appearanceCleanup=()=>{delete document.documentElement.dataset.appearancePreview;applyAppearance(saved);};
- const sliders=[];for(const [name,max]of [['Farbton',360],['Sättigung',100],['Helligkeit',100]]){const label=el('label',name),input=el('input'),value=el('output');input.type='range';input.min='0';input.max=String(max);input.setAttribute('aria-label',name);input.dataset.colorChannel=name;input.oninput=()=>{draft.color=hslToHex(...sliders.map(s=>Number(s.input.value)));preview(false);};label.append(input,value);mixFields.append(label);sliders.push({input,value});}
- function preview(syncSliders=true){document.documentElement.dataset.appearancePreview='true';applyAppearance(draft);current.textContent='Aktuelle Farbe: '+(aeroColors.find(([,hex])=>hex===draft.color)?.[0]||'Benutzerdefiniert');for(const tile of grid.children)tile.setAttribute('aria-pressed',String(tile.dataset.color===draft.color));intensityValue.textContent=draft.intensity+' %';if(syncSliders){const hsl=hexToHsl(draft.color);sliders.forEach((s,i)=>s.input.value=hsl[i]);}sliders.forEach(s=>s.value.textContent=s.input.value);panel.style.setProperty('--color-hue',sliders[0].input.value+'deg');}
- for(const[name,color]of aeroColors){const tile=el('button',undefined,'aero-color-swatch'),glass=el('span');tile.type='button';tile.title=name;tile.dataset.color=color;tile.setAttribute('aria-label','Fensterfarbe '+name);glass.style.backgroundColor=color+'40';glass.style.setProperty('--swatch-color',color);tile.append(glass);tile.onclick=()=>{draft.color=color;preview();};grid.append(tile);}
- transparent.onchange=()=>{draft.transparency=transparent.checked;preview();};intensity.oninput=()=>{draft.intensity=Number(intensity.value);preview();};mixer.ontoggle=()=>summary.textContent=mixer.open?'Farbmixer ausblenden':'Farbmixer einblenden';
- button('Änderungen speichern',async()=>{await api('/api/desktop',{appearance:draft,...(shared?{scope:'share'}:{})});saved={...draft};appearanceCleanup();await reload();await background();status.textContent='Fensterfarbe und Transparenz gespeichert.';},actions);button('Abbrechen',async()=>{appearanceCleanup();await background();},actions);preview();
+ const contextKey=()=>{const s=getState();return JSON.stringify([s.userId,s.actorId??s.userId,!!s.authenticated,!!s.readonly,!!s.shareEditing,s.role]);};
+ const opening=getState(),context=contextKey(),shared=!!opening.shareEditing,actorKnown=typeof opening.actorId==='string'&&!!opening.actorId;
+ const appearanceContext=Object.freeze({profileId:opening.userId,actorId:opening.actorId??opening.userId,shareEditing:shared});
+ const getAppearance=()=>{const s=getState();return (s.shareEditing||s.readonly?s.publicDesktop:s.desktop)?.appearance;};
+ const controls=createAppearanceControls({getAppearance,getContextKey:contextKey,canEdit:()=>{const s=getState();return s.authenticated===true&&(s.shareEditing?s.role==='admin':!s.readonly);},
+  save:async(value,{signal})=>{
+   if(contextKey()!==context)throw Error('Das Profil wurde gewechselt.');
+   if(shared&&!actorKnown)throw Error('Bitte die Seite neu laden, bevor Sie die Share-Darstellung speichern.');
+   const response=await fetch('/api/desktop',{method:'POST',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({appearance:value,appearanceContext,...(shared?{scope:'share'}:{})})});
+   const result=await response.json();if(!response.ok)throw Error(result.error||'Speichern fehlgeschlagen.');
+   if(contextKey()!==context)return;await reload();
+  },onClose:async result=>{if(contextKey()!==context)return;await background();if(result==='saved')status.textContent='Fensterfarbe und Transparenz gespeichert.';}});
+ appearanceCleanup=Object.assign(controls.dispose,{refresh:controls.refreshContext});
+ if(inline){const details=el('details',undefined,'personalization-color-section');details.append(el('summary','Fensterfarbe und Darstellung'),controls.element);inline.append(details);}else body.append(controls.element);
 }
 
 async function renderPage(page){try{if(page==='avatar')await avatar();else if(page==='wallpapers')await wallpapers();else if(page==='colors')await colors();else if(page==='background')await background();else if(page==='permissions')await permissions();else if(page==='share')await shareSettings();else await overview();}catch(e){status.textContent=e.message;}}
-return{setHost:value=>host=value,dispose:()=>{appearanceCleanup?.();appearanceCleanup=null;currentPage=null;pageHistory=[];},back:async()=>{const previous=pageHistory.pop();if(!previous)return false;goingBack=true;try{await previous.render();}finally{goingBack=false;}return true;},renderInto:async(container,page)=>{pageHistory=[];currentPage=null;container.append(body,status);await renderPage(page);},open:async(page)=>{if(host)return host.open(page||'accounts');desktop.show(dialog.id);await renderPage(page);}};
+return{setHost:value=>host=value,refreshAppearance:()=>appearanceCleanup?.refresh?.(),dispose:()=>{appearanceCleanup?.();appearanceCleanup=null;currentPage=null;pageHistory=[];},back:async()=>{const previous=pageHistory.pop();if(!previous)return false;goingBack=true;try{await previous.render();}finally{goingBack=false;}return true;},renderInto:async(container,page)=>{pageHistory=[];currentPage=null;container.append(body,status);await renderPage(page);},open:async(page)=>{if(host)return host.open(page||'accounts');desktop.show(dialog.id);await renderPage(page);}};
 }
