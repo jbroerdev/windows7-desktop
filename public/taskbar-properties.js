@@ -1,13 +1,18 @@
+import{normalizeStartMenu}from'./start-menu-state.js';
 import{normalizeTaskbar,taskbarWorkArea}from'./taskbar-state.js';
 let serial=0;
 export function createTaskbarProperties({desktop,getState,reload,openCustomize,openNotificationArea}){
  const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
- let currentDialog;
- return{open(){
+ let currentDialog,currentContext;
+ const context=()=>{const s=getState();return JSON.stringify([s.userId,!!s.authenticated,!!s.readonly,!!s.shareEditing,s.role]);};
+ const refresh=()=>{if(currentDialog?.open&&currentContext!==context())currentDialog.close();};
+ return{refresh,open(){
+  refresh();
   if(currentDialog?.open){desktop.show(currentDialog.id);return currentDialog;}
   const state=getState(),prefs=()=>{const s=getState();return((s.shareEditing||s.readonly)?s.publicDesktop:s.desktop)||{};};
-  let saved=normalizeTaskbar(prefs().taskbar),draft={...saved},tab='taskbar',saving=false;
-  const dialog=el('dialog',undefined,'taskbar-properties-window');currentDialog=dialog;dialog.id='taskbar-properties-'+(++serial);
+  const read=()=>({...normalizeTaskbar(prefs().taskbar),...normalizeStartMenu(state.shareEditing?{recentPrograms:false,recentDocuments:false}:prefs().startMenu)});
+  let saved=read(),draft={...saved},tab='taskbar',saving=false;
+  const dialog=el('dialog',undefined,'taskbar-properties-window');currentDialog=dialog;currentContext=context();const openedContext=currentContext;dialog.id='taskbar-properties-'+(++serial);
   const bar=el('header'),title=el('span','Eigenschaften von Taskleiste und Startmenü'),close=el('button'),body=el('div',undefined,'tb-properties-body'),tabs=el('div',undefined,'tb-properties-tabs'),panel=el('section',undefined,'tb-properties-panel'),footer=el('footer',undefined,'tb-properties-actions'),ok=el('button','OK'),cancel=el('button','Abbrechen'),apply=el('button','Übernehmen'),error=el('p','','tb-properties-error');
   close.type=ok.type=cancel.type=apply.type='button';close.setAttribute('aria-label','Schließen');bar.append(title,close);tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Eigenschaften');panel.setAttribute('role','tabpanel');error.setAttribute('role','alert');footer.append(ok,cancel,apply);body.append(tabs,panel);dialog.append(bar,body,footer,error);document.body.append(dialog);
   const editable=!!(state.shareEditing||state.authenticated&&!state.readonly),buttons=[];
@@ -27,12 +32,12 @@ export function createTaskbarProperties({desktop,getState,reload,openCustomize,o
    }else if(tab==='start'){
     const top=el('div',undefined,'tb-properties-start'),label=el('p','Klicken Sie auf „Anpassen“, wenn Sie die Darstellung und das Verhalten von Links, Symbolen und Menüs im Startmenü anpassen möchten.'),customize=el('button','Anpassen…');customize.type='button';customize.onclick=()=>openCustomize?.();top.append(label,customize);panel.append(top);
     const powerRow=el('label',undefined,'tb-properties-power'),power=el('select'),powerOption=el('option','Abmelden');powerOption.value='logout';power.append(powerOption);power.disabled=true;power.title='Der Webdesktop meldet das Konto ab; eine Host-Abschaltung ist hier nicht verfügbar.';powerRow.append(el('span','Standardaktion für Beenden:'),power);panel.append(powerRow);
-    const privacy=group('Datenschutz');check(privacy,'Zuletzt geöffnete Programme im Startmenü speichern und anzeigen',null,true);check(privacy,'Zuletzt geöffnete Elemente im Startmenü und in der Taskleiste speichern und anzeigen',null,true);privacy.title='Verlaufseinstellungen sind noch nicht implementiert.';const help=el('a','Wie kann die Darstellung des Startmenüs geändert werden?','tb-properties-help tb-start-help');help.href='https://support.microsoft.com/windows';help.target='_blank';help.rel='noopener noreferrer';panel.append(help);
+    const privacy=group('Datenschutz');check(privacy,'Zuletzt geöffnete Programme im Startmenü speichern und anzeigen','recentPrograms',!!state.shareEditing);check(privacy,'Zuletzt geöffnete Elemente im Startmenü und in der Taskleiste speichern und anzeigen','recentDocuments',!!state.shareEditing);if(state.shareEditing)privacy.title='Verlauf wird ausschließlich im persönlichen Konto gespeichert.';const help=el('a','Wie kann die Darstellung des Startmenüs geändert werden?','tb-properties-help tb-start-help');help.href='https://support.microsoft.com/windows';help.target='_blank';help.rel='noopener noreferrer';panel.append(help);
    }else{
     for(const name of ['Adresse','Links','Tablet PC-Eingabebereich','Desktop'])check(panel,name,null,true);panel.append(el('p','Zusätzliche Symbolleisten sind noch nicht verfügbar.','tb-properties-unavailable'));
    }dirty();
   }
-  async function commit(shouldClose){if(saving)return;if(!editable||JSON.stringify(saved)===JSON.stringify(draft)){if(shouldClose)dialog.close();return;}saving=true;error.textContent='';dirty();try{const response=await fetch('/api/desktop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({taskbar:draft,...(getState().shareEditing?{scope:'share'}:{})})});const data=await response.json();if(!response.ok)throw Error(data.error||'Die Einstellungen konnten nicht gespeichert werden.');await reload();saved=normalizeTaskbar(prefs().taskbar);draft={...saved};if(shouldClose)dialog.close();else render();}catch(e){error.textContent=e.message;}finally{saving=false;dirty();}}
+  async function commit(shouldClose){if(saving)return;if(openedContext!==context()){dialog.close();return;}if(!editable||JSON.stringify(saved)===JSON.stringify(draft)){if(shouldClose)dialog.close();return;}saving=true;error.textContent='';dirty();try{const response=await fetch('/api/desktop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({taskbar:normalizeTaskbar(draft),...(state.shareEditing?{scope:'share'}:{startMenu:{recentPrograms:draft.recentPrograms,recentDocuments:draft.recentDocuments}})})});const data=await response.json();if(!response.ok)throw Error(data.error||'Die Einstellungen konnten nicht gespeichert werden.');await reload();saved=read();draft={...saved};if(shouldClose)dialog.close();else render();}catch(e){error.textContent=e.message;}finally{saving=false;dirty();}}
   ok.onclick=()=>commit(true);apply.onclick=()=>commit(false);cancel.onclick=()=>dialog.close();
   dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dialog.close();}else if(e.key==='Enter'&&!['BUTTON','SELECT'].includes(e.target.tagName)){e.preventDefault();commit(true);}});
   desktop.register(dialog,{bar,title,closeButton:close,icon:'/icons/filetypes/application.ico?v=1',appId:'control-panel',resizable:false,rememberPlacement:false,minWidth:414,minHeight:463});

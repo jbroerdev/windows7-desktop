@@ -14,7 +14,7 @@ export function validateTaskbar(value){
  return Object.fromEntries(Object.keys(value).map(key=>[key,value[key]]));
 }
 
-export function taskbarThickness(value){const prefs=normalizeTaskbar(value);return prefs.autoHide?2:['left','right'].includes(prefs.position)?prefs.smallIcons?42:62:prefs.smallIcons?30:42;}
+export function taskbarThickness(value){const prefs=normalizeTaskbar(value);return prefs.autoHide?2:['left','right'].includes(prefs.position)?prefs.smallIcons?42:62:prefs.smallIcons?30:40;}
 
 export function taskbarWorkArea({width,height},value){
  width=Number.isFinite(width)?Math.max(0,Math.floor(width)):0;height=Number.isFinite(height)?Math.max(0,Math.floor(height)):0;

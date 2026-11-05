@@ -256,6 +256,7 @@ function renderControlPanelNetwork({ document: doc = globalThis.document, data =
 }
 
 // entry.mjs
+import { taskbarWorkArea } from "/taskbar-state.js";
 import { createNotificationAreaProperties } from "/notification-area-properties.js";
 import { createTaskbarProperties } from "/taskbar-properties.js";
 import { renderDateTimePage } from "/date-time.js";
@@ -663,8 +664,8 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     render();
     desktop.show(dialog.id);
     if (fresh) {
-      const width = Math.min(800, innerWidth - 24), height = Math.min(601, innerHeight - 66), workHeight = innerHeight - 42;
-      desktop.applyWorkspaceGeometry(dialog.id, { mode: "normal", left: Math.max(0, (innerWidth - width) / 2) / innerWidth, top: Math.max(0, (workHeight - height) / 2) / workHeight, width: width / innerWidth, height: height / workHeight });
+      const area = taskbarWorkArea({ width: innerWidth, height: innerHeight }, preferences().taskbar), workWidth = Math.max(1, area.width), workHeight = Math.max(1, area.height), width = Math.max(1, Math.min(800, workWidth - 24)), height = Math.max(1, Math.min(601, workHeight - 24)), left = area.left + Math.max(0, (area.width - width) / 2), top = area.top + Math.max(0, (area.height - height) / 2);
+      desktop.applyWorkspaceGeometry(dialog.id, { mode: "normal", left: (left - area.left) / workWidth, top: (top - area.top) / workHeight, width: width / workWidth, height: height / workHeight });
     }
     return dialog;
   }

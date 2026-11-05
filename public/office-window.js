@@ -1,6 +1,6 @@
 const types={text:{name:'Word',extension:'odt',icon:'word'},sheet:{name:'Excel',extension:'ods',icon:'excel'},presentation:{name:'PowerPoint',extension:'odp',icon:'powerpoint'}};
 export const officeFile=n=>n?.kind==='file'&&/\.(docm?|docx|dotx?|odt|ott|rtf|xlsx?|xlsm|xltx?|ods|ots|csv|pptx?|ppsx?|odp|otp|pdf)$/i.test(n.name);
-export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getNode,toast}){
+export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getNode,toast,onOpened=()=>{}}){
  let serial=0;
  function open(node=null,kind='text',resumeState={}){
   if(!getState().officeEnabled){toast('Office ist noch nicht eingerichtet.');return;}
@@ -8,7 +8,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   const dialog=el('dialog'),bar=el('header'),title=el('span',type.name),min=el('button'),max=el('button'),close=el('button'),toolbar=el('nav'),menu=el('details'),label=el('summary','Datei'),items=el('div'),status=el('footer','Dokument wird vorbereitet …'),stage=el('section');
   dialog.className='office-window';dialog.id='office-window-'+(++serial);title.id=dialog.id+'-title';toolbar.className='office-menubar';menu.className='office-file-menu';status.className='office-status';stage.className='office-stage';status.setAttribute('role','status');menu.append(label,items);toolbar.append(menu);bar.append(title,min,max,close);dialog.append(bar,toolbar,stage,status);document.body.append(dialog);
   let finishLoading;dialog.whenReady=new Promise(resolve=>finishLoading=resolve);
-  let frame=null,grant=null,temporary=false,disposed=false,ready=false,pending=null,saveTimer=null,busy=false,dirty=false;
+  let frame=null,grant=null,temporary=false,disposed=false,ready=false,pending=null,saveTimer=null,busy=false,dirty=false,recentFile=null,skipFirstRecent=!!resumeState.noRecent;
   const send=(MessageId,Values={})=>{if(frame&&grant)frame.contentWindow.postMessage(JSON.stringify({MessageId,SendTime:Date.now(),Values}),grant.origin);};
   const action=(name,fn)=>{const b=el('button',name);b.type='button';b.onclick=()=>{menu.open=false;Promise.resolve(fn()).catch(e=>{status.textContent=e.message;toast(e.message);});};items.append(b);return b;};
   async function confirmChanges(){return new Promise(resolve=>{const prompt=el('dialog'),text=el('p','Änderungen an „'+node.name+'“ speichern?'),yes=el('button','Speichern'),no=el('button','Nicht speichern'),cancel=el('button','Abbrechen');prompt.className='office-discard-dialog';prompt.append(text,yes,no,cancel);document.body.append(prompt);const done=value=>{prompt.close();prompt.remove();resolve(value);};yes.onclick=()=>done('save');no.onclick=()=>done('discard');cancel.onclick=()=>done('cancel');prompt.oncancel=e=>{e.preventDefault();done('cancel');};prompt.showModal();});}
@@ -16,6 +16,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
   function updateTitle(){title.textContent=(node?.name||type.name)+(dirty?' *':'')+(node?' – '+type.name:'');}
   async function discard(id){if(id)await api('/api/office-discard',{id});}
   async function load(file){
+   recentFile=!skipFirstRecent&&!file.temporary?(file.sourceId||(!file.workingCopy?file.id:null)):null;skipFirstRecent=false;
    ready=false;status.textContent='Dokument wird geöffnet …';if(!file.temporary&&!file.workingCopy&&getState().authenticated)file=await api('/api/office-edit',{id:file.id,open:true});if(disposed){if(file.temporary||file.workingCopy)await discard(file.id);return;}const nextGrant=file.grant||await api('/api/office-open',{id:file.id,readOnly:!getState().authenticated});
    if(disposed){if(file.temporary||file.workingCopy)await discard(file.id);return;}const oldDraft=node?.temporary||node?.workingCopy?node.id:null;grant=nextGrant;node=file;temporary=!!file.temporary;dirty=false;updateTitle();stage.replaceChildren();
    frame=el('iframe');frame.name=dialog.id+'-frame-'+Date.now();frame.title=title.textContent;frame.referrerPolicy='no-referrer';frame.allow='fullscreen; clipboard-read; clipboard-write';frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-downloads allow-popups allow-modals');stage.append(frame);frame.addEventListener('load',()=>send('Host_PostmessageReady'));
@@ -32,7 +33,7 @@ export function createOfficeWindows({desktop,api,chooseFile,getState,reload,getN
    if(disposed||!frame||event.source!==frame.contentWindow||event.origin!==grant?.origin)return;let data;try{data=typeof event.data==='string'?JSON.parse(event.data):event.data;}catch{return;}
    try{
     if(data?.MessageId==='App_LoadingStatus'&&['Initialized','Frame_Ready'].includes(data.Values?.Status))send('Host_PostmessageReady');
-    if(data?.MessageId==='App_LoadingStatus'&&data.Values?.Status==='Document_Loaded'){ready=true;finishLoading();send('Disable_Default_UIAction',{action:'UI_Save',disable:true});send('Disable_Default_UIAction',{action:'UI_Close',disable:true});status.textContent=temporary?'Nicht gespeichert':grant.writable?'Bereit':'Schreibgeschützt';}
+    if(data?.MessageId==='App_LoadingStatus'&&data.Values?.Status==='Document_Loaded'){ready=true;finishLoading();send('Disable_Default_UIAction',{action:'UI_Save',disable:true});send('Disable_Default_UIAction',{action:'UI_Close',disable:true});status.textContent=temporary?'Nicht gespeichert':grant.writable?'Bereit':'Schreibgeschützt';if(recentFile){const id=recentFile;recentFile=null;onOpened({id,kind,profile:resumeState.recentProfile});}}
     if(data?.MessageId==='Doc_ModifiedStatus'&&data.Values?.Modified===true){dirty=true;updateTitle();status.textContent=temporary?'Nicht gespeichert':'Geändert';}
     if(data?.MessageId==='Action_Save_Resp'&&pending){clearTimeout(saveTimer);const done=pending;pending=null;if(data.Values?.success===true||data.Values?.result==='unmodified')await done();else{status.textContent='Speichern fehlgeschlagen: '+(data.Values?.errorMsg||data.Values?.result||'Keine Fehlerdetails von Collabora.');toast(status.textContent);}}
     if(data?.MessageId==='UI_Save')await saveDocument();
