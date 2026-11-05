@@ -10,3 +10,13 @@ test('Aero accepts bounded settings, rejects CSS injection, and converts mixer c
  applyAppearance({color:'#ff0000',intensity:100,transparency:false},root);assert.equal(values['--aero-alpha'],'1');assert.equal(values['--aero-shell-alpha'],'1');assert.equal(values['--aero-blur'],'0px');
  applyAppearance(defaultAppearance,root);assert.equal(values['--aero-blur'],'14px');assert.ok(Number(values['--aero-alpha'])<1);assert.equal(root.dataset.aeroTransparency,'true');
 });
+
+test('native Himmel default preserves explicit saved colors without migration',()=>{
+ assert.equal(defaultAppearance.color,'#74b8fc');
+ const saved={color:'#69a4c9',intensity:50,transparency:true};
+ assert.deepEqual(normalizeAppearance(saved),saved);
+ const values={},root={dataset:{},style:{setProperty:(key,value)=>values[key]=value}};
+ applyAppearance(saved,root);assert.equal(values['--aero-rgb'],'105 164 201');
+ applyAppearance(null,root);assert.equal(values['--aero-rgb'],'116 184 252');
+ assert.equal(saved.color,'#69a4c9');
+});

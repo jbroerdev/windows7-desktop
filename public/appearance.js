@@ -1,5 +1,5 @@
-export const defaultAppearance={color:'#69a4c9',intensity:50,transparency:true};
-export const aeroColors=[['Himmel','#69a4c9'],['Abenddämmerung','#4967a7'],['Meer','#479ca0'],['Blätter','#648c51'],['Limette','#9dad3e'],['Sonne','#e3c34b'],['Kürbis','#cf873b'],['Rubin','#b74444'],['Fuchsia','#bd4986'],['Rosa','#dba4ae'],['Violett','#80569e'],['Lavendel','#ada1c9'],['Sand','#b8aa8a'],['Schokolade','#825e48'],['Schiefer','#70838e'],['Frost','#d6e4ea']];
+export const defaultAppearance={color:'#74b8fc',intensity:50,transparency:true};
+export const aeroColors=[['Himmel','#74b8fc'],['Abenddämmerung','#4967a7'],['Meer','#479ca0'],['Blätter','#648c51'],['Limette','#9dad3e'],['Sonne','#e3c34b'],['Kürbis','#cf873b'],['Rubin','#b74444'],['Fuchsia','#bd4986'],['Rosa','#dba4ae'],['Violett','#80569e'],['Lavendel','#ada1c9'],['Sand','#b8aa8a'],['Schokolade','#825e48'],['Schiefer','#70838e'],['Frost','#d6e4ea']];
 export function validateAppearance(value){
  if(!value||typeof value!=='object'||Array.isArray(value)||!/^#[0-9a-f]{6}$/i.test(value.color)||!Number.isInteger(value.intensity)||value.intensity<0||value.intensity>100||typeof value.transparency!=='boolean')throw Error('Ungültige Fensterfarbe.');
  return {color:value.color.toLowerCase(),intensity:value.intensity,transparency:value.transparency};

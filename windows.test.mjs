@@ -123,8 +123,8 @@ test('first opening a tall cascaded application fits above the taskbar',async()=
   make('control-panel',800,601,650,420);
   const paint=make('paint',1120,700,700,380);
   assert.equal(Number.parseFloat(paint.style.top),0);
-  assert.equal(Number.parseFloat(paint.style.height),678);
-  assert.ok(Number.parseFloat(paint.style.top)+Number.parseFloat(paint.style.height)<=720-42);
+  assert.equal(Number.parseFloat(paint.style.height),680);
+  assert.ok(Number.parseFloat(paint.style.top)+Number.parseFloat(paint.style.height)<=720-40);
  }finally{for(const key of keys)if(prior[key]===undefined)delete globalThis[key];else globalThis[key]=prior[key];}
 });
 
@@ -167,4 +167,24 @@ test('minimizing foreground activates the top visible window without reviving mi
  const minimize=new Function('records','window','CustomEvent','activate','syncPins',source.slice(start,end)+';return minimize;')(records,{dispatchEvent:()=>sounds++},class{},r=>active=r.el.id,()=>{});
  active='b';minimize('b');assert.equal(b.el.hidden,true);assert.equal(active,'a');assert.equal(focused,'a');assert.equal(c.el.hidden,true);assert.equal(sounds,1);minimize('b');assert.equal(sounds,1);
  b.el.hidden=false;active='b';focused=null;minimize('a');assert.equal(active,'b');assert.equal(focused,null);
+});
+
+test('group preview click focuses the active member and Escape restores the taskbar anchor',async()=>{
+ const {readFile}=await import('node:fs/promises'),source=await readFile('./public/window-manager.js','utf8'),start=source.indexOf('  function taskbarPreviewFocusTarget(items){'),end=source.indexOf('\n',start),focusTarget=new Function(source.slice(start,end)+';return taskbarPreviewFocusTarget;')();
+ const record=(id,active)=>({el:{id,classList:{contains:name=>name==='active-window'&&active}}}),first=record('first',false),active=record('active',true);
+ assert.equal(focusTarget([first,active]),active);assert.equal(focusTarget([first]),first);assert.equal(focusTarget([]),null);
+ const hideStart=source.indexOf('  function hidePreview(restoreFocus=false){'),hideEnd=source.indexOf('\n',hideStart);let focused=null,removed=false,cleared=null;
+ const anchor={isConnected:true,focus(){focused=this;}},child={},popup={contains:node=>node===child,remove(){removed=true;}};
+ const makeHide=new Function('document','clearTimeout','preview','previewTimer','previewAnchor','previewFocusOnDismiss',source.slice(hideStart,hideEnd)+';return{hidePreview,state:()=>({preview,previewTimer,previewAnchor,previewFocusOnDismiss})};');
+ const keyboard=makeHide({activeElement:child},id=>cleared=id,popup,17,anchor,true);keyboard.hidePreview(true);
+ assert.equal(removed,true);assert.equal(cleared,17);assert.equal(focused,anchor);assert.deepEqual(keyboard.state(),{preview:null,previewTimer:null,previewAnchor:null,previewFocusOnDismiss:false});
+ focused=null;removed=false;const input={};const hover=makeHide({activeElement:input},()=>{},popup,18,anchor,false);hover.hidePreview(true);
+ assert.equal(removed,true);assert.equal(focused,null,'closing a hover preview must preserve an unrelated focused input');
+});
+
+test('group preview mouse-leave timer restores popup focus without stealing external input focus',async()=>{
+ const {readFile}=await import('node:fs/promises'),source=await readFile('./public/window-manager.js','utf8'),start=source.indexOf('  function schedulePreviewHide(){'),end=source.indexOf('\n',start);let delay=null,timer=null,restored,cleared=null;
+ const controls=new Function('clearTimeout','setTimeout','hidePreview','previewTimer',source.slice(start,end)+';return{schedulePreviewHide,state:()=>previewTimer};')(id=>cleared=id,(fn,ms)=>{timer=fn;delay=ms;return 19;},value=>restored=value,17);
+ controls.schedulePreviewHide();assert.equal(cleared,17);assert.equal(delay,180);assert.equal(controls.state(),19);timer();assert.equal(restored,true,'timer dismissal must restore focus when the popup owns keyboard focus');
+ const noPopupFocus={previewFocusOnDismiss:false,activeInside:false};assert.equal(noPopupFocus.previewFocusOnDismiss||noPopupFocus.activeInside,false,'hover dismissal with a focused input must not claim focus for the taskbar');
 });

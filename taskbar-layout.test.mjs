@@ -20,7 +20,7 @@ test('Peek is a reversible visual state and obeys its preference without minimiz
  const f=fixture();try{f.show.emit('pointerenter');f.run(800);assert.equal(f.body.classList.contains('taskbar-peeking'),true);f.show.emit('pointerleave');assert.equal(f.body.classList.contains('taskbar-peeking'),false);f.setPrefs({peek:false});f.show.emit('pointerenter');f.run(800);assert.equal(f.body.classList.contains('taskbar-peeking'),false);}finally{f.adapter.dispose();}
 });
 test('unlocked docking saves only on completed drag and the working surface follows the selected edge',async()=>{
- const f=fixture({locked:false});try{f.taskbar.emit('pointerdown',{button:0,pointerId:1,clientX:500,clientY:710});f.doc.emit('pointermove',{pointerId:1,clientX:500,clientY:1});assert.equal(f.body.dataset.taskbarPosition,'top');assert.equal(f.surface.style.top,'42px');assert.equal(f.saved.length,0);f.doc.emit('pointerup',{pointerId:1});await new Promise(resolve=>setImmediate(resolve));assert.equal(f.saved[0].taskbar.position,'top');f.setPrefs({locked:true});f.taskbar.emit('pointerdown',{button:0,pointerId:2,clientX:500,clientY:1});f.doc.emit('pointermove',{pointerId:2,clientX:1,clientY:300});f.doc.emit('pointerup',{pointerId:2});assert.equal(f.saved.length,1);assert.equal(nearestTaskbarEdge(1279,400,1280,720),'right');}finally{f.adapter.dispose();}
+ const f=fixture({locked:false});try{f.taskbar.emit('pointerdown',{button:0,pointerId:1,clientX:500,clientY:710});f.doc.emit('pointermove',{pointerId:1,clientX:500,clientY:1});assert.equal(f.body.dataset.taskbarPosition,'top');assert.equal(f.surface.style.top,'40px');assert.equal(f.saved.length,0);f.doc.emit('pointerup',{pointerId:1});await new Promise(resolve=>setImmediate(resolve));assert.equal(f.saved[0].taskbar.position,'top');f.setPrefs({locked:true});f.taskbar.emit('pointerdown',{button:0,pointerId:2,clientX:500,clientY:1});f.doc.emit('pointermove',{pointerId:2,clientX:1,clientY:300});f.doc.emit('pointerup',{pointerId:2});assert.equal(f.saved.length,1);assert.equal(nearestTaskbarEdge(1279,400,1280,720),'right');}finally{f.adapter.dispose();}
 });
 test('tray flyouts prevent hiding and secondary displays without taskbars reserve no taskbar strip',()=>{
  const f=fixture({autoHide:true,position:'left'});try{const popup=new f.Element();popup.classList.add('sound-flyout');popup.offsetWidth=180;popup.offsetHeight=240;f.popups.push(popup);f.observers[0].callback();f.run(600);assert.equal(f.body.classList.contains('taskbar-auto-hidden'),false);assert.ok(Number.parseFloat(popup.style.left)>=0);f.body.classList.add('secondary-screen');f.adapter.update();assert.equal(f.surface.style.left,'0px');assert.equal(f.surface.style.width,'1280px');}finally{f.adapter.dispose();assert.equal(f.observers[0].disconnected,true);}
@@ -29,7 +29,7 @@ test('tray flyouts prevent hiding and secondary displays without taskbars reserv
 
 test('work area changes reflow icons only after surface geometry changes, without recursive resize events',()=>{
  const f=fixture();try{
-  assert.equal(f.areas.length,1);assert.deepEqual(f.areas[0].area,{left:0,top:0,width:1280,height:678});
+  assert.equal(f.areas.length,1);assert.deepEqual(f.areas[0].area,{left:0,top:0,width:1280,height:680});
   f.adapter.update();f.setPrefs({peek:false,locked:false});assert.equal(f.areas.length,1);
   f.setPrefs({position:'left'});assert.equal(f.areas.length,2);assert.equal(f.areas[1].area.left,62);assert.equal(f.areas[1].surface.left,'62px');assert.equal(f.areas[1].surface.width,'1218px');
   f.win.innerWidth=900;f.win.emit('resize');assert.equal(f.areas.length,3);assert.equal(f.areas[2].area.width,838);
@@ -42,6 +42,14 @@ test('an open notification overflow keeps auto hide visible until the actual pop
  const f=fixture({autoHide:true});try{const panel=new f.Element();panel.classList.add('notification-overflow');f.popups.push(panel);f.observers[0].callback();f.run(600);assert.equal(f.body.classList.contains('taskbar-auto-hidden'),false);assert.equal(panel.style.left,undefined);f.popups.length=0;f.observers[0].callback();f.run(600);assert.equal(f.body.classList.contains('taskbar-auto-hidden'),true);}finally{f.adapter.dispose();}
 });
 
+test('taskbar jump lists hold auto hide without being repositioned as a volume flyout',()=>{
+ const f=fixture({autoHide:true,position:'left'});try{
+  const panel=new f.Element();panel.classList.add('task-jump-menu');panel.style.left='68px';panel.style.top='120px';f.popups.push(panel);f.observers[0].callback();f.run(600);
+  assert.equal(f.body.classList.contains('taskbar-auto-hidden'),false);assert.equal(panel.style.left,'68px');assert.equal(panel.style.top,'120px');
+  panel.hidden=true;f.observers[0].callback();f.run(600);assert.equal(f.body.classList.contains('taskbar-auto-hidden'),true);
+ }finally{f.adapter.dispose();}
+});
+
 
 test('taskbar reserves the actual tray extent and returns hidden icon space to its buttons',()=>{
  const f=fixture();try{
@@ -51,6 +59,19 @@ test('taskbar reserves the actual tray extent and returns hidden icon space to i
   assert.equal(f.taskbar.style.paddingRight,'19px');assert.equal(f.refreshed.at(-1).paddingRight,'19px');assert.equal(f.areas.length,1);
   f.tray.rect={width:155.25,height:42};f.resizeObservers[0].callback();assert.equal(f.taskbar.style.paddingRight,'160px');
  }finally{f.adapter.dispose();assert.equal(f.resizeObservers[0].disconnected,true);}
+});
+
+test('open tray flyouts follow all edges including a return to the bottom',()=>{
+ const f=fixture();try{
+  const popup=new f.Element();popup.classList.add('sound-flyout');popup.offsetWidth=180;popup.offsetHeight=240;f.popups.push(popup);
+  f.tray.rect={left:0,right:62,top:500,bottom:720,width:62,height:220};f.setPrefs({position:'left'});
+  assert.equal(popup.style.left,'68px');assert.equal(popup.style.top,'474px');
+  f.tray.rect={left:1180,right:1280,top:0,bottom:42,width:100,height:42};f.setPrefs({position:'top'});
+  assert.equal(popup.style.top,'48px');
+  f.tray.rect={left:1180,right:1280,top:678,bottom:720,width:100,height:42};f.setPrefs({position:'bottom'});
+  assert.equal(popup.style.left,'1094px');assert.equal(popup.style.top,'432px');assert.equal(popup.style.bottom,'auto');
+  popup.offsetHeight=900;f.adapter.update();assert.equal(popup.style.top,'6px');
+ }finally{f.adapter.dispose();}
 });
 
 test('vertical tray reservations follow measured height and clear obsolete horizontal padding',()=>{

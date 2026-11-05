@@ -10,6 +10,6 @@ test('incoming notification sounds once across tabs and stays silent for an acti
 });
 test('opening Start invokes its configured navigation sound, closing it does not',async()=>{
  const source=await readFile('./public/desktop-shell.js','utf8'),start=source.indexOf('function toggleStart(show)'),end=source.indexOf('start.onclick=',start),sounds=[];
- const toggle=new Function('soundSystem','menu','start','renderMenu',"let allPrograms=false,accessoriesOpen=false,programFolder=null;const search={value:''};"+source.slice(start,end)+';return toggleStart;')({play:id=>sounds.push(id)},{hidden:true},{setAttribute(){},focus(){}},()=>{});
+ const toggle=new Function('soundSystem','menu','start','renderMenu','renderJumpList',"let allPrograms=false,accessoriesOpen=false,programFolder=null,jumpApp=null;const search={value:''};"+source.slice(start,end)+';return toggleStart;')({play:id=>sounds.push(id)},{hidden:true},{setAttribute(){},focus(){}},()=>{},()=>{});
  toggle(true);toggle(false);assert.deepEqual(sounds,['navigation-start']);
 });

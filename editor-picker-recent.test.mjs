@@ -1,0 +1,21 @@
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs/promises';import path from'node:path';import os from'node:os';import vm from'node:vm';import{pathToFileURL}from'node:url';
+const root=import.meta.dirname,candidate=root;
+test('actual isolated picker callback records success and respects cancel/error/profile/restore boundaries',async t=>{
+ const source=await fs.readFile(path.join(root,'public/app.js'),'utf8');const begin=source.indexOf('const pick=async()=>'),end=source.indexOf('\nconst editor=createEditor',begin);assert.ok(begin>0&&end>begin);const actual=source.slice(begin,end)+'\npick;';
+ const temp=await fs.mkdtemp(path.join(os.tmpdir(),'worker2-picker-review-'));process.env.NODE_ENV='test';process.env.DATA_DIR=path.join(temp,'metadata');process.env.EXPLORER_ROOT=path.join(temp,'Explorer');let server;
+ try{({server}=await import(pathToFileURL(path.join(candidate,'backend.mjs'))));await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ const call=async(route,data,cookie='')=>{const r=await fetch(base+route,{method:data===undefined?'GET':'POST',headers:{cookie,'content-type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});const value=await r.json();if(!r.ok)throw Error(value.error);return{data:value,cookie:r.headers.get('set-cookie')?.split(';')[0]};};
+ const {cookie}=await call('/api/setup',{username:'pickerreview',password:'synthetic-picker-only'});const state=(await call('/api/session',undefined,cookie)).data;const nodes=(await call('/api/nodes',undefined,cookie)).data.nodes,docs=nodes.find(n=>n.system&&n.space==='documents'),file=(await call('/api/new-text',{parent:docs.id,name:'Picker-callback-test.txt'},cookie)).data;
+ const {createRecentActivity}=await import(pathToFileURL(path.join(candidate,'public/recent-activity.js')));
+ for(const mode of['success','cancel','read-error','profile-change','restore-origin','readonly'])await t.test(mode,async()=>{
+  await call('/api/desktop',{startMenu:{recentPrograms:false,recentDocuments:false}},cookie);await call('/api/desktop',{startMenu:{recentPrograms:true,recentDocuments:true}},cookie);
+  let queued=Promise.resolve();const posts=[],errors=[];const ctx={state:{...state,readonly:mode==='readonly',desktop:{startMenu:{recentPrograms:true,recentDocuments:true}}},restoringRecent:mode==='restore-origin'?1:0,n:{},result:{},record:{},title:{},field:{},editor:{setFile(){},setEncoding(){}},dirty:()=>false,confirm:()=>true,isText:()=>true,toast:msg=>errors.push(msg),api:async route=>(await call(route,undefined,cookie)).data};
+  const activity=createRecentActivity({getState:()=>ctx.state,request:async(route,event)=>{if(event)posts.push(event);return(await call(route,event,cookie)).data;}});ctx.recentActivity={token:activity.token,document:(...args)=>{queued=activity.document(...args);return queued;}};
+  ctx.chooseFile=async()=>{if(mode==='cancel')return null;if(mode==='profile-change')ctx.state={...ctx.state,userId:'different-synthetic-profile'};if(mode==='restore-origin')ctx.restoringRecent=0;return{node:mode==='read-error'?{id:'missing-synthetic-node'}:file};};
+  const pick=vm.runInNewContext(actual,ctx);await pick();await queued;
+  const api=(await call('/api/recent-items',undefined,cookie)).data,db=JSON.parse(await fs.readFile(path.join(process.env.DATA_DIR,'database.json'),'utf8')),stored=db.users.find(u=>u.username==='pickerreview').recentItems;
+  if(mode==='success'){assert.equal(posts.length,1);assert.equal(posts[0].kind,'document');assert.equal(posts[0].appId,'editor');assert.equal(posts[0].profileId,state.userId);assert.deepEqual(api.documents.map(x=>x.id),[file.id]);assert.deepEqual(stored.documents.map(x=>x.id),[file.id]);}
+  else{assert.equal(posts.length,0);assert.equal(api.documents.length,0);assert.equal(stored.documents.length,0);}assert.equal(errors.length,mode==='read-error'?1:0);
+ });
+ }finally{if(server?.listening){server.closeAllConnections();await new Promise(r=>server.close(r));}if(path.dirname(temp)!==path.resolve(os.tmpdir())||!path.basename(temp).startsWith('worker2-picker-review-'))throw Error('Unexpected cleanup');await fs.rm(temp,{recursive:true,force:true});}
+});
