@@ -1,3 +1,897 @@
+// category-catalog.mjs
+var action = (label, target) => ({ label, target });
+var controlPanelCategories = {
+  system: { title: "System und Sicherheit", icon: "/icons/control-panel/system.png", groups: [
+    { title: "Wartungscenter", items: [action("Status des Computers \xFCberpr\xFCfen", "maintenance"), action("Einstellungen der Benutzerkontensteuerung \xE4ndern", "uac"), action("Probleme erkennen und beheben", "troubleshooting")] },
+    { title: "Windows-Firewall", items: [action("Firewallstatus \xFCberpr\xFCfen", "firewall"), action("Programm \xFCber die Windows-Firewall kommunizieren lassen", "firewall-apps")] },
+    { title: "System", items: [action("Arbeitsspeicher und Prozessorgeschwindigkeit anzeigen", "system-info"), action("Remotezugriff zulassen", "remote-access"), action("Computernamen anzeigen", "system-info")] },
+    { title: "Windows Update", items: [action("Automatische Updates aktivieren oder deaktivieren", "windows-update"), action("Installierte Updates anzeigen", "installed-updates")] },
+    { title: "Energieoptionen", items: [action("Energiesparmodus \xE4ndern", "power"), action("Energieoptionen \xE4ndern", "power")] },
+    { title: "Sichern und Wiederherstellen", items: [action("Sicherung des Computers erstellen", "backup"), action("Dateien aus einer Sicherung wiederherstellen", "restore")] },
+    { title: "Verwaltung", items: [action("Festplattenpartitionen erstellen und formatieren", "disk-management"), action("Ereignisprotokolle anzeigen", "event-viewer")] }
+  ] },
+  network: { title: "Netzwerk und Internet", icon: "/icons/control-panel/network.png", groups: [
+    { title: "Netzwerk- und Freigabecenter", items: [action("Netzwerkstatus und -aufgaben anzeigen", "network-center"), action("Verbindung mit einem Netzwerk herstellen", "connect-network"), action("Heimnetzgruppen- und Freigabeoptionen ausw\xE4hlen", "sharing")] },
+    { title: "Heimnetzgruppe", items: [action("Kennwort f\xFCr die Heimnetzgruppe anzeigen", "homegroup"), action("Erweiterte Freigabeeinstellungen \xE4ndern", "sharing")] },
+    { title: "Internetoptionen", items: [action("Startseite \xE4ndern", "internet-options"), action("Browser-Add-Ons verwalten", "internet-options"), action("Browserverlauf und Cookies l\xF6schen", "internet-options")] }
+  ] },
+  hardware: { title: "Hardware und Sound", icon: "/icons/control-panel/hardware.png", groups: [
+    { title: "Ger\xE4te und Drucker", items: [action("Ger\xE4te und Drucker anzeigen", "devices"), action("Ger\xE4t hinzuf\xFCgen", "add-device"), action("Erweiterte Druckereinrichtung", "printers")] },
+    { title: "Automatische Wiedergabe", items: [action("Medien oder Ger\xE4te automatisch wiedergeben", "autoplay")] },
+    { title: "Sound", items: [action("Lautst\xE4rke anpassen", "sound"), action("Audioger\xE4te verwalten", "sound"), action("Systemkl\xE4nge \xE4ndern", "sound")] },
+    { title: "Energieoptionen", items: [action("Energiesparmodus \xE4ndern", "power")] },
+    { title: "Anzeige", items: [action("Bildschirmaufl\xF6sung anpassen", "display")] }
+  ] },
+  programs: { title: "Programme", icon: "/icons/control-panel/programs.png", groups: [
+    { title: "Programme und Funktionen", items: [action("Programm deinstallieren", "programs"), action("Installierte Updates anzeigen", "installed-updates"), action("Windows-Funktionen aktivieren oder deaktivieren", "windows-features")] },
+    { title: "Standardprogramme", items: [action("Standardprogramme festlegen", "default-programs"), action("Dateityp immer mit einem bestimmten Programm \xF6ffnen", "file-associations"), action("Einstellungen f\xFCr automatische Wiedergabe \xE4ndern", "autoplay")] },
+    { title: "Desktopgadgets", items: [action("Desktopgadgets anzeigen und verwalten", "gadgets")] }
+  ] },
+  accounts: { title: "Benutzerkonten und Jugendschutz", icon: "/icons/control-panel/accounts.png", groups: [
+    { title: "Benutzerkonten", items: [action("Benutzerkonten hinzuf\xFCgen oder entfernen", "accounts"), action("Kontotyp \xE4ndern", "accounts"), action("Anmeldekennwort \xE4ndern", "accounts")] },
+    { title: "Anmeldeinformationsverwaltung", items: [action("Web- und Windows-Anmeldeinformationen verwalten", "credentials")] },
+    { title: "Jugendschutz", items: [action("Jugendschutz f\xFCr beliebige Benutzer einrichten", "parental-controls")] }
+  ] },
+  appearance: { title: "Darstellung und Anpassung", icon: "/icons/control-panel/appearance.png", groups: [
+    { title: "Anpassung", items: [action("Design \xE4ndern", "background"), action("Desktophintergrund \xE4ndern", "wallpapers"), action("Fensterfarben \xE4ndern", "colors"), action("Bildschirmschoner \xE4ndern", "screensaver")] },
+    { title: "Anzeige", items: [action("Text und andere Elemente vergr\xF6\xDFern oder verkleinern", "display"), action("Bildschirmaufl\xF6sung anpassen", "display"), action("Anzeigeger\xE4te verbinden", "display")] },
+    { title: "Taskleiste und Startmen\xFC", items: [action("Taskleiste anpassen", "taskbar")] },
+    { title: "Center f\xFCr erleichterte Bedienung", items: [action("Visuelle Darstellung des Bildschirms optimieren", "access")] }
+  ] },
+  region: { title: "Zeit, Sprache und Region", icon: "/icons/control-panel/region.png", groups: [
+    { title: "Datum und Uhrzeit", items: [action("Datum und Uhrzeit einstellen", "date-time"), action("Zeitzone \xE4ndern", "date-time"), action("Uhrzeit f\xFCr verschiedene Zeitzonen hinzuf\xFCgen", "date-time")] },
+    { title: "Region und Sprache", items: [action("Tastaturen und Eingabemethoden \xE4ndern", "input-methods"), action("Anzeigesprache \xE4ndern", "display-language"), action("Datums-, Uhrzeit- oder Zahlenformat \xE4ndern", "regional-format")] }
+  ] },
+  access: { title: "Erleichterte Bedienung", icon: "/icons/control-panel/access.png", groups: [
+    { title: "Center f\xFCr erleichterte Bedienung", items: [action("Einstellungen empfehlen lassen", "access-wizard"), action("Visuelle Darstellung des Bildschirms optimieren", "access-display"), action("Computer ohne Bildschirm verwenden", "narrator"), action("Computer ohne Maus oder Tastatur verwenden", "on-screen-keyboard"), action("Mausbedienung erleichtern", "mouse-keys"), action("Tastaturbedienung erleichtern", "keyboard-access"), action("Text oder visuelle Alternativen f\xFCr Sounds verwenden", "sound-access")] },
+    { title: "Spracherkennung", items: [action("Spracherkennung starten", "speech-recognition"), action("Mikrofon einrichten", "microphone-setup")] }
+  ] }
+};
+function getControlPanelCategory(categoryId) {
+  return Object.prototype.hasOwnProperty.call(controlPanelCategories, categoryId) ? controlPanelCategories[categoryId] : null;
+}
+
+// category-source.mjs
+function isAvailable(availableTargets, target) {
+  return availableTargets instanceof Set ? availableTargets.has(target) : !!availableTargets && Object.prototype.hasOwnProperty.call(availableTargets, target) && availableTargets[target] === true;
+}
+function renderControlPanelCategory({ categoryId, onNavigate, availableTargets = {}, document: doc = globalThis.document }) {
+  const root = doc.createElement("section");
+  root.className = "cp-category-native";
+  root.dataset.categoryId = categoryId || "";
+  const category = getControlPanelCategory(categoryId);
+  if (!category) {
+    root.classList.add("cp-category-unknown");
+    const title2 = doc.createElement("h2");
+    title2.textContent = "Systemsteuerung";
+    const message = doc.createElement("p");
+    message.textContent = "Diese Kategorie ist nicht verf\xFCgbar.";
+    root.append(title2, message);
+    return root;
+  }
+  const header = doc.createElement("header");
+  header.className = "cp-category-heading";
+  const icon = doc.createElement("img");
+  icon.src = category.icon;
+  icon.alt = "";
+  icon.width = 48;
+  icon.height = 48;
+  const title = doc.createElement("h2");
+  title.textContent = category.title;
+  header.append(icon, title);
+  root.append(header);
+  const groups = doc.createElement("div");
+  groups.className = "cp-category-groups";
+  for (const groupData of category.groups) {
+    const group = doc.createElement("section");
+    group.className = "cp-category-group";
+    const heading = doc.createElement("h3");
+    heading.textContent = groupData.title;
+    group.append(heading);
+    const list = doc.createElement("ul");
+    for (const itemData of groupData.items) {
+      const row = doc.createElement("li"), target = itemData.target, available2 = typeof onNavigate === "function" && isAvailable(availableTargets, target), item = doc.createElement(available2 ? "button" : "span");
+      item.className = "cp-category-link";
+      item.textContent = itemData.label;
+      if (available2) {
+        item.type = "button";
+        item.addEventListener("click", () => onNavigate(target));
+      } else {
+        item.classList.add("is-unavailable");
+        item.setAttribute("aria-disabled", "true");
+        item.title = "Noch nicht in dieser Webumgebung verf\xFCgbar.";
+      }
+      row.append(item);
+      list.append(row);
+    }
+    group.append(list);
+    groups.append(group);
+  }
+  root.append(groups);
+  return root;
+}
+
+// network-source.mjs
+var controlPanelNetworkNavigation = Object.freeze([
+  { target: "home", label: "Startseite der Systemsteuerung" },
+  { target: "adapter-settings", label: "Adaptereinstellungen \xE4ndern" },
+  { target: "advanced-sharing", label: "Erweiterte Freigabeeinstellungen \xE4ndern" },
+  { target: "homegroup", label: "Heimnetzgruppe", related: true },
+  { target: "internet-options", label: "Internetoptionen", related: true },
+  { target: "firewall", label: "Windows-Firewall", related: true }
+].map((item) => Object.freeze(item)));
+var tasks = [
+  ["setup-network", "Neue Verbindung oder neues Netzwerk einrichten", "Richtet eine Drahtlos-, Breitband-, Einw\xE4hl-, Ad-hoc- oder VPN-Verbindung bzw. einen Router oder Zugriffspunkt ein."],
+  ["connect-network", "Verbindung mit einem Netzwerk herstellen", "Stellt (erneut) eine Verbindung mit einem Drahtlosnetzwerk, verkabelten Netzwerk, Einw\xE4hlnetzwerk oder VPN-Netzwerk her."],
+  ["homegroup", "Heimnetzgruppen- und Freigabeoptionen ausw\xE4hlen", "Erm\xF6glicht Zugriff auf Dateien und Drucker auf anderen Netzwerkcomputern zu, oder \xE4ndert die Freigabeeinstellungen."],
+  ["network-troubleshoot", "Probleme beheben", "Diagnostiziert und behebt Netzwerkprobleme, oder ruft Problembehandlungsinformationen ab."]
+];
+var owns = (object, key) => object != null && Object.prototype.hasOwnProperty.call(object, key);
+var available = (targets, key) => targets instanceof Set ? targets.has(key) : owns(targets, key) && targets[key] === true;
+var finite = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0;
+var bytes = (value) => finite(value) ? new Intl.NumberFormat("de-DE").format(value) + " Byte" : "Nicht verf\xFCgbar";
+function getControlPanelNetworkData(snapshot, { now = Date.now(), shareEnabled } = {}) {
+  const age = now - Date.parse(snapshot?.generatedAt);
+  const fresh = snapshot?.scope === "host" && Number.isFinite(age) && age >= -5e3 && age <= 15e3;
+  const adapters = fresh && Array.isArray(snapshot.interfaces) ? snapshot.interfaces.filter((item) => typeof item?.name === "string" && item.name.trim()).slice(0, 256).map((item) => ({
+    name: item.name,
+    received: finite(item.received) ? item.received : null,
+    sent: finite(item.sent) ? item.sent : null,
+    speed: finite(item.speed) && item.speed > 0 ? item.speed : null
+  })) : [];
+  return {
+    hostAvailable: fresh,
+    hostname: fresh && typeof snapshot.host?.hostname === "string" ? snapshot.host.hostname : null,
+    generatedAt: fresh ? snapshot.generatedAt : null,
+    adapters,
+    shareEnabled: typeof shareEnabled === "boolean" ? shareEnabled : null
+  };
+}
+function networkDataFromTaskManager(snapshot, { authenticated = false, role, shareEditing = false, readonly = false, now = Date.now() } = {}) {
+  if (authenticated !== true || !["admin", "user"].includes(role) || shareEditing !== false || readonly !== false) return getControlPanelNetworkData(null, { now });
+  return getControlPanelNetworkData(snapshot, { now });
+}
+var safeText = (value, max = 200) => typeof value === "string" && value.trim() ? value.trim().slice(0, max) : null;
+var validFamily = (value) => value === "IPv4" || value === "IPv6";
+var isIPv4Address = (value) => typeof value === "string" && value.split(".").length === 4 && value.split(".").every((part) => /^\d{1,3}$/.test(part) && Number(part) <= 255);
+var networkCapabilityKeys = ["readAdapters", "diagnose", "setDisplayName", "configureIpv4", "enable", "disable", "networkManagerCheckpoint"];
+var normalizeCapabilities = (value) => Object.fromEntries(networkCapabilityKeys.map((key) => [key, value?.[key] === true]));
+function normalizeNetworkAdapter(item, globalCapabilities) {
+  const ifIndex = Number.isInteger(item?.ifindex) && item.ifindex >= 0 ? item.ifindex : null, name = safeText(item?.name, 160), mac = safeText(item?.mac, 80);
+  if (ifIndex === null || !name) return null;
+  const adapterId = safeText(item.id, 240) || String(ifIndex) + ":" + (mac ? mac.replaceAll(":", "") : "no-mac");
+  const addresses = Array.isArray(item.addresses) ? item.addresses.slice(0, 64).flatMap((address) => {
+    const family = address?.family === "inet" ? "IPv4" : address?.family === "inet6" ? "IPv6" : validFamily(address?.family) ? address.family : null, local = safeText(address?.local, 128), prefixLength = Number.isInteger(address?.prefixLength) && address.prefixLength >= 0 && address.prefixLength <= (family === "IPv4" ? 32 : 128) ? address.prefixLength : null;
+    return family && local ? [{ family, local, prefixLength, scope: safeText(address?.scope, 40) }] : [];
+  }) : null;
+  const routes = Array.isArray(item.routes) ? item.routes.slice(0, 64).flatMap((route) => {
+    const family = route?.family === "inet" ? "IPv4" : route?.family === "inet6" ? "IPv6" : validFamily(route?.family) ? route.family : null, gateway = safeText(route?.gateway, 128), destination = safeText(route?.destination, 160), metric = Number.isInteger(route?.metric) && route.metric >= 0 ? route.metric : null;
+    return family ? [{ family, gateway, destination, metric }] : [];
+  }) : null;
+  const operState = ["up", "down", "dormant", "lowerlayerdown", "notpresent", "unknown"].includes(String(item.operState || "").toLowerCase()) ? String(item.operState).toLowerCase() : "unknown";
+  const capabilities = { ...globalCapabilities, ...Object.fromEntries(networkCapabilityKeys.filter((key) => owns(item.capabilities, key)).map((key) => [key, item.capabilities[key] === true])) };
+  return {
+    adapterId,
+    ifIndex,
+    name,
+    displayName: safeText(item.displayName, 160),
+    mac,
+    kind: safeText(item.kind, 80),
+    mtu: Number.isInteger(item.mtu) && item.mtu > 0 && item.mtu <= 65535 ? item.mtu : null,
+    adminUp: typeof item.adminUp === "boolean" ? item.adminUp : null,
+    operState,
+    addresses,
+    routes,
+    dnsServers: Array.isArray(item.dnsServers) ? item.dnsServers.slice(0, 32).map((value) => safeText(value, 128)).filter(Boolean) : null,
+    dnsSource: safeText(item.dnsSource, 80),
+    configurationReason: safeText(item.configurationReason, 240),
+    capabilities
+  };
+}
+function networkDataFromAdaptersSnapshot(snapshot, { authenticated = false, role, shareEditing = false, readonly = false, now = Date.now() } = {}) {
+  const denied = { adapterListAvailable: false, generatedAt: null, hostname: null, revision: null, aliasRevision: null, adapters: [], capabilities: normalizeCapabilities(null) };
+  if (authenticated !== true || role !== "admin" || shareEditing !== false || readonly !== false) return denied;
+  const age = now - Date.parse(snapshot?.generatedAt), fresh = snapshot?.schemaVersion === 1 && snapshot?.scope === "host" && Number.isFinite(age) && age >= -5e3 && age <= 15e3;
+  if (!fresh) return denied;
+  const capabilities = normalizeCapabilities(snapshot.capabilities);
+  const adapters = Array.isArray(snapshot.adapters) ? snapshot.adapters.slice(0, 128).map((item) => normalizeNetworkAdapter(item, capabilities)).filter(Boolean) : [];
+  const adapter = snapshot.adapter ? normalizeNetworkAdapter(snapshot.adapter, capabilities) : null;
+  return { adapterListAvailable: capabilities.readAdapters === true, generatedAt: snapshot.generatedAt, hostname: safeText(snapshot.hostname, 160), revision: typeof snapshot.revision === "string" && /^[a-f0-9]{64}$/.test(snapshot.revision) ? snapshot.revision : null, aliasRevision: Number.isInteger(snapshot.aliasRevision) && snapshot.aliasRevision >= 0 ? snapshot.aliasRevision : null, internetConnectivity: snapshot.internetConnectivity === "not-tested" ? "not-tested" : null, adapters, adapter, capabilities };
+}
+function targetAvailable(targets, key) {
+  return available(targets, key);
+}
+function sectionElement(doc, tag, text2, className) {
+  const node = doc.createElement(tag);
+  if (text2 !== void 0) node.textContent = text2;
+  if (className) node.className = className;
+  return node;
+}
+function appendField(doc, parent, label, value) {
+  parent.append(sectionElement(doc, "dt", label), sectionElement(doc, "dd", value ?? "Nicht verf\xFCgbar"));
+}
+function isSafeDiagnosticTarget(value) {
+  return typeof value === "string" && value.trim().length > 0 && value.trim().length <= 253 && /^[a-zA-Z0-9][a-zA-Z0-9.:%_-]*$/.test(value.trim());
+}
+function renderControlPanelNetwork({ document: doc = globalThis.document, data = {}, availableTargets = {}, onNavigate, onAction, busy = false, error = null, includeNavigation = true, now = Date.now() } = {}) {
+  const el = (tag, text2, className) => sectionElement(doc, tag, text2, className);
+  const root = el("section", void 0, "cp-network-page");
+  root.setAttribute("aria-label", "Netzwerk- und Freigabecenter");
+  root.setAttribute("aria-busy", String(!!busy));
+  const diagnosticsReady = data?.capabilities?.diagnose === true && targetAvailable(availableTargets, "network-troubleshoot") && typeof onAction === "function";
+  const link = (target, label, { internal = false, enabledOverride = false } = {}) => {
+    let enabled = enabledOverride;
+    if (!enabled) {
+      if (internal === "adapter-settings") enabled = data?.capabilities?.readAdapters === true && typeof onNavigate === "function";
+      else if (internal === "network-troubleshoot") enabled = diagnosticsReady;
+      else enabled = typeof onNavigate === "function" && targetAvailable(availableTargets, target);
+    }
+    const node = el(enabled ? "button" : "span", label, "cp-network-link");
+    node.dataset.networkTarget = target;
+    if (enabled) {
+      node.type = "button";
+      node.addEventListener("click", () => {
+        if (internal === "network-troubleshoot") {
+          diagnostic.hidden = !diagnostic.hidden;
+          diagnosticTarget?.focus?.();
+          return;
+        }
+        if (typeof onNavigate === "function" && (internal === "adapter-settings" || targetAvailable(availableTargets, target))) onNavigate(target);
+      });
+    } else {
+      node.classList.add("is-unavailable");
+      node.setAttribute("aria-disabled", "true");
+      node.title = targetReason(data, target);
+    }
+    return node;
+  };
+  if (includeNavigation) {
+    const side = el("nav", void 0, "cp-network-sidebar");
+    side.setAttribute("aria-label", "Systemsteuerung");
+    for (const item of controlPanelNetworkNavigation.filter((item2) => !item2.related)) side.append(link(item.target, item.label, { internal: item.target === "adapter-settings" ? "adapter-settings" : false }));
+    const related = el("div", void 0, "cp-network-related");
+    related.append(el("p", "Siehe auch"));
+    for (const item of controlPanelNetworkNavigation.filter((item2) => item2.related)) related.append(link(item.target, item.label));
+    side.append(related);
+    root.append(side);
+  }
+  const content = el("div", void 0, "cp-network-content");
+  root.append(content);
+  const home = el("div", void 0, "cp-network-home");
+  content.append(home);
+  home.append(el("h2", "Zeigen Sie die grundlegenden Informationen zum Netzwerk an, und richten Sie Verbindungen ein."));
+  const map = el("div", void 0, "cp-network-map");
+  map.append(el("p", "Die Netzwerk\xFCbersicht des Webdesktops ist nicht mit einer Windows-Netzwerk\xFCbersicht gleichzusetzen."), link("network-map", "Gesamt\xFCbersicht anzeigen"));
+  home.append(map);
+  const heading = (text2, target, label, internal) => {
+    const row = el("div", void 0, "cp-network-section-heading");
+    row.append(el("h3", text2));
+    if (target) row.append(link(target, label, { internal }));
+    home.append(row);
+  };
+  heading("Aktive Netzwerke anzeigen", "connect-network", "Verbindung herstellen oder trennen");
+  const active = el("div", void 0, "cp-network-active");
+  active.append(el("p", "F\xFCr diesen Webdesktop liegen keine Informationen \xFCber aktive Windows-Netzwerke oder Internetzugriff vor."));
+  const status = el("dl");
+  for (const [label, value] of [["Zugriffstyp:", "Nicht ermittelt"], ["Verbindungen:", "Nicht ermittelt"]]) status.append(el("dt", label), el("dd", value));
+  active.append(status);
+  home.append(active);
+  heading("Netzwerkeinstellungen \xE4ndern");
+  const list = el("ul", void 0, "cp-network-tasks");
+  for (const [target, label, description] of tasks) {
+    const row = el("li");
+    row.append(link(target, label, { internal: target === "network-troubleshoot" ? "network-troubleshoot" : false }), el("p", description));
+    list.append(row);
+  }
+  home.append(list);
+  const diagnostic = el("section", void 0, "cp-network-diagnostic");
+  diagnostic.hidden = true;
+  diagnostic.setAttribute("aria-label", "Netzwerkdiagnose");
+  diagnostic.append(el("h3", "Netzwerkdiagnose"), el("p", "Die Diagnose l\xE4uft auf dem Serverhost. Sie pr\xFCft keine Verbindung aus Windows und \xE4ndert keine Adaptereinstellungen."));
+  const diagnosticForm = el("form", void 0, "cp-network-diagnostic-form"), diagnosticKind = el("select"), diagnosticTarget = el("input"), diagnosticSubmit = el("button", "Diagnose starten");
+  for (const [value, label] of [["ping", "Ping"], ["dns", "DNS-Aufl\xF6sung"]]) {
+    const option = el("option", label);
+    option.value = value;
+    diagnosticKind.append(option);
+  }
+  diagnosticKind.value = "ping";
+  diagnosticTarget.type = "text";
+  diagnosticTarget.maxLength = 253;
+  diagnosticTarget.autocomplete = "off";
+  diagnosticTarget.setAttribute("aria-label", "Hostname oder IP-Adresse");
+  diagnosticTarget.placeholder = "Hostname oder IP-Adresse";
+  diagnosticSubmit.type = "submit";
+  diagnosticSubmit.disabled = !!busy;
+  diagnosticForm.append(diagnosticKind, diagnosticTarget, diagnosticSubmit);
+  diagnosticForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const target = diagnosticTarget.value.trim();
+    if (!isSafeDiagnosticTarget(target)) {
+      diagnosticTarget.setCustomValidity?.("Bitte einen g\xFCltigen Hostnamen oder eine IP-Adresse eingeben.");
+      diagnosticTarget.reportValidity?.();
+      return;
+    }
+    diagnosticTarget.setCustomValidity?.("");
+    onAction?.({ action: "diagnose", kind: diagnosticKind.value, target });
+  });
+  const result = data?.diagnostic;
+  if (result && typeof result.output === "string") {
+    const resultBox = el("section", void 0, "cp-network-diagnostic-result");
+    resultBox.setAttribute("aria-label", "Diagnoseergebnis");
+    resultBox.append(el("h4", "Ergebnis: " + (result.kind === "dns" ? "DNS-Aufl\xF6sung" : "Ping")), el("p", "Hostdiagnose \xB7 " + (Number.isInteger(result.exitCode) ? "Exitcode " + result.exitCode : "Exitcode nicht verf\xFCgbar")));
+    const output = el("pre", result.output);
+    resultBox.append(output);
+    if (result.internetConnectivity === "not-tested") resultBox.append(el("p", "Ein fehlgeschlagener Ping belegt keinen getrennten Internetzugriff."));
+    diagnostic.append(resultBox);
+  }
+  diagnostic.append(diagnosticForm);
+  if (error) diagnostic.append(el("p", String(error), "cp-network-error"));
+  home.append(diagnostic);
+  const model = getControlPanelNetworkData({ scope: data?.hostAvailable === true ? "host" : null, generatedAt: data?.generatedAt, host: { hostname: data?.hostname }, interfaces: data?.adapters }, { now, shareEnabled: data?.shareEnabled });
+  const observation = el("details", void 0, "cp-network-observations");
+  observation.append(el("summary", "Verf\xFCgbare Informationen des Webdesktops"));
+  observation.append(el("p", "Host-Adapter und \xF6ffentlicher Desktop sind getrennte Webdesktopdaten und belegen weder Windows-Netzwerkverbindungen noch eine Heimnetzgruppe."));
+  if (model.hostAvailable) {
+    observation.append(el("p", "Datenquelle: Host-Monitor" + (model.hostname ? " \xB7 " + model.hostname : "") + " \xB7 " + new Date(model.generatedAt).toLocaleString("de-DE")));
+    if (model.adapters.length) {
+      const wrap = el("div", void 0, "cp-network-table-wrap"), table = el("table"), head = el("thead"), tr = el("tr");
+      for (const title of ["Host-Adapter", "Empfangen (gesamt)", "Gesendet (gesamt)", "Linkgeschwindigkeit"]) {
+        const th = el("th", title);
+        th.scope = "col";
+        tr.append(th);
+      }
+      head.append(tr);
+      table.append(head);
+      const body = el("tbody");
+      for (const adapter of model.adapters) {
+        const row = el("tr");
+        const th = el("th", adapter.name);
+        th.scope = "row";
+        row.append(th, el("td", bytes(adapter.received)), el("td", bytes(adapter.sent)), el("td", adapter.speed === null ? "Nicht verf\xFCgbar" : new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(adapter.speed / 1e6) + " MBit/s"));
+        body.append(row);
+      }
+      table.append(body);
+      wrap.append(table);
+      observation.append(wrap);
+    } else observation.append(el("p", "Der Host-Monitor meldet keine Adapter. Dies belegt keinen getrennten Netzwerkzustand."));
+  } else observation.append(el("p", "Aktuelle Host-Adapterdaten sind nicht verf\xFCgbar."));
+  observation.append(el("p", "\xD6ffentlicher Desktop: " + (model.shareEnabled === null ? "Nicht ermittelt" : model.shareEnabled ? "Freigabe aktiviert" : "Freigabe deaktiviert")));
+  const actions = el("div", void 0, "cp-network-web-actions");
+  actions.append(link("share", "\xD6ffentlichen Desktop verwalten"), link("explorer-network", "Netzwerk im Explorer \xF6ffnen"), link("task-manager", "Hostinformationen im Task-Manager anzeigen"));
+  observation.append(actions);
+  home.append(observation);
+  home.append(el("p", "Grau dargestellte Aufgaben sind in dieser Webumgebung noch nicht verf\xFCgbar.", "cp-network-limit"));
+  return root;
+}
+function renderControlPanelAdapters({ document: doc = globalThis.document, data = {}, availableTargets = {}, onNavigate, busy = false, error = null } = {}) {
+  const el = (tag, text2, className) => sectionElement(doc, tag, text2, className), root = el("section", void 0, "cp-network-adapters");
+  root.setAttribute("aria-label", "Netzwerkverbindungen");
+  root.setAttribute("aria-busy", String(!!busy));
+  const toolbar = el("div", void 0, "cp-network-adapter-toolbar"), organize = el("button", "Organisieren"), disable = el("button", "Netzwerkger\xE4t deaktivieren"), inspect = el("button", "Verbindung untersuchen"), rename = el("button", "Verbindung umbenennen");
+  for (const button of [organize, disable, inspect, rename]) button.type = "button";
+  organize.disabled = true;
+  organize.title = "Keine weiteren Organisationsoptionen verf\xFCgbar.";
+  disable.disabled = true;
+  disable.title = "\xC4nderungen am Hostadapter sind nicht freigegeben.";
+  inspect.disabled = true;
+  rename.disabled = true;
+  toolbar.append(organize, disable, inspect, rename);
+  root.append(toolbar);
+  if (!data?.adapterListAvailable) {
+    root.append(el("p", data?.error || "Aktuelle Host-Adapterdaten sind nicht verf\xFCgbar.", "cp-network-unavailable"));
+    if (error) root.append(el("p", String(error), "cp-network-error"));
+    return root;
+  }
+  const list = el("div", void 0, "cp-network-adapter-list");
+  list.setAttribute("role", "listbox");
+  list.setAttribute("aria-label", "Hostadapter");
+  let selected = null;
+  const rows = [];
+  const openStatus = (adapter) => {
+    if (adapter && data?.capabilities?.readAdapters === true && targetAvailable(availableTargets, "adapter-details")) onNavigate?.("adapter-details", { adapterId: adapter.adapterId });
+  };
+  const openAddressDetails = (adapter) => {
+    if (adapter && data?.capabilities?.readAdapters === true && targetAvailable(availableTargets, "adapter-address-details")) onNavigate?.("adapter-address-details", { adapterId: adapter.adapterId });
+  };
+  const select = (adapter) => {
+    selected = adapter;
+    for (const row of rows) {
+      const active = row.dataset.adapterId === adapter.adapterId;
+      row.setAttribute("aria-selected", String(active));
+      row.classList.toggle("selected", active);
+    }
+    inspect.disabled = !(data?.capabilities?.readAdapters === true && targetAvailable(availableTargets, "adapter-details"));
+    rename.disabled = !(data?.capabilities?.setDisplayName === true && targetAvailable(availableTargets, "adapter-address-details"));
+  };
+  for (const adapter of data.adapters || []) {
+    const tile = el("button", void 0, "cp-network-adapter-tile");
+    tile.type = "button";
+    tile.setAttribute("role", "option");
+    tile.setAttribute("aria-selected", "false");
+    tile.dataset.adapterId = adapter.adapterId;
+    tile.title = "Hostschnittstelle \xB7 Index " + adapter.ifIndex + (adapter.mac ? " \xB7 " + adapter.mac : "");
+    const icon = el("span", void 0, "cp-network-adapter-icon");
+    icon.setAttribute("aria-hidden", "true");
+    const symbol = el("img");
+    symbol.src = "/icons/network-16.png";
+    symbol.alt = "";
+    icon.append(symbol);
+    const text2 = el("span", void 0, "cp-network-adapter-text"), type = adapter.kind === "ether" ? "Ethernet" : adapter.kind === "wlan" ? "WLAN" : adapter.kind || "Adaptertyp nicht verf\xFCgbar";
+    text2.append(el("span", adapter.displayName || adapter.name), el("span", "Hostadapter"), el("span", type + " \xB7 " + adapter.name));
+    tile.append(icon, text2);
+    tile.addEventListener("click", () => select(adapter));
+    tile.addEventListener("dblclick", () => openStatus(adapter));
+    rows.push(tile);
+    list.append(tile);
+  }
+  if (!rows.length) list.append(el("p", "Der Host-Agent hat keine Adapter gemeldet."));
+  inspect.addEventListener("click", () => openStatus(selected));
+  rename.addEventListener("click", () => openAddressDetails(selected));
+  root.append(list);
+  if (error) root.append(el("p", String(error), "cp-network-error"));
+  return root;
+}
+function renderControlPanelAdapterStatus({ document: doc = globalThis.document, data = {}, availableTargets = {}, onAction, onNavigate, busy = false, error = null } = {}) {
+  const el = (tag, text2, className) => sectionElement(doc, tag, text2, className), root = el("section", void 0, "cp-network-adapter-status");
+  root.setAttribute("aria-label", "Adapterstatus");
+  root.setAttribute("aria-busy", String(!!busy));
+  const adapter = data?.adapter;
+  if (!adapter || typeof adapter.adapterId !== "string") {
+    root.append(el("p", "Adapterstatus ist nicht verf\xFCgbar.", "cp-network-unavailable"));
+    if (error) root.append(el("p", String(error), "cp-network-error"));
+    return root;
+  }
+  const tab = el("div", void 0, "cp-network-status-tabs");
+  tab.setAttribute("role", "tablist");
+  const tabButton = el("button", "Allgemein", "cp-network-status-tab");
+  tabButton.type = "button";
+  tabButton.setAttribute("role", "tab");
+  tabButton.setAttribute("aria-selected", "true");
+  tab.append(tabButton);
+  const panel = el("div", void 0, "cp-network-status-panel");
+  panel.setAttribute("role", "tabpanel");
+  const connection = el("fieldset", void 0, "cp-network-status-group");
+  connection.append(el("legend", "Verbindung"));
+  const mediaStatus = adapter.adminUp === false ? "Deaktiviert" : adapter.operState === "up" ? "Aktiviert" : adapter.operState === "down" ? "Getrennt" : null;
+  const values = el("dl", void 0, "cp-network-status-values");
+  appendField(doc, values, "IPv4-Konnektivit\xE4t:", null);
+  appendField(doc, values, "IPv6-Konnektivit\xE4t:", null);
+  appendField(doc, values, "Medienstatus:", mediaStatus);
+  appendField(doc, values, "Dauer:", null);
+  appendField(doc, values, "\xDCbertragungsrate:", null);
+  connection.append(values);
+  const details = el("button", "Details \u2026", "cp-network-details-button");
+  details.type = "button";
+  details.disabled = !(data?.capabilities?.readAdapters === true && targetAvailable(availableTargets, "adapter-address-details") && typeof onNavigate === "function");
+  details.addEventListener("click", () => {
+    if (!details.disabled) onNavigate("adapter-address-details", { adapterId: adapter.adapterId });
+  });
+  connection.append(details);
+  const activity = el("fieldset", void 0, "cp-network-status-group cp-network-activity");
+  activity.append(el("legend", "Aktivit\xE4t"));
+  const directions = el("div", void 0, "cp-network-activity-directions"), sent = el("span", "Gesendet"), icon = el("span", void 0, "cp-network-activity-icon"), image = el("img"), received = el("span", "Empfangen");
+  icon.setAttribute("aria-hidden", "true");
+  image.src = "/icons/network-16.png";
+  image.alt = "";
+  icon.append(image);
+  directions.append(sent, icon, received);
+  const counters = el("div", void 0, "cp-network-activity-counters");
+  counters.append(el("span", "Bytes: " + bytes(adapter.sent)), el("span", ""), el("span", "Bytes: " + bytes(adapter.received)));
+  activity.append(directions, counters);
+  panel.append(connection, activity);
+  root.append(tab, panel);
+  const actions = el("div", void 0, "cp-network-status-actions"), properties = el("button", "Eigenschaften"), disable = el("button", "Deaktivieren"), diagnose = el("button", "Diagnose");
+  properties.type = disable.type = diagnose.type = "button";
+  properties.disabled = true;
+  properties.title = adapter.configurationReason || "Adapter\xE4nderungen sind in dieser Version nicht freigegeben.";
+  disable.disabled = adapter.capabilities?.disable !== true;
+  disable.title = adapter.configurationReason || "Adapter\xE4nderungen sind in dieser Version nicht freigegeben.";
+  diagnose.disabled = !((adapter.capabilities?.diagnose === true || data?.capabilities?.diagnose === true) && targetAvailable(availableTargets, "network-troubleshoot") && typeof onAction === "function") || !!busy;
+  actions.append(properties, disable, diagnose);
+  root.append(actions);
+  const diagnostic = el("section", void 0, "cp-network-status-diagnostic");
+  diagnostic.hidden = true;
+  const form = el("form", void 0, "cp-network-diagnostic-form"), kind = el("select"), target = el("input"), run = el("button", "Diagnose starten");
+  for (const [value, label] of [["ping", "Ping"], ["dns", "DNS-Aufl\xF6sung"]]) {
+    const option = el("option", label);
+    option.value = value;
+    kind.append(option);
+  }
+  kind.value = "ping";
+  target.type = "text";
+  target.maxLength = 253;
+  target.autocomplete = "off";
+  target.placeholder = "Hostname oder IP-Adresse";
+  target.setAttribute("aria-label", "Hostname oder IP-Adresse");
+  run.type = "submit";
+  run.disabled = !!busy;
+  form.append(kind, target, run);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = target.value.trim();
+    if (!isSafeDiagnosticTarget(value)) {
+      target.setCustomValidity?.("Bitte einen g\xFCltigen Hostnamen oder eine IP-Adresse eingeben.");
+      target.reportValidity?.();
+      return;
+    }
+    target.setCustomValidity?.("");
+    onAction?.({ action: "diagnose", kind: kind.value, target: value });
+  });
+  diagnostic.append(form);
+  diagnose.addEventListener("click", () => {
+    if (!diagnose.disabled) {
+      diagnostic.hidden = !diagnostic.hidden;
+      if (!diagnostic.hidden) target.focus?.();
+    }
+  });
+  root.append(diagnostic);
+  if (data?.diagnostic && typeof data.diagnostic.output === "string") {
+    const result = el("section", void 0, "cp-network-diagnostic-result");
+    result.setAttribute("aria-label", "Diagnoseergebnis");
+    result.append(el("h3", "Hostdiagnose"), el("p", "Exitcode: " + (Number.isInteger(data.diagnostic.exitCode) ? data.diagnostic.exitCode : "Nicht verf\xFCgbar")), el("pre", data.diagnostic.output));
+    if (data.diagnostic.internetConnectivity === "not-tested") result.append(el("p", "Dies belegt keinen getrennten Internetzugriff."));
+    root.append(result);
+  }
+  if (error) root.append(el("p", String(error), "cp-network-error"));
+  return root;
+}
+function renderControlPanelAdapterDetails({ document: doc = globalThis.document, data = {}, onAction, busy = false, error = null } = {}) {
+  const el = (tag, text2, className) => sectionElement(doc, tag, text2, className), root = el("section", void 0, "cp-network-adapter-details");
+  root.setAttribute("aria-label", "Netzwerkverbindungsdetails");
+  root.setAttribute("aria-busy", String(!!busy));
+  const adapter = data?.adapter;
+  if (!adapter || typeof adapter.adapterId !== "string") {
+    root.append(el("p", "Adapterdetails sind nicht verf\xFCgbar.", "cp-network-unavailable"));
+    if (error) root.append(el("p", String(error), "cp-network-error"));
+    return root;
+  }
+  root.append(el("p", "Netzwerkverbindungsdetails:"));
+  const rows = [], addresses = Array.isArray(adapter.addresses) ? adapter.addresses : [], routes = Array.isArray(adapter.routes) ? adapter.routes : [];
+  const list = (family) => addresses.filter((item) => item.family === family), v4 = list("IPv4"), v6 = list("IPv6");
+  const dottedMask = (prefix) => {
+    if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) return null;
+    const bits = prefix === 0 ? 0 : 4294967295 << 32 - prefix >>> 0;
+    return [24, 16, 8, 0].map((shift) => bits >>> shift & 255).join(".");
+  };
+  const routeDefaults = (family, values) => routes.filter((item) => item.family === family && ["default", family === "IPv4" ? "0.0.0.0/0" : "::/0"].includes(item.destination || "")).map((item) => item.gateway).filter(Boolean).join(", ") || null;
+  const add = (name, value) => rows.push([name, value ?? "Nicht verf\xFCgbar"]);
+  add("Verbindungsspezifisches DNS-Suffix", null);
+  add("Beschreibung", "Hostadapter \xB7 " + adapter.name);
+  add("Physische Adresse", adapter.mac);
+  add("DHCP aktiviert", null);
+  const dns = Array.isArray(adapter.dnsServers) ? adapter.dnsServers : null, byFamily = (family) => {
+    if (!dns) return null;
+    const matched = dns.filter((value) => family === "IPv4" ? isIPv4Address(value) : value.includes(":"));
+    return matched.join(", ") || (dns.length ? "Keine gemeldeten Server dieser Familie" : "Keine gemeldet");
+  }, unknownDns = dns?.filter((value) => !isIPv4Address(value) && !value.includes(":"));
+  add("IPv4-Adresse", v4.map((item) => item.local).join(", ") || null);
+  add("IPv4-Subnetzmaske", v4.map((item) => dottedMask(item.prefixLength)).filter(Boolean).join(", ") || null);
+  add("Lease erhalten am", null);
+  add("Lease l\xE4uft ab am", null);
+  add("IPv4-Standardgateway", routeDefaults("IPv4", routes));
+  add("IPv4-DHCP-Server", null);
+  add("IPv4-DNS-Server", byFamily("IPv4"));
+  add("IPv4-WINS-Server", null);
+  add("NetBIOS \xFCber TCP/IP aktiviert", null);
+  add("IPv6-Adresse", v6.filter((item) => item.scope !== "link").map((item) => item.local + (Number.isInteger(item.prefixLength) ? "/" + item.prefixLength : "")).join(", ") || null);
+  add("Tempor\xE4re IPv6-Adresse", null);
+  add("IPv6-Link-Local-Adresse", v6.filter((item) => item.scope === "link").map((item) => item.local + (Number.isInteger(item.prefixLength) ? "/" + item.prefixLength : "")).join(", ") || null);
+  add("IPv6-Standardgateway", routeDefaults("IPv6", routes));
+  add("IPv6-DNS-Server", byFamily("IPv6"));
+  if (unknownDns?.length) add("DNS-Server (Familie nicht ermittelt)", unknownDns.join(", "));
+  const table = el("table", void 0, "cp-network-details-table"), head = el("thead"), headRow = el("tr");
+  for (const title of ["Eigenschaft", "Wert"]) {
+    const th = el("th", title);
+    th.scope = "col";
+    headRow.append(th);
+  }
+  head.append(headRow);
+  table.append(head);
+  const body = el("tbody");
+  for (const [name, value] of rows) {
+    const row = el("tr");
+    row.append(el("th", name), el("td", value));
+    row.children[0].scope = "row";
+    body.append(row);
+  }
+  table.append(body);
+  root.append(table);
+  if ((adapter.capabilities?.setDisplayName === true || data?.capabilities?.setDisplayName === true) && typeof onAction === "function") {
+    const alias = el("details", void 0, "cp-network-alias"), summary = el("summary", "Web-Anzeigename \xE4ndern \u2026"), form = el("form", void 0, "cp-network-label-form"), label = el("label", "Anzeigename"), input = el("input"), save = el("button", "Speichern");
+    input.type = "text";
+    input.maxLength = 80;
+    input.value = adapter.displayName === adapter.name ? "" : adapter.displayName || "";
+    input.placeholder = "Leer lassen, um den Alias zu entfernen";
+    input.autocomplete = "off";
+    label.append(input);
+    save.type = "submit";
+    save.disabled = !!busy;
+    form.append(label, save);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const displayName = input.value.trim();
+      if (displayName.length > 80 || /[\r\n\u0000-\u001f]/.test(displayName)) {
+        input.setCustomValidity?.("Bitte h\xF6chstens 80 druckbare Zeichen eingeben.");
+        input.reportValidity?.();
+        return;
+      }
+      input.setCustomValidity?.("");
+      onAction({ action: "label", adapterId: adapter.adapterId, displayName, expectedRevision: data.aliasRevision });
+    });
+    alias.append(summary, form);
+    root.append(alias);
+  }
+  if (error) root.append(el("p", String(error), "cp-network-error"));
+  return root;
+}
+function targetReason(data, target) {
+  return target === "adapter-settings" && !data?.capabilities?.readAdapters ? "Adapterinformationen sind nicht freigegeben." : "Diese Funktion wird vom aktuellen Hostvertrag nicht freigegeben.";
+}
+
+// network-host.mjs
+import { taskbarWorkArea } from "/taskbar-state.js";
+
+// network-icons.mjs
+var lanConnected = "data:image/png;base64,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QKFQwPT0dEiPlpYWpFIpeU3usnmmadJEIiE0TRNCCLdarU7Nzs4+yDl/7uabb5ZBOy+0SaEFbUF+pAfq9XofIeR213VPKK1pGiKRCAzDCO+R3pCUkNyPx+Po6OgIuV0ul1GtVrFo0SJl+/btrwwODmZc16W+77u1Wi3red5+APvuvvvu/57zT3mI+a0AMpkM6+/vh67roful8vL4ZACSEjIeJACpuLxHApJgpWfkc/v27XvtgQceeLEZkJWTOH7Kuw5Svv9qZk1v3LhGM9Qz5mreUNljvUzghX/6fO+lHwnghhtuGL///vv/emho6GfzlJEUkgoKIatzg9fynAzO+cwiqSPPyd+dO3fuO3z48G4AbnPVTlL+BMev+vsf3r9p47rPe5479Yt/e27zi09tO9ELXf/v798uONscAU5XKEw53TlMsOk6e6HssW3/axBfd911D2zbti22atWqH3R0dHRIC0swYRcp91oau3kngrpWq4XHcnd5x44dV9xzzz2vSM4DaJHbPwCqzd8THP/iFTf9Yust37xqZU8KR0cnB598dtebt9zzzD8s2filq8cmc9es7mrBF/qTGLNcPDlSxhuzFiZdjFs+3k7p9PVTqgN33XVXb39//1+l0+nNhmEMGYYRU1VVkRRqZiVer9edbDabyWazd3ue9+qWLVveOukVzf2KDzl+w/fuOj9uaD/58z/7k/XReCeefnYXvNoUzh3qwysfZOG3deKM9ii6F3fhmWkXj47WUI22IqEIGMXpquLVtvF6devsD65yTqmQPfTQQ0o6ne73PG+t67oDpmlGKaW0WCyKqakp17IsGaj7I5HIsdtuu+0jh/LLr/1eIrUo/UfFQrH38su+8KOvXvZFzFY9vLxjF+ZqDr519SbEIyqyLse7w8cxmy3j17tfhZWbhdqaxPMzc3OFkXcfY6MHHwEh73hTx6uf+B8cC5Xv/ON9X6eE3bZuefrsY9MlnHP26bA5RW5qHMfnahi6ZB1UIwo9kLOBAcMLkBk5ikKpjP6ePpTnpvDkE8/c8cwvf/r95iuNJhW931qJP6k8tuOtpalY5JZ33zuywasU19509WaY7WkEtovDo1lMzhUwXqzDETMQ+56A1roa6uIB7D90ANmpcXT39qGvtxfdfcswMT3JXVW344nUaVY1LxWXgR6Onp86gFu2/kRLRLWb68XZO47szSiMMCxZ1o87HtwBM96Kxb3t6OuNYDpbQBsr4Nr1Z0K0rsC7k3kc2rsbfSuW48zTB6Hp0TBNO7YNz3WpIAoDEZlmLJ0oeJ86gGjE2J/uaj+rYHnoWjEAM8IRMXT88cASzOQr2L7zTRT6etBtAJdddDHGeBT79x1ET2cSG7+8CW4gN5PkZkIAShXEY/EwNSuKoluVgsxivyGfOoDBwYFVn1t7DvbueQ3rz1+Cot0O4vp45/0PMJWdxrJFXTj7tB4czUzjsT2HcfqyRfjyxReGc3K9XoMZkQMSgckFrLqNva+9jNd//dILnhs89VHf+9QB2E7gHhubVhP+G9CYhV/tBL5yTgJHjx9Ha8syKILJ+VeMT86QzZv+EOnORciXJJ05+pb24sjIGA4eGkZLSxR7dj3/2sGD7915YPeTj3/c9z51ALoeiQ2eNoTdE164U5FmO1Eud6InZSMlysiKQfT19pC5oo3l/T2YnplDsjUBx/Hxrz9/GNsfe/jOsfHjo8ypFhb3Dz4+fGCnLIb4zADseOHp1S89/9T5b+598bzDm/1rF3e300pVxUBvD0aOvIwjMxF8bv1q+d8oV3DE21pb8cgT2/Hyf/7qxfGxkRuOHHj52Py7KoXp3/q933kd6Fu67KIzVp919bdv3HTZ3v17ehPpy/EXX/0Knn15H3qXLMK2n95/aHJ05FsHXnlC9k3/v+WmG/90053/cu/P33jrUO6yv/zu8dUXff3b/9d3fiaV+GT54T/fHZ2cmv7mG28fG9334iPPfNbf/738XvCb8l80xA7bNpd8iAAAAABJRU5ErkJggg==";
+var lanNeutral = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAEjElEQVR4nO3WbUwTdxwH8O/1udhSpIHy0LOgkzJQ7KZMp5k6Fx0ZbMPFLWPDhGQxPiXLloVk0SwbyYLbi5nFhcXswWRGzBZkKBNHGMiDCvIYlQcRLC2tfYLSUvp4197d0kRfbNnDiyHO5D7JvbrL7/v/Xv7/3AE8Ho/H4/F4PB6Px+PxeDwej8d77BB4DBy9Nv00qZDuFUtF+e4gneujGZLh0PL5ZvJF0aNeXNm7x04Vb9+wmaYp+9kffy1pPV8TenDvnV/ufMyxTIkMyBMKkMAyHCIMxzhCTIuPZmrizzzSAjteO3i2qnJf2RNaNSbNNn1DU+dA5TeN72Vuf6HcYpvZa0hNxJasJFgCFBqMPvTOBmCjYA1EcVMtEVx/ZFto/5EvNymk4hNvvvFqoVyRggtNnaCDdjyVq8OVuy5El6cgP1mO9IxUNDoo/GQOwi9XQSnkIPU6/EI6WMOG/FWzn5RFlqxAacURpTpN87LX4yVLi7Z8trtoB2b9NNrbOuEORnCovBgKmQguisXIuAmzLh+udl1DYGYWIlUSmp1ut8c4UseYh2tBELdou8kfn7skBT749Ls9AoL5aMNKTcGUYx7rCvIQZgWYsVthcgeR+/wGiKRySGIEkiRSSOkYpo2T8Mz7kKXVwee2o6G+sbrx55NH74+UAuAA0A/tDNS13VihXiarHLk98Sy94F1/sLwECckaxMIUxswu2NweWL0hRDgnuP56iFUGiDJyMDg6BJfdinRSBx1JIl2XjXsOG0uJJGGFUr064J+LLzx+0L3xnEUvUFl1QqyUi98PeWerJ/qmhQzBIDM7C9U/tCFBoUIGmQwdKYPD5cFyxoOKwjXgVKswYpvDaF8XdKtWYk2eHmKJHLFYDJFwGDRFCThCyIDgpgGw998+91AKyGXSQU1q8lpPgEbqqhwkyFjIpBK8kpMJ59wCLnYMwKPTIl0KFG3dBgsrx2D/MLQpSdi+sxhULAqwHKhoDAKBEIplCgiFwvglCSx46D/nLXoBvT7nyY3r16GvuweFmzLhDSeDoKK4decu7C4HstNSUbBai8lpB+q6x5CXnYad255DlBEgFAoiQSYDQRBIYDkEQmH09bTj+tXLLTQVO/9XeYteIByJUVMWh0gZ7YWYCeBSB7BrnRKTJhNUidkQcgyCEYqz2pxESfFL0KSkYW4+vp1Z6FaQmDBaMDw6jsREObo7m3uGh28fH+pqOPd3eYteQCKRLdOvzkXXPRpCgoOG6YDPlwKtOgw154OL00NHagm3N4yVWVo4nG4kqZSIRKL4/vQZXKw7c9xiNZmZiN+TkaU/Nz7UQf1T3qIXaGu5YLjcfH7TQF/rM2Ml0YqM9GTBgl+EHFIL40Q7JpwybCw0RKMcKI6FYrlKhdr6i2j/7VKr1WLcPzHUPvVg1oLH8a95D/07oFuRvTXfsLb88IHior7BblKpKcVbu3ehqb0fZGYaak6eGrWZjYeGrtR34f/u4IHXi49/9e3p3hujM0Vvf2gybN1z+L/OXPJ/oWNffC232R37em9OmftbaxuXOp/Hwx/9Du349ArTnZEiAAAAAElFTkSuQmCC";
+
+// network-host.mjs
+function createNetworkPanelHost({ desktop, getState, getContextKey, navigate, request = fetch, document: doc = document }) {
+  const el = (tag, text2, cls) => {
+    const node = doc.createElement(tag);
+    if (text2 !== void 0) node.textContent = text2;
+    if (cls) node.className = cls;
+    return node;
+  };
+  let context = getContextKey(), status = null, details = null, sequence = 0, listRefresh = null;
+  const personalAdmin = () => {
+    const state = getState();
+    return state.authenticated === true && state.role === "admin" && !state.readonly && !state.shareEditing;
+  };
+  const current = (key) => key === getContextKey() && personalAdmin();
+  function applyAdapterIcons(root, data) {
+    for (const tile of root.querySelectorAll(".cp-network-adapter-tile")) {
+      const adapter = data.adapters?.find((item) => item.adapterId === tile.dataset.adapterId);
+      if (!adapter) continue;
+      const linked = adapter.adminUp === true && adapter.operState === "up", ethernet = ["ether", "ethernet", "veth"].includes(adapter.kind);
+      const image = tile.querySelector(".cp-network-adapter-icon img");
+      if (image) {
+        image.src = linked && ethernet ? lanConnected : lanNeutral;
+        image.width = image.height = 48;
+        image.dataset.connectionIcon = linked && ethernet ? "local-link" : "neutral";
+      }
+      const label = tile.querySelector(".cp-network-adapter-text>span:nth-child(2)");
+      if (label) label.textContent = adapter.adminUp === false ? "Deaktiviert" : linked ? "Verbunden (lokaler Link)" : ["down", "lowerlayerdown", "notpresent"].includes(adapter.operState) ? "Nicht verbunden" : "Status unbekannt";
+    }
+  }
+  async function api(path, { signal, value } = {}) {
+    const response = await request(path, { signal, cache: "no-store", ...value ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(value) } : {} });
+    const data = await response.json();
+    if (!response.ok) throw Error(data.error || "Netzwerkdaten sind nicht verf\xFCgbar.");
+    return data;
+  }
+  const targets = (data) => /* @__PURE__ */ new Set(["home", "network-center", ...data?.capabilities?.readAdapters ? ["adapter-settings", "adapter-details", "adapter-address-details"] : [], ...data?.capabilities?.diagnose ? ["network-troubleshoot"] : [], ...data?.capabilities?.setDisplayName ? ["adapter-label"] : []]);
+  function refreshContext() {
+    const next = getContextKey();
+    if (next === context) return false;
+    context = next;
+    closeStatus();
+    return true;
+  }
+  function closeDetails() {
+    if (!details) return;
+    const prior = details;
+    details = null;
+    if (prior.dialog.open) prior.dialog.close();
+    else prior.dialog.remove();
+  }
+  function closeStatus() {
+    closeDetails();
+    if (!status) return;
+    const prior = status;
+    status = null;
+    prior.controller.abort();
+    prior.actionController?.abort();
+    if (prior.dialog.open) prior.dialog.close();
+    else prior.dialog.remove();
+  }
+  function statusCurrent(record) {
+    return status === record && record.dialog.open && current(record.context);
+  }
+  function drawStatus(record) {
+    if (!statusCurrent(record)) return;
+    const data = { ...networkDataFromAdaptersSnapshot(record.snapshot, getState()), ...record.diagnostic ? { diagnostic: record.diagnostic } : {} };
+    const restoreDetailsFocus = record.body.querySelector(".cp-network-details-button") === doc.activeElement;
+    const diagnosticsOpen = record.body.querySelector(".cp-network-status-diagnostic")?.hidden === false;
+    record.body.replaceChildren(renderControlPanelAdapterStatus({ document: doc, data, availableTargets: targets(data), busy: record.busy, error: record.error, onAction: (value) => perform(record, value), onNavigate: (target, options = {}) => {
+      if (target === "adapter-address-details" && options.adapterId === record.adapterId && targets(data).has(target)) openDetails(record);
+    } }));
+    if (diagnosticsOpen || record.diagnostic || record.error) {
+      const section = record.body.querySelector(".cp-network-status-diagnostic");
+      if (section) section.hidden = false;
+    }
+    if (data.adapter) record.title.textContent = "Status von " + (data.adapter.displayName || data.adapter.name);
+    drawDetails(record);
+    if (restoreDetailsFocus && !details) record.body.querySelector(".cp-network-details-button")?.focus({ preventScroll: true });
+  }
+  function showWindow(dialog, width, height) {
+    const state = getState(), prefs = state.readonly ? state.publicDesktop : state.desktop, area = taskbarWorkArea({ width: innerWidth, height: innerHeight }, prefs?.taskbar), vw = Math.max(1, area.width), vh = Math.max(1, area.height);
+    dialog.showModal();
+    desktop.show(dialog.id);
+    desktop.applyWorkspaceGeometry(dialog.id, { mode: "normal", left: Math.max(0, (vw - width) / 2) / vw, top: Math.max(0, (vh - height) / 2) / vh, width: Math.min(width, vw) / vw, height: Math.min(height, vh) / vh });
+  }
+  function drawDetails(parent) {
+    if (!details || details.parent !== parent || !details.dialog.open || !statusCurrent(parent)) return;
+    const data = networkDataFromAdaptersSnapshot(parent.snapshot, getState());
+    details.body.replaceChildren(renderControlPanelAdapterDetails({ document: doc, data, busy: parent.busy, error: parent.error, onAction: (value) => perform(parent, value) }));
+  }
+  function openDetails(parent) {
+    if (!statusCurrent(parent) || !parent.snapshot) return;
+    closeDetails();
+    const dialog = el("dialog", void 0, "network-status-window network-details-window"), bar = el("header"), title = el("span", "Netzwerkverbindungsdetails"), close = el("button"), body = el("div", void 0, "network-status-content"), actions = el("footer", void 0, "network-status-buttons"), done = el("button", "Schlie\xDFen");
+    dialog.id = "network-details-" + ++sequence;
+    close.type = done.type = "button";
+    close.setAttribute("aria-label", "Schlie\xDFen");
+    bar.append(title, close);
+    actions.append(done);
+    dialog.append(bar, body, actions);
+    doc.body.append(dialog);
+    const record = { dialog, body, parent };
+    details = record;
+    done.onclick = () => dialog.close();
+    const afterClose = () => {
+      if (details === record) details = null;
+      desktop.unregister(dialog.id);
+      dialog.remove();
+      if (statusCurrent(parent)) {
+        desktop.show(parent.dialog.id);
+        queueMicrotask(() => {
+          if (statusCurrent(parent) && !details) parent.body.querySelector(".cp-network-details-button")?.focus({ preventScroll: true });
+        });
+      }
+    };
+    desktop.register(dialog, { bar, title, closeButton: close, icon: "/icons/control-panel/network.png", appId: "control-panel", minWidth: 375, minHeight: 444, resizable: false, rememberPlacement: false });
+    dialog.addEventListener("close", afterClose);
+    showWindow(dialog, 375, 444);
+    drawDetails(parent);
+  }
+  async function loadStatus(record) {
+    try {
+      const snapshot = await api("/api/network/adapters/" + encodeURIComponent(record.adapterId), { signal: record.controller.signal });
+      if (!statusCurrent(record)) return;
+      record.snapshot = snapshot;
+      record.error = null;
+      drawStatus(record);
+      if (record.openDetailsAfterLoad) {
+        record.openDetailsAfterLoad = false;
+        openDetails(record);
+      }
+    } catch (error) {
+      if (!statusCurrent(record) || record.controller.signal.aborted) return;
+      record.error = error.message;
+      drawStatus(record);
+    }
+  }
+  async function perform(record, value) {
+    if (!statusCurrent(record) || record.busy || !["diagnose", "label"].includes(value?.action)) return;
+    const state = getState(), profileId = String(state.userId), key = getContextKey();
+    if (key !== record.context || !profileId) return;
+    const capability = value.action === "label" ? "setDisplayName" : "diagnose";
+    const payload = value.action === "label" ? { adapterId: record.adapterId, displayName: value.displayName, expectedRevision: value.expectedRevision, profileId } : { kind: value.kind, target: value.target, profileId };
+    record.busy = true;
+    record.error = null;
+    record.actionController = new AbortController();
+    drawStatus(record);
+    try {
+      if (networkDataFromAdaptersSnapshot(record.snapshot, getState()).capabilities?.[capability] !== true) await loadStatus(record);
+      if (!statusCurrent(record)) return;
+      if (networkDataFromAdaptersSnapshot(record.snapshot, getState()).capabilities?.[capability] !== true) throw Error("Aktuelle Adapterdaten oder die ben\xF6tigte Funktion sind nicht verf\xFCgbar.");
+      const result = await api(value.action === "label" ? "/api/network/adapter-label" : "/api/network/diagnostics", { signal: record.actionController.signal, value: payload });
+      if (!statusCurrent(record) || key !== getContextKey()) return;
+      if (value.action === "diagnose") record.diagnostic = result;
+      else {
+        await loadStatus(record);
+        await listRefresh?.();
+      }
+    } catch (error) {
+      if (statusCurrent(record) && !record.actionController.signal.aborted) record.error = error.message;
+    } finally {
+      if (statusCurrent(record)) {
+        record.busy = false;
+        drawStatus(record);
+      }
+    }
+  }
+  function openStatus(adapterId, { showDetails = false } = {}) {
+    refreshContext();
+    if (!personalAdmin() || typeof adapterId !== "string" || !adapterId) return;
+    closeStatus();
+    const dialog = el("dialog", void 0, "network-status-window"), bar = el("header"), title = el("span", "Adapterstatus"), close = el("button"), body = el("div", void 0, "network-status-content"), actions = el("footer", void 0, "network-status-buttons"), done = el("button", "Schlie\xDFen");
+    dialog.id = "network-status-" + ++sequence;
+    close.type = done.type = "button";
+    close.setAttribute("aria-label", "Schlie\xDFen");
+    bar.append(title, close);
+    actions.append(done);
+    dialog.append(bar, body, actions);
+    doc.body.append(dialog);
+    const record = { dialog, title, body, adapterId, context: getContextKey(), controller: new AbortController(), snapshot: null, busy: false, error: null, openDetailsAfterLoad: showDetails };
+    status = record;
+    done.onclick = () => dialog.close();
+    dialog.addEventListener("close", () => {
+      if (details?.parent === record) closeDetails();
+      record.controller.abort();
+      record.actionController?.abort();
+      if (status === record) status = null;
+      desktop.unregister(dialog.id);
+      dialog.remove();
+    });
+    desktop.register(dialog, { bar, title, closeButton: close, icon: "/icons/control-panel/network.png", appId: "control-panel", minWidth: 376, minHeight: 456, resizable: false, rememberPlacement: false });
+    showWindow(dialog, 376, 456);
+    body.replaceChildren(el("p", "Adapterdetails werden geladen \u2026"));
+    void loadStatus(record);
+  }
+  async function renderInto(container, { page, signal, isCurrent }) {
+    refreshContext();
+    const key = getContextKey(), admin = personalAdmin();
+    const view = { snapshot: null, busy: false, error: null, diagnostic: null, request: 0 };
+    const draw = (snapshot, error = null) => {
+      if (!isCurrent() || signal.aborted || key !== getContextKey()) return;
+      const normalized = admin ? networkDataFromAdaptersSnapshot(snapshot, getState()) : networkDataFromTaskManager(snapshot, getState()), data = { ...normalized, ...view.diagnostic ? { diagnostic: view.diagnostic } : {} };
+      const renderer = page === "adapter-settings" ? renderControlPanelAdapters : renderControlPanelNetwork;
+      const diagnosticsOpen = container.querySelector(".cp-network-diagnostic")?.hidden === false;
+      container.replaceChildren(renderer({ document: doc, data, availableTargets: targets(data), busy: view.busy, error: error || view.error, onAction: async (value) => {
+        if (!current(key) || !isCurrent() || signal.aborted || view.busy || value?.action !== "diagnose" || data.capabilities?.diagnose !== true) return;
+        const profileId = String(getState().userId);
+        view.busy = true;
+        view.error = null;
+        draw(view.snapshot);
+        try {
+          const result = await api("/api/network/diagnostics", { signal, value: { kind: value.kind, target: value.target, profileId } });
+          if (current(key) && isCurrent() && !signal.aborted) view.diagnostic = result;
+        } catch (error2) {
+          if (current(key) && isCurrent() && !signal.aborted) view.error = error2.message;
+        } finally {
+          if (current(key) && isCurrent() && !signal.aborted) {
+            view.busy = false;
+            draw(view.snapshot);
+          }
+        }
+      }, onNavigate: (target, options = {}) => {
+        if (!isCurrent() || key !== getContextKey() || !targets(data).has(target)) return;
+        if (target === "adapter-details") openStatus(options.adapterId);
+        else if (target === "adapter-address-details") openStatus(options.adapterId, { showDetails: true });
+        else navigate(target);
+      } }));
+      if (page === "adapter-settings") applyAdapterIcons(container, data);
+      if (diagnosticsOpen || view.diagnostic || view.error) {
+        const section = container.querySelector(".cp-network-diagnostic");
+        if (section) section.hidden = false;
+      }
+    };
+    draw(null);
+    const state = getState();
+    if (!state.authenticated || state.readonly || state.shareEditing || page === "adapter-settings" && !admin) return;
+    const refresh = async () => {
+      if (!isCurrent() || signal.aborted || key !== getContextKey()) return;
+      const revision = ++view.request;
+      try {
+        const snapshot = await api(admin ? "/api/network/adapters" : "/api/task-manager", { signal });
+        if (revision !== view.request) return;
+        view.snapshot = snapshot;
+        draw(view.snapshot);
+      } catch (error) {
+        if (!signal.aborted && revision === view.request) draw(null, error.message);
+      }
+    };
+    listRefresh = refresh;
+    await refresh();
+  }
+  return { renderInto, openStatus, refreshContext, refresh: () => listRefresh?.(), dispose: () => {
+    listRefresh = null;
+    closeStatus();
+  } };
+}
+
 // system-source.mjs
 var own = (object, key) => !!object && Object.prototype.hasOwnProperty.call(object, key);
 var text = (value) => typeof value === "string" && value.trim() ? value.trim() : null;
@@ -116,146 +1010,8 @@ function renderControlPanelSystem({ data = {}, availableTargets = {}, onNavigate
   return root;
 }
 
-// network-source.mjs
-var controlPanelNetworkNavigation = Object.freeze([
-  { target: "home", label: "Startseite der Systemsteuerung" },
-  { target: "adapter-settings", label: "Adaptereinstellungen \xE4ndern" },
-  { target: "advanced-sharing", label: "Erweiterte Freigabeeinstellungen \xE4ndern" },
-  { target: "homegroup", label: "Heimnetzgruppe", related: true },
-  { target: "internet-options", label: "Internetoptionen", related: true },
-  { target: "firewall", label: "Windows-Firewall", related: true }
-].map((item) => Object.freeze(item)));
-var tasks = [
-  ["setup-network", "Neue Verbindung oder neues Netzwerk einrichten", "Richtet eine Drahtlos-, Breitband-, Einw\xE4hl-, Ad-hoc- oder VPN-Verbindung bzw. einen Router oder Zugriffspunkt ein."],
-  ["connect-network", "Verbindung mit einem Netzwerk herstellen", "Stellt (erneut) eine Verbindung mit einem Drahtlosnetzwerk, verkabelten Netzwerk, Einw\xE4hlnetzwerk oder VPN-Netzwerk her."],
-  ["homegroup", "Heimnetzgruppen- und Freigabeoptionen ausw\xE4hlen", "Erm\xF6glicht Zugriff auf Dateien und Drucker auf anderen Netzwerkcomputern zu, oder \xE4ndert die Freigabeeinstellungen."],
-  ["network-troubleshoot", "Probleme beheben", "Diagnostiziert und behebt Netzwerkprobleme, oder ruft Problembehandlungsinformationen ab."]
-];
-var owns = (object, key) => object != null && Object.prototype.hasOwnProperty.call(object, key);
-var available = (targets, key) => targets instanceof Set ? targets.has(key) : owns(targets, key) && targets[key] === true;
-var finite = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0;
-var bytes = (value) => finite(value) ? new Intl.NumberFormat("de-DE").format(value) + " Byte" : "Nicht verf\xFCgbar";
-function getControlPanelNetworkData(snapshot, { now = Date.now(), shareEnabled } = {}) {
-  const age = now - Date.parse(snapshot?.generatedAt);
-  const fresh = snapshot?.scope === "host" && Number.isFinite(age) && age >= -5e3 && age <= 15e3;
-  const adapters = fresh && Array.isArray(snapshot.interfaces) ? snapshot.interfaces.filter((item) => typeof item?.name === "string" && item.name.trim()).slice(0, 256).map((item) => ({
-    name: item.name,
-    received: finite(item.received) ? item.received : null,
-    sent: finite(item.sent) ? item.sent : null,
-    speed: finite(item.speed) && item.speed > 0 ? item.speed : null
-  })) : [];
-  return {
-    hostAvailable: fresh,
-    hostname: fresh && typeof snapshot.host?.hostname === "string" ? snapshot.host.hostname : null,
-    generatedAt: fresh ? snapshot.generatedAt : null,
-    adapters,
-    shareEnabled: typeof shareEnabled === "boolean" ? shareEnabled : null
-  };
-}
-function networkDataFromTaskManager(snapshot, { authenticated = false, role, shareEditing = false, readonly = false, now = Date.now() } = {}) {
-  if (authenticated !== true || !["admin", "user"].includes(role) || shareEditing !== false || readonly !== false) return getControlPanelNetworkData(null, { now });
-  return getControlPanelNetworkData(snapshot, { now });
-}
-function renderControlPanelNetwork({ document: doc = globalThis.document, data = {}, availableTargets = {}, onNavigate, includeNavigation = true, now = Date.now() } = {}) {
-  const el = (tag, text2, className) => {
-    const node = doc.createElement(tag);
-    if (text2 !== void 0) node.textContent = text2;
-    if (className) node.className = className;
-    return node;
-  };
-  const root = el("section", void 0, "cp-network-page");
-  root.setAttribute("aria-label", "Netzwerk- und Freigabecenter");
-  const link = (target, label) => {
-    const enabled = typeof onNavigate === "function" && available(availableTargets, target);
-    const node = el(enabled ? "button" : "span", label, "cp-network-link");
-    node.dataset.networkTarget = target;
-    if (enabled) {
-      node.type = "button";
-      node.addEventListener("click", () => {
-        if (available(availableTargets, target)) onNavigate(target);
-      });
-    } else {
-      node.classList.add("is-unavailable");
-      node.setAttribute("aria-disabled", "true");
-      node.title = "In dieser Webumgebung noch nicht verf\xFCgbar.";
-    }
-    return node;
-  };
-  if (includeNavigation) {
-    const side = el("nav", void 0, "cp-network-sidebar");
-    side.setAttribute("aria-label", "Systemsteuerung");
-    for (const item of controlPanelNetworkNavigation.filter((item2) => !item2.related)) side.append(link(item.target, item.label));
-    const related = el("div", void 0, "cp-network-related");
-    related.append(el("p", "Siehe auch"));
-    for (const item of controlPanelNetworkNavigation.filter((item2) => item2.related)) related.append(link(item.target, item.label));
-    side.append(related);
-    root.append(side);
-  }
-  const content = el("div", void 0, "cp-network-content");
-  root.append(content);
-  content.append(el("h2", "Zeigen Sie die grundlegenden Informationen zum Netzwerk an, und richten Sie Verbindungen ein."));
-  const map = el("div", void 0, "cp-network-map");
-  map.append(el("p", "Die Netzwerk\xFCbersicht ist in dieser Webumgebung nicht verf\xFCgbar."), link("network-map", "Gesamt\xFCbersicht anzeigen"));
-  content.append(map);
-  const heading = (text2, target, label) => {
-    const row = el("div", void 0, "cp-network-section-heading");
-    row.append(el("h3", text2));
-    if (target) row.append(link(target, label));
-    content.append(row);
-  };
-  heading("Aktive Netzwerke anzeigen", "connect-network", "Verbindung herstellen oder trennen");
-  const active = el("div", void 0, "cp-network-active");
-  active.append(el("p", "F\xFCr diesen Webdesktop liegen keine Informationen \xFCber aktive Windows-Netzwerke vor."));
-  const status = el("dl");
-  for (const [label, value] of [["Zugriffstyp:", "Nicht ermittelt"], ["Verbindungen:", "Nicht ermittelt"]]) status.append(el("dt", label), el("dd", value));
-  active.append(status);
-  content.append(active);
-  heading("Netzwerkeinstellungen \xE4ndern");
-  const list = el("ul", void 0, "cp-network-tasks");
-  for (const [target, label, description] of tasks) {
-    const row = el("li");
-    row.append(link(target, label), el("p", description));
-    list.append(row);
-  }
-  content.append(list);
-  const model = getControlPanelNetworkData({ scope: data?.hostAvailable === true ? "host" : null, generatedAt: data?.generatedAt, host: { hostname: data?.hostname }, interfaces: data?.adapters }, { now, shareEnabled: data?.shareEnabled });
-  const observation = el("details", void 0, "cp-network-observations");
-  observation.append(el("summary", "Verf\xFCgbare Informationen des Webdesktops"));
-  observation.append(el("p", "Host-Adapter und \xF6ffentlicher Desktop sind keine Windows-Netzwerkverbindungen oder Heimnetzgruppe."));
-  if (model.hostAvailable) {
-    observation.append(el("p", "Datenquelle: Host-Monitor" + (model.hostname ? " \xB7 " + model.hostname : "") + " \xB7 " + new Date(model.generatedAt).toLocaleString("de-DE")));
-    if (model.adapters.length) {
-      const wrap = el("div", void 0, "cp-network-table-wrap"), table = el("table"), head = el("thead"), tr = el("tr");
-      for (const title of ["Host-Adapter", "Empfangen (gesamt)", "Gesendet (gesamt)", "Linkgeschwindigkeit"]) {
-        const th = el("th", title);
-        th.scope = "col";
-        tr.append(th);
-      }
-      head.append(tr);
-      table.append(head);
-      const body = el("tbody");
-      for (const adapter of model.adapters) {
-        const row = el("tr");
-        const th = el("th", adapter.name);
-        th.scope = "row";
-        row.append(th, el("td", bytes(adapter.received)), el("td", bytes(adapter.sent)), el("td", adapter.speed === null ? "Nicht verf\xFCgbar" : new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(adapter.speed / 1e6) + " MBit/s"));
-        body.append(row);
-      }
-      table.append(body);
-      wrap.append(table);
-      observation.append(wrap);
-    } else observation.append(el("p", "Der Host-Monitor meldet keine Adapter. Dies belegt keinen getrennten Netzwerkzustand."));
-  } else observation.append(el("p", "Aktuelle Host-Adapterdaten sind nicht verf\xFCgbar."));
-  observation.append(el("p", "\xD6ffentlicher Desktop: " + (model.shareEnabled === null ? "Nicht ermittelt" : model.shareEnabled ? "Freigabe aktiviert" : "Freigabe deaktiviert")));
-  const actions = el("div", void 0, "cp-network-web-actions");
-  actions.append(link("share", "\xD6ffentlichen Desktop verwalten"), link("explorer-network", "Netzwerk im Explorer \xF6ffnen"), link("task-manager", "Hostinformationen im Task-Manager anzeigen"));
-  observation.append(actions);
-  content.append(observation);
-  content.append(el("p", "Grau dargestellte Aufgaben sind in dieser Webumgebung noch nicht verf\xFCgbar.", "cp-network-limit"));
-  return root;
-}
-
 // entry.mjs
+import { taskbarWorkArea as taskbarWorkArea2 } from "/taskbar-state.js";
 import { createNotificationAreaProperties } from "/notification-area-properties.js";
 import { createTaskbarProperties } from "/taskbar-properties.js";
 import { renderDateTimePage } from "/date-time.js";
@@ -271,8 +1027,9 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   style.href = "/control-panel.css";
   document.head.append(style);
   let disposeDateTime = () => {
-  }, moduleAbort;
-  const isModule = () => ["system-info", "network-center"].includes(page);
+  }, moduleAbort, networkPanelHost;
+  const networkPanels = () => networkPanelHost ??= createNetworkPanelHost({ desktop, getState, getContextKey: profileContext, navigate });
+  const isModule = () => ["system-info", "network-center", "adapter-settings"].includes(page);
   const canReadModule = () => {
     const s = getState();
     return s.authenticated === true && ["user", "admin"].includes(s.role) && !s.readonly && !s.shareEditing;
@@ -284,6 +1041,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   async function renderModule(token) {
     const targetPage = page, context = profileContext(), controller = new AbortController();
     moduleAbort = controller;
+    if (targetPage !== "system-info") return networkPanels().renderInto(body, { page: targetPage, signal: controller.signal, isCurrent: () => token === request && context === profileContext() && page === targetPage && !!dialog?.open });
     const renderer = targetPage === "system-info" ? renderControlPanelSystem : renderControlPanelNetwork, adapter = targetPage === "system-info" ? systemDataFromTaskManager : networkDataFromTaskManager;
     const draw = (snapshot) => {
       const state = getState();
@@ -306,7 +1064,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   }
   const profileContext = () => {
     const s = getState();
-    return JSON.stringify([s.userId, !!s.authenticated, !!s.readonly, !!s.shareEditing, s.role]);
+    return JSON.stringify([s.userId, s.actorId, !!s.authenticated, !!s.readonly, !!s.shareEditing, s.role]);
   };
   const notificationAreaProperties = createNotificationAreaProperties({ desktop, getPreferences: () => preferences().notificationArea, getTaskbar: () => preferences().taskbar, getVolume: () => preferences().sound, canEdit: () => {
     const s = getState();
@@ -324,7 +1082,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   } });
   const taskbarProperties = createTaskbarProperties({ desktop, getState, reload, openCustomize: () => open("taskbar-programs"), openNotificationArea: () => notificationAreaProperties.open() });
   let dialog, body, search, toolbar, crumb, back, sidebar, view = "category", page = "home", accountKey = null, request = 0;
-  const labels = { "system-info": "System", "network-center": "Netzwerk- und Freigabecenter", "date-time": "Datum und Uhrzeit", home: "Alle Systemsteuerungselemente", avatar: "Eigenes Kontobild \xE4ndern", colors: "Fensterfarbe und Darstellung", wallpapers: "Desktophintergrund", sound: "Sound", background: "Anpassung", display: "Anzeige", desktop: "Desktopsymbole", taskbar: "Taskleiste und Startmen\xFC", accounts: "Benutzerkonten", permissions: "Ordnerberechtigungen", share: "\xD6ffentlicher Desktop" };
+  const labels = { "system-info": "System", "network-center": "Netzwerk- und Freigabecenter", "adapter-settings": "Netzwerkverbindungen", "date-time": "Datum und Uhrzeit", home: "Alle Systemsteuerungselemente", avatar: "Eigenes Kontobild \xE4ndern", colors: "Fensterfarbe und Darstellung", wallpapers: "Desktophintergrund", sound: "Sound", background: "Anpassung", display: "Anzeige", desktop: "Desktopsymbole", taskbar: "Taskleiste und Startmen\xFC", accounts: "Benutzerkonten", permissions: "Ordnerberechtigungen", share: "\xD6ffentlicher Desktop" };
   function breadcrumb(label) {
     if (crumb) crumb.textContent = label ? " \u203A " + label : " \u203A";
     if (toolbar) toolbar.hidden = page !== "home";
@@ -395,18 +1153,25 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     }
     body.append(grid);
   }
+  function categoryTargets() {
+    const s = getState(), editable = s.authenticated && (s.shareEditing ? s.role === "admin" : !s.readonly), targets = new Set(editable ? ["background", "wallpapers", "colors", "display", "taskbar", "sound", "date-time"] : []);
+    if (s.authenticated && !s.readonly && !s.shareEditing) targets.add("accounts");
+    if (canReadModule()) {
+      targets.add("system-info");
+      targets.add("network-center");
+    }
+    return targets;
+  }
   function renderCategory() {
     const group = categories.find((c) => "category:" + c[0] === page);
     if (!group) return;
     breadcrumb(group[1]);
-    body.append(el("h2", group[1]));
-    const list = el("div", void 0, "cp-grid cp-large");
-    for (const id of group[3]) {
-      const item = entries.find((e) => e[0] === id);
-      if (item) list.append(card(item));
-    }
-    if (!list.children.length) list.append(el("p", "In dieser Kategorie sind noch keine Einstellungen verf\xFCgbar.", "cp-unavailable"));
-    body.append(list);
+    const context = profileContext(), categoryPage = page, token = request;
+    body.append(renderControlPanelCategory({ categoryId: group[0], availableTargets: categoryTargets(), onNavigate: (target) => {
+      if (token !== request || page !== categoryPage || profileContext() !== context || !categoryTargets().has(target)) return;
+      if (target === "sound") window.openSoundSettings?.();
+      else navigate(target);
+    } }));
   }
   function renderSidebar(key = page) {
     if (!sidebar) return;
@@ -526,7 +1291,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     body.append(status, buttons);
   }
   function card(item, compact = false) {
-    const [id, name, description, icon, , action, admin] = item, b = el("button", void 0, "cp-item");
+    const [id, name, description, icon, , action2, admin] = item, b = el("button", void 0, "cp-item");
     b.dataset.setting = id;
     const image = el("img");
     image.src = id === "background" ? "/icons/win7-settings/personalization.png" : id === "sound" ? "/icons/win7-settings/sound.png" : id === "date-time" ? "/icons/win7-settings/date-time.png" : "/icons/filetypes/" + icon + ".ico?v=1";
@@ -536,7 +1301,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     if (!compact) text2.append(el("small", description));
     b.append(image, text2);
     b.disabled = admin && (getState().role !== "admin" || getState().shareEditing) || !getState().authenticated;
-    b.onclick = action;
+    b.onclick = action2;
     return b;
   }
   async function render() {
@@ -651,6 +1416,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
       dialog.addEventListener("close", () => {
         ++request;
         invalidateModule();
+        networkPanelHost?.dispose();
         if (isModule()) body.replaceChildren();
         accounts.dispose();
         disposeDateTime();
@@ -663,14 +1429,20 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     render();
     desktop.show(dialog.id);
     if (fresh) {
-      const width = Math.min(800, innerWidth - 24), height = Math.min(601, innerHeight - 66), workHeight = innerHeight - 42;
-      desktop.applyWorkspaceGeometry(dialog.id, { mode: "normal", left: Math.max(0, (innerWidth - width) / 2) / innerWidth, top: Math.max(0, (workHeight - height) / 2) / workHeight, width: width / innerWidth, height: height / workHeight });
+      const area = taskbarWorkArea2({ width: innerWidth, height: innerHeight }, preferences().taskbar), workWidth = Math.max(1, area.width), workHeight = Math.max(1, area.height), width = Math.max(1, Math.min(800, workWidth - 24)), height = Math.max(1, Math.min(601, workHeight - 24)), left = area.left + Math.max(0, (area.width - width) / 2), top = area.top + Math.max(0, (area.height - height) / 2);
+      desktop.applyWorkspaceGeometry(dialog.id, { mode: "normal", left: (left - area.left) / workWidth, top: (top - area.top) / workHeight, width: width / workWidth, height: height / workHeight });
     }
     return dialog;
   }
   return { open, refresh: () => {
+    accounts.refreshAppearance?.();
     notificationAreaProperties.refresh();
-    if (isModule()) {
+    const contextChanged = networkPanelHost?.refreshContext();
+    if (networkPanelHost && ["network-center", "adapter-settings"].includes(page) && !contextChanged) {
+      networkPanelHost.refresh();
+      return;
+    }
+    if (isModule() || page.startsWith("category:")) {
       ++request;
       invalidateModule();
       body?.replaceChildren();

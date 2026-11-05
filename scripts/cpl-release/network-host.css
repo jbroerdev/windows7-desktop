@@ -1,0 +1,14 @@
+/* Desktop ownership and narrow native dialogs; renderer styles stay isolated. */
+dialog.network-status-window{box-sizing:border-box;margin:0;padding:0 6px 6px;min-width:0;max-width:none;max-height:none;overflow:hidden}
+dialog.network-status-window[open]{display:flex;flex-direction:column}
+dialog.network-status-window::backdrop{background:transparent}
+.network-status-window>.desktop-titlebar{flex:none}
+.network-status-window>.desktop-titlebar>.desktop-caption{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.network-status-content{position:relative;z-index:1;flex:1;min-width:0;min-height:0;overflow:auto;background:#f0f0f0;color:#111}
+.network-status-buttons{box-sizing:border-box;position:relative;z-index:1;flex:none;display:flex;justify-content:flex-end;align-items:center;height:38px;min-height:38px;padding:5px 8px;background:#f0f0f0}
+.network-status-buttons>button{min-width:75px;height:23px;padding:2px 10px;border:1px solid #8e9ba7;border-radius:3px;background:linear-gradient(#fff,#e3e3e3);color:#111;font:12px "Segoe UI",Tahoma,sans-serif}
+.network-status-buttons>button:focus-visible{outline:1px dotted #333;outline-offset:-4px}
+.network-details-window .cp-network-details-table{font-size:11px}
+.network-details-window .cp-network-details-table th,.network-details-window .cp-network-details-table td{overflow-wrap:anywhere;word-break:normal}
+.cp-network-adapters .cp-network-adapter-tile{padding:1px 4px;gap:6px}
+.cp-network-adapters .cp-network-adapter-icon,.cp-network-adapters .cp-network-adapter-icon img{width:48px;height:48px;flex:none}
