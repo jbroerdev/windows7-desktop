@@ -1,0 +1,45 @@
+name: Isolated networkd transaction laboratory
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/networkd-boot-availability-20261105]
+    paths:
+      - .github/workflows/networkd-phase2-lab.yml
+      - scripts/phase2-lab-v5.zip
+permissions:
+  contents: read
+concurrency:
+  group: networkd-phase2-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  phase2:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Verify frozen phase2 V5 package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          archive="$GITHUB_WORKSPACE/scripts/phase2-lab-v5.zip"
+          printf '%s  %s\n' f71b4b792d055d1fa9af10f12ee8bef7d59c7b24a4d4330224953df140fcfb18 "$archive" | sha256sum -c -
+          lab=$(mktemp -d "$RUNNER_TEMP/networkd-phase2.XXXXXXXX")
+          printf 'NETWORKD_BOOT_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
+          unzip -q "$archive" -d "$lab"
+          printf '%s\n' 'Disposable guest transactions only. Canary failure blocks overall pass. No production access.'
+      - name: Run guest transaction and foreign-pending canary gates
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$NETWORKD_BOOT_LAB"
+          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/phase2-lab-v5.zip"
+      - name: Preserve complete phase2 guest evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: networkd-phase2-${{ github.run_id }}
+          path: ${{ runner.temp }}/networkd-phase2.*/evidence.*
+          if-no-files-found: error
+          retention-days: 14
