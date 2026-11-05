@@ -248,3 +248,74 @@ body.desktop-shell[data-taskbar-small=false]:is([data-taskbar-position=top],[dat
 /* Proposed scoped central aero.css delta; native tracks keep the selected hue. */
 .aero-colors .aero-mixer input[data-color-channel='Sättigung']::-webkit-slider-runnable-track{background:linear-gradient(90deg,#fff,hsl(var(--color-hue,210deg) 100% 50%))}
 .aero-colors .aero-mixer input[data-color-channel='Helligkeit']::-webkit-slider-runnable-track{background:linear-gradient(90deg,#000,hsl(var(--color-hue,210deg) 100% 50%))}
+
+/* Proposed central CSS delta, not part of frozen functional release.
+   Native visible swatches 56x56, pitch72; normalized web values unchanged.
+   Narrow main color page only; theme preview/inline controls remain independent. */
+.cp-subpage .account-body>.aero-colors .aero-color-grid{
+ grid-template-columns:repeat(8,68px);gap:4px;width:572px;max-width:100%;
+}
+.cp-subpage .account-body>.aero-colors .aero-color-swatch{
+ width:68px;height:68px;padding:5px;box-sizing:border-box;
+}
+.cp-subpage .account-body>.aero-colors .aero-color-swatch span{
+ width:56px;height:56px;box-sizing:border-box;
+}
+.cp-subpage .account-body>.aero-colors{
+ font-size:12px;
+}
+.cp-subpage .account-body>.aero-colors .aero-transparency,
+.cp-subpage .account-body>.aero-colors .aero-intensity,
+.cp-subpage .account-body>.aero-colors .aero-mixer label,
+.cp-subpage .account-body>.aero-colors .aero-mixer summary{
+ font-size:12px;
+}
+.cp-subpage .account-body>.aero-colors .aero-intensity,
+.cp-subpage .account-body>.aero-colors .aero-mixer label{
+ grid-template-columns:104px 259px;
+}
+.cp-subpage .account-body>.aero-colors label input[type=range]{
+ width:259px;
+}
+.cp-subpage .account-body>.aero-colors .aero-color-actions .account-action{
+ height:23px;font-size:12px;padding:0;
+}
+.cp-subpage .account-body>.aero-colors .aero-color-actions .account-action:first-child{width:150px;min-width:150px}
+.cp-subpage .account-body>.aero-colors .aero-color-actions .account-action:last-child{width:88px;min-width:88px}
+@media(max-width:720px){
+ .cp-subpage .account-body>.aero-colors .aero-color-grid{grid-template-columns:repeat(8,minmax(0,1fr));width:100%;gap:4px}
+ .cp-subpage .account-body>.aero-colors .aero-color-swatch{width:100%;height:auto;aspect-ratio:1;padding:3px}
+ .cp-subpage .account-body>.aero-colors .aero-color-swatch span{width:100%;height:100%}
+ .cp-subpage .account-body>.aero-colors .aero-intensity,
+ .cp-subpage .account-body>.aero-colors .aero-mixer label{grid-template-columns:104px minmax(0,259px)}
+ .cp-subpage .account-body>.aero-colors label input[type=range]{width:100%}
+}
+
+/* The old controller's 0x40 inline alpha washed out the colored glass.
+   Opaque decorative swatches restore contrast without changing click values.
+   Sky/Frost keep their intentionally pale material. */
+.cp-subpage .account-body>.aero-colors .aero-color-swatch:not([data-color='#74b8fc']):not([data-color='#d6e4ea']) span{
+ background-color:var(--swatch-color)!important;
+}
+
+/* APP-003: main colors page offsets relative to native 800x601 frame. */
+.control-panel-window .cp-content:has(.account-body>.aero-colors){padding-top:13px;padding-bottom:0}
+.control-panel-window .cp-subpage .account-body:has(>.aero-colors)>h2{margin-left:65px;margin-bottom:12px}
+.cp-subpage .account-body>.aero-colors{padding-left:72px}
+.cp-subpage .account-body>.aero-colors .aero-intensity,
+.cp-subpage .account-body>.aero-colors .aero-mixer label{grid-template-columns:96px 259px}
+.cp-subpage .account-body>.aero-colors .aero-mixer{margin-top:22px}
+.cp-subpage .account-body>.aero-colors .aero-mixer label{min-height:35px}
+.cp-subpage .account-body>.aero-colors .aero-color-actions{margin-left:-102px;margin-right:-64px;padding-top:11px;padding-bottom:11px;padding-right:96px;gap:12px}
+@media(max-width:720px){
+ .control-panel-window .cp-subpage .account-body:has(>.aero-colors)>h2{margin-left:0}
+ .cp-subpage .account-body>.aero-colors{padding-left:24px;padding-right:24px}
+ .cp-subpage .account-body>.aero-colors .aero-intensity,
+ .cp-subpage .account-body>.aero-colors .aero-mixer label{grid-template-columns:96px minmax(0,259px)}
+ .cp-subpage .account-body>.aero-colors .aero-color-actions{margin-left:-54px;margin-right:-54px;padding-right:18px;gap:8px}
+}
+
+/* Separate native curved-glass experiment; does not replace frozen V2a. */
+.cp-subpage .account-body>.aero-colors .aero-color-swatch span{
+ background-image:radial-gradient(ellipse 140% 125% at -25% -25%,#ffffffa0 0%,#ffffff48 89%,#ffffff08 92%,#ffffff00 94%),linear-gradient(160deg,#ffffff12,#ffffff00 65%,#ffffff20);
+}
