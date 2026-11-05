@@ -17,7 +17,7 @@
   },
   "outputs": {
     "control-panel.js": "7d6a377818d0b8403d1b0657837d9c1611b8ddfad9fc0581f0057f28f6fe5714",
-    "control-panel.css": "45ba75aba19bb5d244d3a582094a72c6ed1183926450564813f5c26d13529974"
+    "control-panel.css": "73c20591af8fcc7623d39ead43e74ca10d4a2e0b2469ef13d976cd2689d6df09"
   },
   "externalImports": [
     "/notification-area-properties.js",
