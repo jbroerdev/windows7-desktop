@@ -8,3 +8,7 @@
 *.sh text eol=lf
 Dockerfile text eol=lf
 *.png binary
+# Preserve exact bytes of reviewed production release artifacts.
+public/app.js -text -eol
+public/desktop-shell.js -text -eol
+public/control-panel.css -text -eol
