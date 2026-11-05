@@ -23,6 +23,8 @@ class FakeClassList {
 }
 class FakeNode {
   constructor(tag,text){this.tagName=tag.toUpperCase();this.children=[];this.attributes={};this.dataset={};this.listeners={};this.classList=new FakeClassList(this);this.value='';this.disabled=false;this.hidden=false;this.text='';this.type='';this.maxLength=0;if(text!==undefined)this.textContent=text;}
+  set className(value){this.classList.values=new Set(String(value).split(/\s+/).filter(Boolean));}
+  get className(){return [...this.classList.values].join(' ');}
   set textContent(value){this.text=String(value);this.children=[];}
   get textContent(){return this.text+this.children.map(child=>child.textContent).join('');}
   append(...nodes){this.children.push(...nodes);}
@@ -82,6 +84,8 @@ test('adapter status tabs show host facts and alias action is scoped to a web la
   const actions=[],routes=[],data=networkDataFromAdaptersSnapshot(sample(),context);data.adapter=data.adapters[0];
   const targets=new Set(['adapter-address-details','network-troubleshoot']),root=renderControlPanelAdapterStatus({document,data,availableTargets:targets,onAction:action=>actions.push(action),onNavigate:(...args)=>routes.push(args)});
   const tabs=root.queryAll(node=>node.getAttribute('role')==='tab');assert.equal(tabs.length,1);assert.equal(tabs[0].textContent,'Allgemein');
+  const panel=root.queryAll(node=>node.getAttribute('role')==='tabpanel')[0];assert.ok(panel);assert.equal(panel.queryAll(node=>node.classList.contains('cp-network-status-actions')).length,1);
+  assert.equal(root.queryAll(node=>node.tagName==='IMG'&&node.src==='/icons/network-adapter-connected-48.png').length,1);
   byText(root,'BUTTON','Details …').dispatch('click');assert.deepEqual(routes,[['adapter-address-details',{adapterId:'2:020000000001'}]]);
   assert.match(root.textContent,/Aktivität/);assert.match(root.textContent,/Nicht verfügbar/);
   byText(root,'BUTTON','Diagnose').dispatch('click');const diagForm=root.queryAll(node=>node.tagName==='FORM')[0],diagInput=root.queryAll(node=>node.tagName==='INPUT')[0];diagInput.value='example.test';diagForm.dispatch('submit');
@@ -100,9 +104,10 @@ test('separate details view preserves null values and stores only a web alias',(
   assert.match(root.textContent,/Web-Anzeigename ändern/);
 });
 
-test('details keep IPv4 and IPv6 DNS servers in their own rows and wrap long values',()=>{
+test('details keep the native table in its own scroll viewport and preserve long values',()=>{
   const data=networkDataFromAdaptersSnapshot(sample(),context);data.adapter=data.adapters[0];
-  const root=renderControlPanelAdapterDetails({document,data}),rows=root.queryAll(node=>node.tagName==='TR'),valueFor=label=>rows.find(row=>row.children[0]?.textContent===label)?.children[1]?.textContent;
+  const root=renderControlPanelAdapterDetails({document,data}),rows=root.queryAll(node=>node.tagName==='TR'),valueFor=label=>rows.find(row=>row.children[0]?.textContent===label)?.children[1]?.textContent,viewport=root.queryAll(node=>node.classList.contains('cp-network-details-viewport'))[0];
+  assert.equal(viewport.getAttribute('role'),'region');assert.equal(viewport.getAttribute('tabindex'),'0');assert.equal(viewport.children[0].classList.contains('cp-network-details-table'),true);
   assert.equal(valueFor('IPv4-DNS-Server'),'192.0.2.53');assert.equal(valueFor('IPv6-DNS-Server'),'2001:db8::53');
   const longData=networkDataFromAdaptersSnapshot({...sample(),adapters:[{...sample().adapters[0],addresses:[{family:'inet6',local:'2001:db8:ffff:ffff:1234:5678:9abc:def0',prefixLength:128,scope:'global'}],dnsServers:['2001:db8:ffff:ffff:ffff:ffff:ffff:ffff']}]},context);longData.adapter=longData.adapters[0];
   const longRoot=renderControlPanelAdapterDetails({document,data:longData});assert.ok(longRoot.textContent.includes('2001:db8:ffff:ffff:1234:5678:9abc:def0/128'));assert.ok(longRoot.textContent.includes('2001:db8:ffff:ffff:ffff:ffff:ffff:ffff'));
