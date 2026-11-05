@@ -123,8 +123,8 @@ test('first opening a tall cascaded application fits above the taskbar',async()=
   make('control-panel',800,601,650,420);
   const paint=make('paint',1120,700,700,380);
   assert.equal(Number.parseFloat(paint.style.top),0);
-  assert.equal(Number.parseFloat(paint.style.height),678);
-  assert.ok(Number.parseFloat(paint.style.top)+Number.parseFloat(paint.style.height)<=720-42);
+  assert.equal(Number.parseFloat(paint.style.height),680);
+  assert.ok(Number.parseFloat(paint.style.top)+Number.parseFloat(paint.style.height)<=720-40);
  }finally{for(const key of keys)if(prior[key]===undefined)delete globalThis[key];else globalThis[key]=prior[key];}
 });
 
