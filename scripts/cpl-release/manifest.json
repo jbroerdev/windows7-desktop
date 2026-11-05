@@ -3,19 +3,21 @@
   "inputs": {
     ".asset-cache/production-release-base/public/control-panel.js": "70c42bad2bc29c7b87565fa7fb7bd0c6e1465e4e09f189c7bf821825c8160196",
     ".asset-cache/production-release-base/public/control-panel.css": "07b131c3da55a52194a27367d39c2afeec96973fd83229eba7f9266f3fc10a05",
-    "public/control-panel-network.js": "5b6d13d962789412a9d94f6b4dda3f99620786aead8eacc5588bbcef19761b61",
-    "public/control-panel-network.css": "2478161b39eb605bf446e3f26c62123b6c941caa75fa6096c091723cb23f3b72",
+    "public/control-panel-network.js": "00761dede1127a5928647e42721c64822e0449930cbde9a3d85666d8bac8c952",
+    "public/control-panel-network.css": "7ae0f6e71c24fdd3cdb53ef5e9fa2a49e7d69f8c4361b28415a00d753db22d51",
     "public/control-panel-system.js": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d",
     "public/control-panel-system.css": "568e8915abf208bf104706d5fb6cbe918f09f94ef75d38d91be24383f7e15c90",
     "frame-verification/worker3-system-logo-1050.png": "00ddf499d3b3acdebe2a53452107a437d474e2e0efac54abff1c823c4e3274d5",
     "frame-verification/worker3-uac-pack-16-32bit.png": "3f098bcd2d0e0cd1a1134149e0433ffd5e6697f026847a55d23b17eb5e8e18d7",
+    "frame-verification/network-icon-reference-20261105/lan-composite-1918-1903-48.png": "0657ae508fcacc2d1c391c4fa165092f356046a5b2bf17cfabea94c167844572",
+    "frame-verification/network-icon-reference-20261105/group-1903-48-rgba.png": "d982b5cab8f82168ff6554496ddd8c4ae6be3693cad800fd5d81680094183e2a",
     "public/control-panel-category-catalog.js": "4e5203af9f74f01a39c01003c3b2b06ab654ab1064b10b1d99eddd4fe9b84c5e",
     "public/control-panel-category-view.js": "0b1d8a02ba39fdd7c5f0b54eae7ec327f76c167160ee526607bd8a2d3fbc9809",
     "public/control-panel-category-view.css": "680900c4b02c0339401c83f946b3bd6ab3cf5517da39a2c02483c44913d26658"
   },
   "outputs": {
-    "control-panel.js": "163735454633af775441abbd9c918e378be99095f84c0541efa16b8c6965c2c4",
-    "control-panel.css": "da7e8c9a7a39ec04c3ee28b85f5d73f9fc44c1756a2b3a68e086cfe5648e6389"
+    "control-panel.js": "3993a4e7ed7137358b90f2bef198c15a05019b442e25bd37ca32c2a26555fdb8",
+    "control-panel.css": "78d1de93c608fbda3ae99e3bbb62594f7737d0307a4de8878634fa9d973b6301"
   },
   "externalImports": [
     "/notification-area-properties.js",
@@ -23,12 +25,22 @@
     "/date-time.js",
     "/taskbar-state.js"
   ],
-  "newBackendRoutes": [],
+  "newBackendRoutes": [
+    "GET /api/network/adapters",
+    "GET /api/network/adapters/:id",
+    "POST /api/network/diagnostics",
+    "POST /api/network/adapter-label"
+  ],
   "activeModuleTargets": [
-    "home"
+    "home",
+    "network-center",
+    "adapter-settings",
+    "adapter-details",
+    "adapter-address-details",
+    "network-troubleshoot"
   ],
   "sourceFreeze": {
-    "network": "8a8a9cb",
+    "network": "00761dede1127a5928647e42721c64822e0449930cbde9a3d85666d8bac8c952",
     "systemJS": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d"
   },
   "assetTransforms": "Original logo1050 and explicit32bit16px UAC embedded unchanged as data URLs; no new requests"

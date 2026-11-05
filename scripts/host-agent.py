@@ -3,6 +3,7 @@
 import argparse, http.server, socketserver, socket, os, json, subprocess, shlex, pathlib, time, threading, ipaddress, re, selectors, signal, shutil, uuid, codecs
 
 from host_files import HostFiles
+from host_network import HostNetwork, NetworkConflict
 
 READ_ONLY={'hostname','ver','date','time','ipconfig','getmac','tasklist','systeminfo','nslookup','ping','tracert','pathping','netstat','route','driverquery','vol','ftype','gpresult','w32tm','help'}
 ADMIN_READ={'dir','type','tree','attrib','comp','fc','diskcomp','chkdsk','mountvol','diskpart'}
@@ -180,6 +181,12 @@ def refresh_hosts(config):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--socket',default='/run/windows7-host/agent.sock');parser.add_argument('--config',default='/etc/windows7-desktop/host.json');parser.add_argument('--group',type=int,required=True);options=parser.parse_args()
     config=json.loads(pathlib.Path(options.config).read_text());refresh_hosts(config);host_files=HostFiles()
+    # Reading network facts must never enable connection changes during deployment.
+    network_service=None
+    try:
+        network_service=HostNetwork(pathlib.Path(options.config).with_name('network-plans.json'), allow_changes=False)
+    except Exception as error:
+        print('Host network unavailable:',type(error).__name__,flush=True)
     def refresh():
         while True:
             time.sleep(5)
@@ -191,12 +198,15 @@ def main():
         def do_POST(self):
             try:
                 length=int(self.headers.get('Content-Length','0'))
-                if (self.path not in ('/execute','/sessions/start','/sessions/poll','/sessions/cancel') and not self.path.startswith('/files/')) or not 0<length<=(16*1024*1024 if self.path=='/files/write' else 512*1024 if self.path=='/files/upload-chunk' else 16384):raise ValueError('Ungültige Anfrage.')
+                if (self.path not in ('/execute','/sessions/start','/sessions/poll','/sessions/cancel','/network/snapshot','/network/diagnose') and not self.path.startswith('/files/')) or not 0<length<=(16*1024*1024 if self.path=='/files/write' else 512*1024 if self.path=='/files/upload-chunk' else 16384):raise ValueError('Ungültige Anfrage.')
                 data=json.loads(self.rfile.read(length))
                 if not slots.acquire(blocking=False):raise ValueError('Zu viele gleichzeitige Host-Befehle.')
                 try:
                     if self.path=='/execute':result=execute(data)
                     elif self.path.startswith('/files/'):result=host_files.execute(self.path[7:],data)
+                    elif self.path.startswith('/network/'):
+                        if network_service is None:raise NotImplementedError('Host-Netzwerkdienst ist nicht verfügbar.')
+                        result=network_service.execute(self.path[9:],data)
                     else:
                         actor=data.get('owner')
                         if not isinstance(actor,str) or not re.fullmatch(r'[a-zA-Z0-9_-]{1,128}',actor):raise PermissionError('Ungültiges Sitzungsprofil.')
@@ -206,6 +216,8 @@ def main():
                     status=200
                 finally:slots.release()
             except FileExistsError as error:result={'error':str(error)};status=409
+            except NetworkConflict as error:result={'error':str(error)};status=409
+            except NotImplementedError as error:result={'error':str(error)};status=501
             except FileNotFoundError as error:result={'error':'Datei oder Ordner nicht gefunden.'};status=404
             except PermissionError as error:result={'error':str(error)};status=403
             except Exception as error:result={'error':str(error)};status=400
