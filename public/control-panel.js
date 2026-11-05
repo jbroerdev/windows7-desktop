@@ -420,7 +420,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   }
   const profileContext = () => {
     const s = getState();
-    return JSON.stringify([s.userId, !!s.authenticated, !!s.readonly, !!s.shareEditing, s.role]);
+    return JSON.stringify([s.userId, s.actorId, !!s.authenticated, !!s.readonly, !!s.shareEditing, s.role]);
   };
   const notificationAreaProperties = createNotificationAreaProperties({ desktop, getPreferences: () => preferences().notificationArea, getTaskbar: () => preferences().taskbar, getVolume: () => preferences().sound, canEdit: () => {
     const s = getState();
@@ -790,6 +790,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     return dialog;
   }
   return { open, refresh: () => {
+    accounts.refreshAppearance?.();
     notificationAreaProperties.refresh();
     if (isModule() || page.startsWith("category:")) {
       ++request;
