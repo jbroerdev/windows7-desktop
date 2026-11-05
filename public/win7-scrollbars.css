@@ -1,0 +1,158 @@
+/* Opt-in only. Put .win7-scrollbars on the scroll container itself. */
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar) {
+  scrollbar-color: #c5c5c5 #f1f1f1;
+  scrollbar-width: auto;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar) {
+    scrollbar-color: auto;
+  }
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar {
+  width: 17px;
+  height: 17px;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-track,
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-track-piece {
+  background: #f1f1f1;
+  border: 1px solid #d4d4d4;
+  box-shadow: inset 0 0 0 1px #fafafa;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-thumb {
+  --win7-thumb-left: #ededed;
+  --win7-thumb-center-left: #d8d8d8;
+  --win7-thumb-center-right: #c8c8c8;
+  --win7-thumb-right: #dedede;
+  --win7-grip-shadow: #aaa;
+  --win7-grip-light: #fff;
+  min-width: 22px;
+  min-height: 22px;
+  border: 1px solid #9c9c9c;
+  border-radius: 2px;
+  background-image: linear-gradient(90deg, var(--win7-thumb-left) 0%, var(--win7-thumb-center-left) 42%, var(--win7-thumb-center-right) 50%, var(--win7-thumb-right) 100%);
+  box-shadow: inset 0 0 0 1px #f7f7f7;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-thumb:vertical {
+  background-image:
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(90deg, var(--win7-thumb-left) 0%, var(--win7-thumb-center-left) 42%, var(--win7-thumb-center-right) 50%, var(--win7-thumb-right) 100%);
+  background-position: center calc(50% - 2px), center calc(50% - 1px), center 50%, center calc(50% + 1px), center calc(50% + 2px), center calc(50% + 3px), center;
+  background-size: 6px 1px, 6px 1px, 6px 1px, 6px 1px, 6px 1px, 6px 1px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-thumb:horizontal {
+  background-image:
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(var(--win7-grip-shadow), var(--win7-grip-shadow)), linear-gradient(var(--win7-grip-light), var(--win7-grip-light)),
+    linear-gradient(180deg, var(--win7-thumb-left) 0%, var(--win7-thumb-center-left) 42%, var(--win7-thumb-center-right) 50%, var(--win7-thumb-right) 100%);
+  background-position: calc(50% - 2px) center, calc(50% - 1px) center, 50% center, calc(50% + 1px) center, calc(50% + 2px) center, calc(50% + 3px) center, center;
+  background-size: 1px 6px, 1px 6px, 1px 6px, 1px 6px, 1px 6px, 1px 6px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-thumb:hover {
+  --win7-thumb-left: #d0edfb;
+  --win7-thumb-center-left: #d0edfb;
+  --win7-thumb-center-right: #a5d3ea;
+  --win7-thumb-right: #a5d3ea;
+  --win7-grip-shadow: #83afc8;
+  --win7-grip-light: #effbff;
+  border-color: #607179;
+  box-shadow: inset 0 0 0 1px #e9fdff;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button {
+  --win7-arrow-color: #545454;
+  display: none;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #d0d0d0;
+  background-color: #eeeeee;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: inset 0 0 0 1px #fafafa;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:vertical:decrement:start,
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:horizontal:decrement:start,
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:vertical:increment:end,
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:horizontal:increment:end {
+  display: block;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:hover {
+  border-color: #8aa8c0;
+  background-color: #e7f4fc;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:vertical:decrement {
+  background-image:
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color));
+  background-size: 1px 1px, 3px 1px, 5px 1px, 7px 1px, 7px 1px;
+  background-position: center calc(50% - 2px), center calc(50% - 1px), center 50%, center calc(50% + 1px), center calc(50% + 2px);
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:vertical:increment {
+  background-image:
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color));
+  background-size: 7px 1px, 7px 1px, 5px 1px, 3px 1px, 1px 1px;
+  background-position: center calc(50% - 2px), center calc(50% - 1px), center 50%, center calc(50% + 1px), center calc(50% + 2px);
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:horizontal:decrement {
+  background-image:
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color));
+  background-size: 1px 1px, 1px 3px, 1px 5px, 1px 7px, 1px 7px;
+  background-position: calc(50% - 2px) center, calc(50% - 1px) center, 50% center, calc(50% + 1px) center, calc(50% + 2px) center;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button:horizontal:increment {
+  background-image:
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)), linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color)),
+    linear-gradient(var(--win7-arrow-color), var(--win7-arrow-color));
+  background-size: 1px 7px, 1px 7px, 1px 5px, 1px 3px, 1px 1px;
+  background-position: calc(50% - 2px) center, calc(50% - 1px) center, 50% center, calc(50% + 1px) center, calc(50% + 2px) center;
+}
+
+.win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+  border: 1px solid #d4d4d4;
+}
+
+@media (forced-colors: active) {
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar) {
+    scrollbar-color: auto;
+  }
+
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-track,
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-track-piece,
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-corner {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-thumb,
+  .win7-scrollbars:not(.cp-sharing-scroll):not(.cp-sharing-scrollbar)::-webkit-scrollbar-button {
+    border-color: CanvasText;
+    background-color: Canvas;
+    --win7-arrow-color: CanvasText;
+    box-shadow: none;
+  }
+}
