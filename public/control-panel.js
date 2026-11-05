@@ -1,3 +1,116 @@
+// category-catalog.mjs
+var action = (label, target) => ({ label, target });
+var controlPanelCategories = {
+  system: { title: "System und Sicherheit", icon: "/icons/control-panel/system.png", groups: [
+    { title: "Wartungscenter", items: [action("Status des Computers \xFCberpr\xFCfen", "maintenance"), action("Einstellungen der Benutzerkontensteuerung \xE4ndern", "uac"), action("Probleme erkennen und beheben", "troubleshooting")] },
+    { title: "Windows-Firewall", items: [action("Firewallstatus \xFCberpr\xFCfen", "firewall"), action("Programm \xFCber die Windows-Firewall kommunizieren lassen", "firewall-apps")] },
+    { title: "System", items: [action("Arbeitsspeicher und Prozessorgeschwindigkeit anzeigen", "system-info"), action("Remotezugriff zulassen", "remote-access"), action("Computernamen anzeigen", "system-info")] },
+    { title: "Windows Update", items: [action("Automatische Updates aktivieren oder deaktivieren", "windows-update"), action("Installierte Updates anzeigen", "installed-updates")] },
+    { title: "Energieoptionen", items: [action("Energiesparmodus \xE4ndern", "power"), action("Energieoptionen \xE4ndern", "power")] },
+    { title: "Sichern und Wiederherstellen", items: [action("Sicherung des Computers erstellen", "backup"), action("Dateien aus einer Sicherung wiederherstellen", "restore")] },
+    { title: "Verwaltung", items: [action("Festplattenpartitionen erstellen und formatieren", "disk-management"), action("Ereignisprotokolle anzeigen", "event-viewer")] }
+  ] },
+  network: { title: "Netzwerk und Internet", icon: "/icons/control-panel/network.png", groups: [
+    { title: "Netzwerk- und Freigabecenter", items: [action("Netzwerkstatus und -aufgaben anzeigen", "network-center"), action("Verbindung mit einem Netzwerk herstellen", "connect-network"), action("Heimnetzgruppen- und Freigabeoptionen ausw\xE4hlen", "sharing")] },
+    { title: "Heimnetzgruppe", items: [action("Kennwort f\xFCr die Heimnetzgruppe anzeigen", "homegroup"), action("Erweiterte Freigabeeinstellungen \xE4ndern", "sharing")] },
+    { title: "Internetoptionen", items: [action("Startseite \xE4ndern", "internet-options"), action("Browser-Add-Ons verwalten", "internet-options"), action("Browserverlauf und Cookies l\xF6schen", "internet-options")] }
+  ] },
+  hardware: { title: "Hardware und Sound", icon: "/icons/control-panel/hardware.png", groups: [
+    { title: "Ger\xE4te und Drucker", items: [action("Ger\xE4te und Drucker anzeigen", "devices"), action("Ger\xE4t hinzuf\xFCgen", "add-device"), action("Erweiterte Druckereinrichtung", "printers")] },
+    { title: "Automatische Wiedergabe", items: [action("Medien oder Ger\xE4te automatisch wiedergeben", "autoplay")] },
+    { title: "Sound", items: [action("Lautst\xE4rke anpassen", "sound"), action("Audioger\xE4te verwalten", "sound"), action("Systemkl\xE4nge \xE4ndern", "sound")] },
+    { title: "Energieoptionen", items: [action("Energiesparmodus \xE4ndern", "power")] },
+    { title: "Anzeige", items: [action("Bildschirmaufl\xF6sung anpassen", "display")] }
+  ] },
+  programs: { title: "Programme", icon: "/icons/control-panel/programs.png", groups: [
+    { title: "Programme und Funktionen", items: [action("Programm deinstallieren", "programs"), action("Installierte Updates anzeigen", "installed-updates"), action("Windows-Funktionen aktivieren oder deaktivieren", "windows-features")] },
+    { title: "Standardprogramme", items: [action("Standardprogramme festlegen", "default-programs"), action("Dateityp immer mit einem bestimmten Programm \xF6ffnen", "file-associations"), action("Einstellungen f\xFCr automatische Wiedergabe \xE4ndern", "autoplay")] },
+    { title: "Desktopgadgets", items: [action("Desktopgadgets anzeigen und verwalten", "gadgets")] }
+  ] },
+  accounts: { title: "Benutzerkonten und Jugendschutz", icon: "/icons/control-panel/accounts.png", groups: [
+    { title: "Benutzerkonten", items: [action("Benutzerkonten hinzuf\xFCgen oder entfernen", "accounts"), action("Kontotyp \xE4ndern", "accounts"), action("Anmeldekennwort \xE4ndern", "accounts")] },
+    { title: "Anmeldeinformationsverwaltung", items: [action("Web- und Windows-Anmeldeinformationen verwalten", "credentials")] },
+    { title: "Jugendschutz", items: [action("Jugendschutz f\xFCr beliebige Benutzer einrichten", "parental-controls")] }
+  ] },
+  appearance: { title: "Darstellung und Anpassung", icon: "/icons/control-panel/appearance.png", groups: [
+    { title: "Anpassung", items: [action("Design \xE4ndern", "background"), action("Desktophintergrund \xE4ndern", "wallpapers"), action("Fensterfarben \xE4ndern", "colors"), action("Bildschirmschoner \xE4ndern", "screensaver")] },
+    { title: "Anzeige", items: [action("Text und andere Elemente vergr\xF6\xDFern oder verkleinern", "display"), action("Bildschirmaufl\xF6sung anpassen", "display"), action("Anzeigeger\xE4te verbinden", "display")] },
+    { title: "Taskleiste und Startmen\xFC", items: [action("Taskleiste anpassen", "taskbar")] },
+    { title: "Center f\xFCr erleichterte Bedienung", items: [action("Visuelle Darstellung des Bildschirms optimieren", "access")] }
+  ] },
+  region: { title: "Zeit, Sprache und Region", icon: "/icons/control-panel/region.png", groups: [
+    { title: "Datum und Uhrzeit", items: [action("Datum und Uhrzeit einstellen", "date-time"), action("Zeitzone \xE4ndern", "date-time"), action("Uhrzeit f\xFCr verschiedene Zeitzonen hinzuf\xFCgen", "date-time")] },
+    { title: "Region und Sprache", items: [action("Tastaturen und Eingabemethoden \xE4ndern", "input-methods"), action("Anzeigesprache \xE4ndern", "display-language"), action("Datums-, Uhrzeit- oder Zahlenformat \xE4ndern", "regional-format")] }
+  ] },
+  access: { title: "Erleichterte Bedienung", icon: "/icons/control-panel/access.png", groups: [
+    { title: "Center f\xFCr erleichterte Bedienung", items: [action("Einstellungen empfehlen lassen", "access-wizard"), action("Visuelle Darstellung des Bildschirms optimieren", "access-display"), action("Computer ohne Bildschirm verwenden", "narrator"), action("Computer ohne Maus oder Tastatur verwenden", "on-screen-keyboard"), action("Mausbedienung erleichtern", "mouse-keys"), action("Tastaturbedienung erleichtern", "keyboard-access"), action("Text oder visuelle Alternativen f\xFCr Sounds verwenden", "sound-access")] },
+    { title: "Spracherkennung", items: [action("Spracherkennung starten", "speech-recognition"), action("Mikrofon einrichten", "microphone-setup")] }
+  ] }
+};
+function getControlPanelCategory(categoryId) {
+  return Object.prototype.hasOwnProperty.call(controlPanelCategories, categoryId) ? controlPanelCategories[categoryId] : null;
+}
+
+// category-source.mjs
+function isAvailable(availableTargets, target) {
+  return availableTargets instanceof Set ? availableTargets.has(target) : !!availableTargets && Object.prototype.hasOwnProperty.call(availableTargets, target) && availableTargets[target] === true;
+}
+function renderControlPanelCategory({ categoryId, onNavigate, availableTargets = {}, document: doc = globalThis.document }) {
+  const root = doc.createElement("section");
+  root.className = "cp-category-native";
+  root.dataset.categoryId = categoryId || "";
+  const category = getControlPanelCategory(categoryId);
+  if (!category) {
+    root.classList.add("cp-category-unknown");
+    const title2 = doc.createElement("h2");
+    title2.textContent = "Systemsteuerung";
+    const message = doc.createElement("p");
+    message.textContent = "Diese Kategorie ist nicht verf\xFCgbar.";
+    root.append(title2, message);
+    return root;
+  }
+  const header = doc.createElement("header");
+  header.className = "cp-category-heading";
+  const icon = doc.createElement("img");
+  icon.src = category.icon;
+  icon.alt = "";
+  icon.width = 48;
+  icon.height = 48;
+  const title = doc.createElement("h2");
+  title.textContent = category.title;
+  header.append(icon, title);
+  root.append(header);
+  const groups = doc.createElement("div");
+  groups.className = "cp-category-groups";
+  for (const groupData of category.groups) {
+    const group = doc.createElement("section");
+    group.className = "cp-category-group";
+    const heading = doc.createElement("h3");
+    heading.textContent = groupData.title;
+    group.append(heading);
+    const list = doc.createElement("ul");
+    for (const itemData of groupData.items) {
+      const row = doc.createElement("li"), target = itemData.target, available2 = typeof onNavigate === "function" && isAvailable(availableTargets, target), item = doc.createElement(available2 ? "button" : "span");
+      item.className = "cp-category-link";
+      item.textContent = itemData.label;
+      if (available2) {
+        item.type = "button";
+        item.addEventListener("click", () => onNavigate(target));
+      } else {
+        item.classList.add("is-unavailable");
+        item.setAttribute("aria-disabled", "true");
+        item.title = "Noch nicht in dieser Webumgebung verf\xFCgbar.";
+      }
+      row.append(item);
+      list.append(row);
+    }
+    group.append(list);
+    groups.append(group);
+  }
+  root.append(groups);
+  return root;
+}
+
 // system-source.mjs
 var own = (object, key) => !!object && Object.prototype.hasOwnProperty.call(object, key);
 var text = (value) => typeof value === "string" && value.trim() ? value.trim() : null;
@@ -396,18 +509,25 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     }
     body.append(grid);
   }
+  function categoryTargets() {
+    const s = getState(), editable = s.authenticated && (s.shareEditing ? s.role === "admin" : !s.readonly), targets = new Set(editable ? ["background", "wallpapers", "colors", "display", "taskbar", "sound", "date-time"] : []);
+    if (s.authenticated && !s.readonly && !s.shareEditing) targets.add("accounts");
+    if (canReadModule()) {
+      targets.add("system-info");
+      targets.add("network-center");
+    }
+    return targets;
+  }
   function renderCategory() {
     const group = categories.find((c) => "category:" + c[0] === page);
     if (!group) return;
     breadcrumb(group[1]);
-    body.append(el("h2", group[1]));
-    const list = el("div", void 0, "cp-grid cp-large");
-    for (const id of group[3]) {
-      const item = entries.find((e) => e[0] === id);
-      if (item) list.append(card(item));
-    }
-    if (!list.children.length) list.append(el("p", "In dieser Kategorie sind noch keine Einstellungen verf\xFCgbar.", "cp-unavailable"));
-    body.append(list);
+    const context = profileContext(), categoryPage = page, token = request;
+    body.append(renderControlPanelCategory({ categoryId: group[0], availableTargets: categoryTargets(), onNavigate: (target) => {
+      if (token !== request || page !== categoryPage || profileContext() !== context || !categoryTargets().has(target)) return;
+      if (target === "sound") window.openSoundSettings?.();
+      else navigate(target);
+    } }));
   }
   function renderSidebar(key = page) {
     if (!sidebar) return;
@@ -527,7 +647,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     body.append(status, buttons);
   }
   function card(item, compact = false) {
-    const [id, name, description, icon, , action, admin] = item, b = el("button", void 0, "cp-item");
+    const [id, name, description, icon, , action2, admin] = item, b = el("button", void 0, "cp-item");
     b.dataset.setting = id;
     const image = el("img");
     image.src = id === "background" ? "/icons/win7-settings/personalization.png" : id === "sound" ? "/icons/win7-settings/sound.png" : id === "date-time" ? "/icons/win7-settings/date-time.png" : "/icons/filetypes/" + icon + ".ico?v=1";
@@ -537,7 +657,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
     if (!compact) text2.append(el("small", description));
     b.append(image, text2);
     b.disabled = admin && (getState().role !== "admin" || getState().shareEditing) || !getState().authenticated;
-    b.onclick = action;
+    b.onclick = action2;
     return b;
   }
   async function render() {
@@ -671,7 +791,7 @@ function createControlPanel({ desktop, getState, reload, accounts, users, displa
   }
   return { open, refresh: () => {
     notificationAreaProperties.refresh();
-    if (isModule()) {
+    if (isModule() || page.startsWith("category:")) {
       ++request;
       invalidateModule();
       body?.replaceChildren();
