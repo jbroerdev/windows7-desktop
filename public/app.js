@@ -1,3 +1,5 @@
+import{installDesktopScrollbars}from'/desktop-scrollbars.js';
+installDesktopScrollbars({scopeSelector:'#explorer-window,.text-app-window,.win7-file-picker,.network-status-window',observeFrames:false,includeDocumentViewport:false});
 import{createRecentActivity}from'/recent-activity.js';
 import{readCMDLine,handleCMDAbortKey}from'/cmd-input.js';
 import{createCMDOutput}from'/cmd-output.js';
