@@ -5,7 +5,7 @@ on:
     branches: [codex/networkd-boot-availability-20261105]
     paths:
       - .github/workflows/networkd-boot-lab.yml
-      - scripts/networkd-boot-lab-v2.zip
+      - scripts/networkd-boot-lab-v4.zip
 permissions:
   contents: read
 concurrency:
@@ -23,8 +23,8 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          archive="$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v2.zip"
-          printf '%s  %s\n' c84c847bed5564e36af42faee7cbe1541fa1d628ae9f347be737d23fb64b3dbb "$archive" | sha256sum -c -
+          archive="$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v4.zip"
+          printf '%s  %s\n' d0634154d3bbeb48ad87ca28174c91c2e907932daa639d8f2b4de2e051679af4 "$archive" | sha256sum -c -
           lab=$(mktemp -d "$RUNNER_TEMP/networkd-boot.XXXXXXXX")
           printf 'NETWORKD_BOOT_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
           unzip -q "$archive" -d "$lab"
@@ -34,7 +34,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           cd "$NETWORKD_BOOT_LAB"
-          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v2.zip"
+          sh run-boot-lab.sh "$GITHUB_WORKSPACE/scripts/networkd-boot-lab-v4.zip"
       - name: Preserve full boot evidence
         if: always()
         uses: actions/upload-artifact@v4
