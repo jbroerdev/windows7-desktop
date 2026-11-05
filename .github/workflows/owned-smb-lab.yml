@@ -1,0 +1,54 @@
+name: Isolated owned SMB real-client laboratory
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/sharing-smb-lab-20261105]
+    paths:
+      - .github/workflows/owned-smb-lab.yml
+      - scripts/owned-smb-lab-log-v2.zip
+permissions:
+  contents: read
+concurrency:
+  group: sharing-smb-lab-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  synthetic-smb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Verify frozen synthetic Samba package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          archive="$GITHUB_WORKSPACE/scripts/owned-smb-lab-log-v2.zip"
+          printf '%s  %s\n' 0ca2eebd941acf4b02d23cf1aa262b17eae488b84d44c875fba34879d894f5d9 "$archive" | sha256sum -c -
+          lab=$(mktemp -d "$RUNNER_TEMP/owned-smb-lab.XXXXXXXX")
+          printf 'OWNED_SMB_LAB=%s\n' "$lab" >> "$GITHUB_ENV"
+          unzip -q "$archive" -d "$lab"
+          printf '%s\n' 'Synthetic namespace only. SETUID/SETGID, no network capabilities, no host mounts/ports/services.'
+      - name: Run isolated real SMB clients
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$OWNED_SMB_LAB"
+          set +e
+          timeout 900s sh run-smb-lab.sh > outer-run.log 2>&1
+          result=$?
+          set -e
+          printf '%s\n' "$result" > outer-run.exit
+          cat outer-run.log
+          exit "$result"
+      - name: Preserve full Samba evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-smb-lab-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/owned-smb-lab.*/evidence
+            ${{ runner.temp }}/owned-smb-lab.*/outer-run.log
+            ${{ runner.temp }}/owned-smb-lab.*/outer-run.exit
+          if-no-files-found: error
+          retention-days: 14
