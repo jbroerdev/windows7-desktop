@@ -725,8 +725,23 @@ function createNetworkPanelHost({ desktop, getState, getContextKey, navigate, re
     const data = networkDataFromAdaptersSnapshot(parent.snapshot, getState());
     details.body.replaceChildren(renderControlPanelAdapterDetails({ document: doc, data, busy: parent.busy, error: parent.error, onAction: (value) => perform(parent, value) }));
   }
-  function openDetails(parent) {
-    if (!statusCurrent(parent) || !parent.snapshot) return;
+  async function openDetails(parent) {
+    if (!statusCurrent(parent) || !parent.snapshot || parent.detailsLoading) return;
+    const available2 = () => {
+      const data = networkDataFromAdaptersSnapshot(parent.snapshot, getState());
+      return data.capabilities?.readAdapters === true && !!data.adapter;
+    };
+    if (!available2()) {
+      parent.detailsLoading = true;
+      const trigger = parent.body.querySelector(".cp-network-details-button");
+      if (trigger) trigger.disabled = true;
+      try {
+        await loadStatus(parent);
+      } finally {
+        parent.detailsLoading = false;
+      }
+      if (!statusCurrent(parent) || !available2()) return;
+    }
     closeDetails();
     const dialog = el("dialog", void 0, "network-status-window network-details-window"), bar = el("header"), title = el("span", "Netzwerkverbindungsdetails"), close = el("button"), body = el("div", void 0, "network-status-content"), actions = el("footer", void 0, "network-status-buttons"), done = el("button", "Schlie\xDFen");
     dialog.id = "network-details-" + ++sequence;

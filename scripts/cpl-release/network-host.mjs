@@ -46,8 +46,15 @@ export function createNetworkPanelHost({desktop,getState,getContextKey,navigate,
   const data=networkDataFromAdaptersSnapshot(parent.snapshot,getState());
   details.body.replaceChildren(renderControlPanelAdapterDetails({document:doc,data,busy:parent.busy,error:parent.error,onAction:value=>perform(parent,value)}));
  }
- function openDetails(parent){
-  if(!statusCurrent(parent)||!parent.snapshot)return;closeDetails();
+ async function openDetails(parent){
+  if(!statusCurrent(parent)||!parent.snapshot||parent.detailsLoading)return;
+  const available=()=>{const data=networkDataFromAdaptersSnapshot(parent.snapshot,getState());return data.capabilities?.readAdapters===true&&!!data.adapter;};
+  if(!available()){
+   parent.detailsLoading=true;const trigger=parent.body.querySelector('.cp-network-details-button');if(trigger)trigger.disabled=true;
+   try{await loadStatus(parent);}finally{parent.detailsLoading=false;}
+   if(!statusCurrent(parent)||!available())return;
+  }
+  closeDetails();
   const dialog=el('dialog',undefined,'network-status-window network-details-window'),bar=el('header'),title=el('span','Netzwerkverbindungsdetails'),close=el('button'),body=el('div',undefined,'network-status-content'),actions=el('footer',undefined,'network-status-buttons'),done=el('button','Schließen');
   dialog.id='network-details-'+(++sequence);close.type=done.type='button';close.setAttribute('aria-label','Schließen');bar.append(title,close);actions.append(done);dialog.append(bar,body,actions);doc.body.append(dialog);
   const record={dialog,body,parent};details=record;done.onclick=()=>dialog.close();
