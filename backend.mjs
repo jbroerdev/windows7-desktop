@@ -5,6 +5,7 @@ import{createProfileTransfers}from'./profile-transfer.mjs';
 import{transferHostFile}from'./host-transfer.mjs';
 import{hostTreeRoute}from'./host-tree-route.mjs';
 import{hostCommand,hostTerminal,hostFile}from'./host-command.mjs';
+import{createNetworkAdapters,createNetworkAliasStore}from'./network-adapters.mjs';
 import{createBrowserDownloadReceiver}from'./browser-downloads.mjs';
 import{browserGateway}from'./browser-gateway.mjs';
 import{spotifyGateway}from'./spotify-gateway.mjs';
@@ -169,6 +170,7 @@ function assertProfileTransferUnlocked(ids,request){for(const [active,protectedI
 function canOfficeLock(id){let node=get(id),seen=new Set();while(node&&!seen.has(node.id)){if([...officeMutations.values()].some(ids=>ids.includes(node.id)))return false;seen.add(node.id);node=get(node.parent);}return true;}
 const archives=createArchiveOperations({db,storage,id,get,owned,readable,creationOwner,duplicate,spaceOf,filePath,save,fail,metadataDir:dir});
 const folderProperties=createFolderProperties({db,get,owner,fullPath,readable,owned,publicNode,filePath,save,fail,shareWorkspace});
+const networkAdapters=createNetworkAdapters({aliasStore:createNetworkAliasStore(path.join(dir,'network-aliases.json'))});
 const computerManagement=createComputerManagement({db,id,fail,makeUser,sessions,save,get,fullPath,owner,shareWorkspace});
 const office=await createOffice({get,readable,owned,publicNode,filePath,save:()=>save(false),metadataDir:dir,runLocked:locked,canLock:canOfficeLock,resolveSession:(sid,shareMode)=>{const session=sessions.get(sid),actor=session&&session.expiry>Date.now()?db.users.find(u=>u.id===session.userId&&!u.deleted&&!u.disabled):null;if(!actor||!!session.shareEditing!==shareMode)return null;return shareMode&&actor.role==='admin'?{...shareWorkspace(),role:'admin',shareEditing:true}:shareMode?null:actor;}});
 
@@ -198,6 +200,26 @@ if(url.pathname.startsWith('/wopi/'))return await office.handle(req,res,url);
 if(!['GET','HEAD'].includes(req.method)){const origin=req.headers.origin;if(origin&&new URL(origin).host!==req.headers.host||req.headers['sec-fetch-site']==='cross-site')fail('Ungültiger Ursprung.',403);}
 
 if(url.pathname.startsWith('/api/host-files/'))return await hostFilesGateway({req,res,url,user,body,json,authorized:()=>sessions.get(sid)===session&&session?.expiry>Date.now()&&!session.shareEditing&&db.users.some(u=>u.id===user?.id&&!u.deleted&&!u.disabled&&u.role==='admin'),beginMutation:()=>{filesystemMutations++;filesystemRevision++;return()=>{filesystemMutations--;};}});
+if(url.pathname.startsWith('/api/network/')){
+ if(!account||user?.shareEditing)fail('Bitte im persönlichen Profil anmelden.',401);
+ if(account.role!=='admin')fail('Adapterverwaltung erfordert Administratorrechte.',403);
+ const authorized=()=>!!profileAuthorizations.get(req)?.()&&session.userId===account.id&&!session.shareEditing&&db.users.some(item=>item.id===account.id&&!item.disabled&&!item.deleted&&item.role==='admin');
+ const assertCurrent=()=>{if(!authorized())fail('Das persönliche Profil wurde gewechselt.',409);if(req.aborted||res.destroyed)fail('Die Anfrage wurde abgebrochen.',409);};
+ assertCurrent();let action,value;
+ if(url.pathname==='/api/network/adapters'||url.pathname.startsWith('/api/network/adapters/')){
+  if(req.method!=='GET')fail('Methode nicht erlaubt.',405);
+  if(url.search)fail('Ungültige Netzwerkanfrage.');
+  action=url.pathname==='/api/network/adapters'?'snapshot':'detail';value=action==='snapshot'?{}:{adapterId:decodeURIComponent(url.pathname.slice('/api/network/adapters/'.length))};
+ }else if(['/api/network/diagnostics','/api/network/adapter-label'].includes(url.pathname)){
+  if(req.method!=='POST')fail('Methode nicht erlaubt.',405);
+  value=JSON.parse((await body(4096)).toString()||'{}');assertCurrent();
+  if(!value||typeof value!=='object'||Array.isArray(value))fail('Ungültige Netzwerkanfrage.');
+  if(typeof value.profileId!=='string'||value.profileId!==account.id)fail('Das persönliche Profil wurde gewechselt.',409);
+  delete value.profileId;action=url.pathname==='/api/network/diagnostics'?'diagnose':'label';
+ }else fail('Nicht gefunden.',404);
+ const result=await networkAdapters.handle({action,value,actor:{id:account.id,role:account.role,authenticated:true,shareEditing:false,readonly:false},authorized});
+ assertCurrent();return json(200,result);
+}
 if(url.pathname.startsWith('/api/host-terminal/')){if(req.method!=='POST')fail('Methode nicht erlaubt.',405);return json(200,await hostTerminal(user,url.pathname.slice('/api/host-terminal/'.length),JSON.parse((await body()).toString())));}
 if(url.pathname==='/api/host-command'){if(req.method!=='POST')fail('Methode nicht erlaubt.',405);return json(200,await hostCommand(user,JSON.parse((await body()).toString())));}
 if(url.pathname.startsWith('/api/spotify/'))return await spotifyGateway({req,res,url,user,body,json});
