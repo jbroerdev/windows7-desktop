@@ -492,7 +492,11 @@ dialog.network-status-window::backdrop{background:transparent}
 .cp-network-adapters .cp-network-adapter-icon,.cp-network-adapters .cp-network-adapter-icon img{width:48px;height:48px;flex:none}
 
 /* Native339px viewport inside the real359px desktop client. */
-.network-details-window .cp-network-adapter-details{padding-left:11px;padding-right:9px;padding-top:4px}
+.network-details-window .cp-network-adapter-details{padding-left:11px;padding-right:9px;padding-top:10px}
+
+/* Native status content: full360px client, no nested scrollbar. */
+dialog.network-status-window:not(.network-details-window)>.network-status-buttons{height:36px;min-height:36px}
+dialog.network-status-window:not(.network-details-window) .cp-network-adapter-status{height:100%;min-height:0;overflow:hidden;padding:8px 7px 0}
 
 /* Isolated System/Network integration; host owns all styles. */
 .control-panel-window .cp-content.cp-module-host{padding:0}.control-panel-window .cp-body.cp-module-body{min-height:100%;padding:0}.cp-system-page .cp-system-edition{position:relative}.cp-system-page .cp-system-original-logo{float:right;width:157px;height:151px;object-fit:contain;margin:0 0 8px 12px}.cp-system-page .cp-system-link img{vertical-align:middle;margin-right:4px;flex:none}@container(max-width:620px){.cp-system-page .cp-system-original-logo{float:none;display:block;margin:0 0 10px auto}}
