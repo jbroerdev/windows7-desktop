@@ -11,8 +11,8 @@ async function read(file,expected){const saved=path.join(out,'sources',sourcePat
 function replace(source,from,to){if(source.split(from).length!==2)throw Error('Nonunique integration anchor: '+from.slice(0,70));return source.replace(from,to);}
 let base=(await read('.asset-cache/production-release-base/public/control-panel.js','70c42bad2bc29c7b87565fa7fb7bd0c6e1465e4e09f189c7bf821825c8160196')).toString();
 const baseCSS=await read('.asset-cache/production-release-base/public/control-panel.css','07b131c3da55a52194a27367d39c2afeec96973fd83229eba7f9266f3fc10a05');
-const network=await read('public/control-panel-network.js','00761dede1127a5928647e42721c64822e0449930cbde9a3d85666d8bac8c952');
-const networkCSS=await read('public/control-panel-network.css','7ae0f6e71c24fdd3cdb53ef5e9fa2a49e7d69f8c4361b28415a00d753db22d51');
+const network=await read('public/control-panel-network.js','130562b5857de469a9a846417bf08b9f7c7f133c949d53e78d52049f5b0c9ece');
+const networkCSS=await read('public/control-panel-network.css','ac6c6bc339153ab160525af641ce162ce67e6cd467ea2a2bb68be22e32b6cc40');
 let system=(await read('public/control-panel-system.js','27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d')).toString();
 const systemCSS=await read('public/control-panel-system.css','568e8915abf208bf104706d5fb6cbe918f09f94ef75d38d91be24383f7e15c90');
 const logo=await read('frame-verification/worker3-system-logo-1050.png','00ddf499d3b3acdebe2a53452107a437d474e2e0efac54abff1c823c4e3274d5');
@@ -20,7 +20,7 @@ const shield=await read('frame-verification/worker3-uac-pack-16-32bit.png','3f09
 system=replace(system,'edition.append(editionText);',`const originalLogo=el('img',undefined,'cp-system-original-logo');originalLogo.src='data:image/png;base64,${logo.toString('base64')}';originalLogo.alt='';originalLogo.width=157;originalLogo.height=151;edition.append(originalLogo,editionText);`);
 system=replace(system,"button.type = 'button'; button.dataset.systemTarget = target;",`button.type = 'button'; button.dataset.systemTarget = target;if(['device-manager','remote-settings','system-protection','advanced-system-settings','computer-name'].includes(target)){const shield=el('img');shield.src='data:image/png;base64,${shield.toString('base64')}';shield.alt='';shield.width=16;shield.height=16;button.prepend(shield);}`);
 await fs.writeFile(path.join(out,'system-source.mjs'),system);
-await fs.writeFile(path.join(out,'network-source.mjs'),network);
+await fs.writeFile(path.join(out,'network-source.mjs'),"import{lanConnected}from'./network-icons.mjs';\n"+replace(network.toString(),"image.src='/icons/network-adapter-connected-48.png';","image.src=lanConnected;"));
 const lan=await read('frame-verification/network-icon-reference-20261105/lan-composite-1918-1903-48.png','0657ae508fcacc2d1c391c4fa165092f356046a5b2bf17cfabea94c167844572'),neutral=await read('frame-verification/network-icon-reference-20261105/group-1903-48-rgba.png','d982b5cab8f82168ff6554496ddd8c4ae6be3693cad800fd5d81680094183e2a');
 await fs.writeFile(path.join(out,'network-icons.mjs'),'export const lanConnected='+JSON.stringify('data:image/png;base64,'+lan.toString('base64'))+';export const lanNeutral='+JSON.stringify('data:image/png;base64,'+neutral.toString('base64'))+';\n');
 base="import{renderControlPanelSystem,systemDataFromTaskManager}from'./system-source.mjs';\nimport{renderControlPanelNetwork,networkDataFromTaskManager}from'./network-source.mjs';\n"+base;

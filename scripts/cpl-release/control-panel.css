@@ -393,6 +393,89 @@ dialog.taskbar-properties-window>.desktop-titlebar{margin-right:-2px!important;p
 .cp-network-page .cp-network-tasks li:has([data-network-target="homegroup"])::before{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAFgElEQVR4nEWVy28cxxGHq3t6XrvLWS3fT/EhilIIxZRkOLJswxEgRDYkIDFkG/LBsgwdIgM+2AHyBwQ5+ZBrLj44iRDoGOTip2xKFpXEsiPKBJiIlESK1L65D+7s7jx7uiuYXcYeDGa6C1W/rqpufE0QXQAKoAAyAACMP4AgZWymFIDsmSUCku4soBB1Qox4irEPQQw7odCJoJ0BRQTsCkHsFkUQcgAGhICigEL/7yoAcW8xgigAZHfJrh7GPgSRIYn9eAiuB54PdRtUDRIJSCUgYYDWWYZ0MgQqWeBJTQcS60uMEya+4KqS4FKoih4I2HpSKeRqhZL9MNvMFxqRz1uNxplTz196a8HQQOlWEgmm6wwoIPCAc1UlEqSqaAJQUbQAoW57XGJhp+SjsZHPzv/0hIrJWqGy9M19QpTLbx9BAkwFoHF9IAQAqH6ICAaCzoEhsGqzEaetUqngqxdOHT95VBihkdG0dFJJJjaz+U+vLwIDSTrbQoDtVN2+wQQXkEqmOcZ9EhKJQtJWLwK0vbZpqRJg/7TB0sF367cYT+9s1YTqelKJN5HGbUdEZqb0IARNBbsJqZ5O8xTCAcLOphopre3s3vju+3+u3GWZIJvbUKO0LdqDU/2/eP4FN4KUFreIEMrMhBLwWOXW0mqhUN94vN0/MvTOu2eYAgFAy2vc+td1LpqzR/p5veAn1Xa5rmp0wITX3nyRhxBwUNS45bTltCqV5uKN5Z8cPmKaIwdnf1YueJcv/aHejE/E59c/mV+YefX8S5OzVrLf6xlwQ/Y4YJt1b63WzHqhVyjVqtWW5wU0mexZXl4bHJyhDIZHDlZ3oVIXtk//9NfPPv7y9vjcxOTUGIdm1XmiJTjTPT0VtoNC2d78ePHvaIKaSuTKtbodUoqwfr9YLomNTXiw0XZ4supAk9Ov7tx5XCs82c3nRXalfs+htuu2AyfY3bUdz5VM3rzztcrMVMbM2Xwj77OQQ7HYaDv3rcxMiInVtQctP6zYjf3D5mYhuzCWWfzH4uRsz+r6f9suqVc8KnpUqvda0/WiZ0sQDpQqTd9AFkmYf2ru2rWvrN4tZvTt1Cq+cP2wPT9/TN9Xv/vvZc2yt/O2lUlHHvgtia7ZnxrsNaddUft2KVfO5mul7Eh/iukGnD598ubtlfUHm77Impa1a5fn5qbOnjtz7z+fZ0uRwqnrh48erE1NPddrWGOTo4PWwZ1tf6TXv/HFSq2YtRJSwyA+2ekM/PrKpbnDY8OjSao4AwPmubOnotB541evKKiur24UHldpmHGrmYx2/OzPrxw7dLoveXjQOlTedrmjei1ArsdChgZPP22eP3/m5Ikjh+dGjz51wHdrMxP9KYCLFy5q0oTQAC+l8TFh943uI2EDhqwDBskQkQjaoEi1Lz3ECIKuQRDCC89OaCpOTvZt5bd7NKkKSYGemH7mL3+8evXah/eWc6boc3Zw9RvIbbdVNJtVX/iwW2uajI2PjhOJ6IXANOACcgW5nc87nhNGXv9wZmA4PTqQEeA2/apujP/2N1eRjw5kphVpBm3YKRVbjaLd2mJK5YMP3o8zSqh7oJsep1MTE482d33u+6FjF0tevdxjmfv2pXSgh6YGl75e8+o+jdJ2TZi67tjtKHSeeW7mwGwf6zI1ZmiHUAgwPZ4JBYRhIGVEFdB1LamrAuCXL5/6/s6aXdsy2FApV9UYM01paPz1188NDQHBSHT5+APkf3i6YxLzGASAJ2DpdvHPH/1t5e7D/eOHWrZtGuR3v3/v2ZOGwvaE4EctjFEfB3dfjKsmCBHG8I/lXLh5Y2t7M7uwsHB0wYrJQ2OKEZQdoe7l0fkJgYQQZc/4Y25RBAKBKp1rA+LrwPPC3l6NYkz7/wHvmuNv/wVmZwAAAABJRU5ErkJggg==")}
 .cp-network-page .cp-network-tasks li:has([data-network-target="network-troubleshoot"])::before{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAFEklEQVR4nJ1V328cVxU+5/6YmTu7a6+9trOxQ+24v0KL4jrFJAEaoBRoCRUq6nOExAttJKS+00ee8hfknVcqpKCCggStABW1BSmlgNzUdmxvnF2vd2e9Mzt35v6sJrTwEiHEp6ujo3vP/XR1vqPvgjbeeS8L47z/7+tfkLL03mdZbm2Vu88O8H4C1gJjVdTaRBGDBwEBjHGUEsRPd7yvYlGUQoTVnRs33kySZDweO+c458aYBxIxikVRcM4RUQghpSSEeO/PnTu3vr7O8lz1er21tbVGoxEEgbX2gSwAkE/S+fn569evX7ly5dq1a1evXr158+b58+dv3bp16tQpFseB1hoRs2zCqHaOOKDgmQcOnrkqUgACACE70emUz377lVFe+9GrPyt9+ZVLlyPu5KRghDIHkOf5l764Dh6sgb09+ZPXfvru+5th1C5kmGakXjshJYow+tbXv1qfaeTMB9PHx+nd1WXx0nPrr7/+yuXnLubZmFEASlzVOQeqBFWW4AA0Hg4GxjaBzikWlxqtER98OHj48VZGnR0WxkN7QZSKXfzyparaOwYgQ6YBS6ToUXM6/u43n7q0sTbJSH9oN7f7/9zqZCotXLTd6Y7KTuEcMC2i4sLnn2nPsJdefOHt3/3CE80ACDIO4ABJLOjsnPjBy99xhh/cGw5Haix97ygdpWWS6a3do27vOOlPkqPuYG/fZ6sRmtNPtn//lrEILIfQYqwKEgQhoKtPNQ1mrdZMc3VGG/AGjhPdPzjcuXfw6IUYmWjCtEomyd3OmYdPyXRXFYserQfKwIOzdJyqKHSUIhecxLwA5YFJIhWoqB2unpxfglYPcge+vCPNPbbxyFkO+mh8V5umR2cJsLgAoslxVowV0IBM83pNxNudj8PpKGwIG0EC6vZkt5+OFtvLw+5gOWwvLS/M6EAeJ63WTJqnljhLbDXZSKy0mTVY6UfZuzsfvvO3P88tL0QLtW456Ktkq7cfBMHoj0n/Vue1yz9un974y3vvgVJfe/6ZkpcWwSMwzSWt6U739sLppUa7/bHu/vwfv7VL4q/Bnf7guAgNa/AxL9Ld/dH2vt0f/31r86mlJ9cubDTDONMpCYhF4hEZZzBMDhfLxbf/8FbrsYf6WPzp/XfKVujnQ3ayLhbq1EGJyGviiS+cEdP2zNnH55YWIh1p7ZQ0HJhzABYZWF7njY2nL053dqdOzimOw7XeR93drdu7g83hMLQ5N0ZgPQja8fTS3IkgoHfu7vTLcIpHshjTjAbICHCmU0WJqPHmI4s8K2Ud+Kvf++Hh8WCQJ4nN94cHH2xvbh7spElSq+MTTz+2cvJ0KAVDzniUHvZ6vb2A0AApK3jsQHhJm2ymEUxxwcejyaxr1oLaItozYuUbixcIAeB449e//BysJNvF6GggfNCaqjtZxFxgqdEUjEWglbFamYmJI5F2j8KaiMPYM6J1WRmD98SjU/bKs9/3PLR02q8E2Tjv7Nw+3NtHNSZGg1Is8vDQ4qwxY8KABEiVKooJMRQo8UAseEeRUM5BLyCRMptQjGbn6nFcC1fOrs7VqPvVG28IGjKk0JgSb/7mRlHkWqkoiiglWmvrPHBqEUrrPEKIUCul95BCYMNYOeAIzYC5PJ2fbYm4ht46KWWWZbnMlFKVjX/myR6qSQOoXIaAu69zJbTFyucAgHqH4ELG4zjGyvoByrJqh7tf+m+i/xHOuSAIPiW6/yX85y3/Bz4BwxPzWktqvMsAAAAASUVORK5CYII=")}
 
+/* NET011/NET012 correction within the fixed native dialog frames. */
+.cp-network-adapter-status .cp-network-status-tabs{height:21px;min-height:21px;flex:none;margin:0;border:0}
+.cp-network-adapter-status .cp-network-status-tab{box-sizing:border-box;width:60px;height:21px;min-height:21px;margin:0;padding:1px 5px;border:1px solid #879aaf;border-bottom-color:#fff;border-radius:3px 3px 0 0;background:linear-gradient(#fff,#e9f0f7);font:12px/18px "Segoe UI",Tahoma,sans-serif;text-align:center}
+.cp-network-adapter-status .cp-network-status-panel{position:relative;box-sizing:border-box;height:354px;min-height:354px;max-height:354px;flex:none;overflow:hidden;padding:13px 12px 10px;border:1px solid #9daec0;background:#fff}
+.cp-network-adapter-status .cp-network-status-group{box-sizing:border-box;min-width:0;margin:0;border:0;border-top:1px solid #aeb9c4;padding:0 13px}
+.cp-network-adapter-status .cp-network-status-group legend{padding:0 4px;color:#333;font:12px/16px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-status .cp-network-status-group:first-child{height:193px;min-height:193px;flex:none}
+.cp-network-adapter-status .cp-network-status-values{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:0 8px;max-width:none;margin:4px 0 0 15px;font:12px/19px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-status .cp-network-status-values dt,.cp-network-adapter-status .cp-network-status-values dd{min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-network-adapter-status .cp-network-status-values dt{color:#333}
+.cp-network-adapter-status .cp-network-status-values dd{color:#111;text-align:right}
+.cp-network-adapter-status .cp-network-details-button{display:block;width:72px;min-width:72px;height:21px;margin:8px 0 0 18px;padding:1px 7px;border:1px solid #9eacbb;border-radius:2px;background:linear-gradient(#fff,#e9eff5);font:12px/17px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-status .cp-network-activity{height:106px;min-height:106px;margin:0;padding:0 13px}
+.cp-network-adapter-status .cp-network-activity-directions{display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);align-items:center;gap:8px;height:58px;min-height:58px;text-align:center}
+.cp-network-adapter-status .cp-network-activity-directions>span:first-child{text-align:center}
+.cp-network-adapter-status .cp-network-activity-directions>span:last-child{text-align:center}
+.cp-network-adapter-status .cp-network-activity-icon{display:flex;width:48px;height:48px;align-items:center;justify-content:center}
+.cp-network-adapter-status .cp-network-activity-icon img{display:block;width:48px;height:48px;object-fit:contain}
+.cp-network-adapter-status .cp-network-activity-counters{display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);align-items:center;gap:8px;padding:0 0 0 15px;color:#333;font:12px/18px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-status .cp-network-activity-counters span:first-child{text-align:left}
+.cp-network-adapter-status .cp-network-activity-counters span:last-child{text-align:right}
+.cp-network-adapter-status .cp-network-status-actions{position:absolute;left:21px;bottom:17px;display:flex;flex-direction:row;align-items:center;gap:7px;margin:0}
+.cp-network-adapter-status .cp-network-status-actions button{box-sizing:border-box;height:21px;min-height:21px;padding:1px 7px;border:1px solid #9eacbb;border-radius:2px;background:linear-gradient(#fff,#e9eff5);font:12px/17px "Segoe UI",Tahoma,sans-serif;white-space:nowrap}
+.cp-network-adapter-status .cp-network-status-actions button:nth-child(1){width:103px;min-width:103px}
+.cp-network-adapter-status .cp-network-status-actions button:nth-child(2){width:96px;min-width:96px}
+.cp-network-adapter-status .cp-network-status-actions button:nth-child(3){width:95px;min-width:95px}
+.cp-network-adapter-status .cp-network-status-diagnostic{display:none}
+.cp-network-adapter-status .cp-network-status-diagnostic:not([hidden]){display:block;position:absolute;left:18px;right:18px;bottom:42px;margin:0;padding:6px;border:1px solid #b9c6d3;background:#f7fafd}
+.cp-network-adapter-status .cp-network-status-diagnostic form{display:flex;gap:6px;flex-wrap:wrap}
+.cp-network-adapter-details{display:flex;box-sizing:border-box;height:100%;min-height:0;max-height:100%;flex-direction:column;overflow:hidden;padding:7px 12px;font:12px/1.3 "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-details>p:first-child{height:20px;min-height:20px;flex:none;margin:0 0 2px}
+.cp-network-details-viewport{box-sizing:border-box;width:338px;max-width:100%;min-height:0;flex:1 1 auto;overflow:auto;border:1px solid #aeb9c4;outline:none}
+.cp-network-details-viewport:focus-visible{outline:1px dotted #333;outline-offset:-2px}
+.cp-network-details-table{width:338px;min-width:338px;max-width:none;border-collapse:collapse;table-layout:fixed;font:12px/14px "Segoe UI",Tahoma,sans-serif}
+.cp-network-details-table th,.cp-network-details-table td{box-sizing:border-box;height:17px;padding:1px 4px;border-bottom:1px solid #e3e6e9;text-align:left;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal}
+.cp-network-details-table thead th{position:sticky;top:0;z-index:1;height:23px;background:#eef2f6;border-bottom:1px solid #b7c2cd;font-weight:600}
+.cp-network-details-table thead th:first-child,.cp-network-details-table tbody th{width:135px;max-width:135px}
+.cp-network-details-table thead th:last-child,.cp-network-details-table tbody td{width:203px;max-width:203px}
+.cp-network-adapter-status{padding:6px 14px 7px}
+.cp-network-adapter-status .cp-network-status-values{margin-left:1px}
+.cp-network-adapter-status .cp-network-details-button{margin-left:4px}
+.cp-network-adapter-status .cp-network-status-group:first-child{height:181px;min-height:181px}
+.cp-network-adapter-status .cp-network-activity-directions{transform:translateX(38px)}
+.cp-network-adapter-status .cp-network-activity-counters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){display:none}
+.cp-network-adapter-status .cp-network-activity-counters span:last-child{grid-column:2;grid-row:1}
+.cp-network-adapter-status .cp-network-activity-counters{position:relative;display:block;height:18px;padding:0;font:12px/18px "Segoe UI",Tahoma,sans-serif}
+.cp-network-adapter-status .cp-network-activity-counters span{position:absolute;top:0;white-space:nowrap}
+.cp-network-adapter-status .cp-network-activity-counters span:first-child{left:14px;text-align:left}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){display:block;left:108px;width:72px;overflow:hidden;text-align:right}
+.cp-network-adapter-status .cp-network-activity-counters span:last-child{right:8px;width:120px;overflow:hidden;text-align:right}
+.cp-network-adapter-details>p:first-child{margin-bottom:0}
+.cp-network-adapter-status .cp-network-status-actions{bottom:18px}
+.cp-network-adapter-status .cp-network-activity-directions{transform:translateX(40px)}
+.cp-network-adapter-status .cp-network-activity-icon{transform:translate(-4px,3px)}
+.cp-network-adapter-status .cp-network-activity-directions>span:last-child{transform:translateX(-1px)}
+.cp-network-adapter-status .cp-network-activity-counters span:first-child{left:2px;top:2px}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){left:100px;top:2px}
+.cp-network-adapter-status .cp-network-activity-counters span:last-child{top:2px}
+.cp-network-details-viewport{width:339px}
+.cp-network-details-table{width:339px;min-width:339px}
+.cp-network-adapter-details>p:first-child{margin-bottom:-1px}
+.cp-network-adapter-details{padding-left:17px}
+.cp-network-adapter-details{padding-left:19px}
+.cp-network-adapter-status .cp-network-activity-icon{transform:translate(-6px,4px)}
+.cp-network-adapter-status .cp-network-activity-directions>span:last-child{transform:translateX(-2px)}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){left:95px}
+.cp-network-adapter-status .cp-network-activity-counters span:last-child{right:-3px}
+/* NET011 reviewer correction: preserve full activity values without widening the pane. */
+.cp-network-adapter-status .cp-network-activity-directions{position:relative;display:block;width:100%;height:58px;min-height:58px;transform:none}
+.cp-network-adapter-status .cp-network-activity-directions>span:first-child,.cp-network-adapter-status .cp-network-activity-directions>span:last-child{position:absolute;top:19px;width:max-content;text-align:left}
+.cp-network-adapter-status .cp-network-activity-directions>span:first-child{left:73px}
+.cp-network-adapter-status .cp-network-activity-icon{position:absolute;left:158px;top:5px;transform:translateY(1px)}
+.cp-network-adapter-status .cp-network-activity-directions>span:last-child{left:244px;transform:none}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){width:88px;overflow:visible;text-align:right}
+/* NET012 reviewer correction: long values contribute to the table's horizontal scroll width. */
+.cp-network-details-table{width:max-content;min-width:339px;max-width:none;table-layout:auto}
+.cp-network-details-table th,.cp-network-details-table td{overflow:visible;text-overflow:clip}
+.cp-network-details-table thead th:first-child,.cp-network-details-table tbody th{width:135px;min-width:135px;max-width:135px}
+.cp-network-details-table thead th:last-child,.cp-network-details-table tbody td{min-width:204px;max-width:none}
+.cp-network-details-viewport{max-height:322px}
+.cp-network-adapter-status .cp-network-activity-counters span:nth-child(2){left:90px;width:96px}
+.cp-network-details-table tbody th{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Desktop ownership and narrow native dialogs; renderer styles stay isolated. */
 dialog.network-status-window{box-sizing:border-box;margin:0;padding:0 6px 6px;min-width:0;max-width:none;max-height:none;overflow:hidden}
 dialog.network-status-window[open]{display:flex;flex-direction:column}
@@ -407,6 +490,13 @@ dialog.network-status-window::backdrop{background:transparent}
 .network-details-window .cp-network-details-table th,.network-details-window .cp-network-details-table td{overflow-wrap:anywhere;word-break:normal}
 .cp-network-adapters .cp-network-adapter-tile{padding:1px 4px;gap:6px}
 .cp-network-adapters .cp-network-adapter-icon,.cp-network-adapters .cp-network-adapter-icon img{width:48px;height:48px;flex:none}
+
+/* Native339px viewport inside the real359px desktop client. */
+.network-details-window .cp-network-adapter-details{padding-left:11px;padding-right:9px;padding-top:10px}
+
+/* Native status content: full360px client, no nested scrollbar. */
+dialog.network-status-window:not(.network-details-window)>.network-status-buttons{height:36px;min-height:36px}
+dialog.network-status-window:not(.network-details-window) .cp-network-adapter-status{height:100%;min-height:0;overflow:hidden;padding:8px 7px 0}
 
 /* Isolated System/Network integration; host owns all styles. */
 .control-panel-window .cp-content.cp-module-host{padding:0}.control-panel-window .cp-body.cp-module-body{min-height:100%;padding:0}.cp-system-page .cp-system-edition{position:relative}.cp-system-page .cp-system-original-logo{float:right;width:157px;height:151px;object-fit:contain;margin:0 0 8px 12px}.cp-system-page .cp-system-link img{vertical-align:middle;margin-right:4px;flex:none}@container(max-width:620px){.cp-system-page .cp-system-original-logo{float:none;display:block;margin:0 0 10px auto}}

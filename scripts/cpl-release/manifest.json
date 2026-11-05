@@ -3,8 +3,8 @@
   "inputs": {
     ".asset-cache/production-release-base/public/control-panel.js": "70c42bad2bc29c7b87565fa7fb7bd0c6e1465e4e09f189c7bf821825c8160196",
     ".asset-cache/production-release-base/public/control-panel.css": "07b131c3da55a52194a27367d39c2afeec96973fd83229eba7f9266f3fc10a05",
-    "public/control-panel-network.js": "00761dede1127a5928647e42721c64822e0449930cbde9a3d85666d8bac8c952",
-    "public/control-panel-network.css": "7ae0f6e71c24fdd3cdb53ef5e9fa2a49e7d69f8c4361b28415a00d753db22d51",
+    "public/control-panel-network.js": "130562b5857de469a9a846417bf08b9f7c7f133c949d53e78d52049f5b0c9ece",
+    "public/control-panel-network.css": "ac6c6bc339153ab160525af641ce162ce67e6cd467ea2a2bb68be22e32b6cc40",
     "public/control-panel-system.js": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d",
     "public/control-panel-system.css": "568e8915abf208bf104706d5fb6cbe918f09f94ef75d38d91be24383f7e15c90",
     "frame-verification/worker3-system-logo-1050.png": "00ddf499d3b3acdebe2a53452107a437d474e2e0efac54abff1c823c4e3274d5",
@@ -16,8 +16,8 @@
     "public/control-panel-category-view.css": "680900c4b02c0339401c83f946b3bd6ab3cf5517da39a2c02483c44913d26658"
   },
   "outputs": {
-    "control-panel.js": "3993a4e7ed7137358b90f2bef198c15a05019b442e25bd37ca32c2a26555fdb8",
-    "control-panel.css": "78d1de93c608fbda3ae99e3bbb62594f7737d0307a4de8878634fa9d973b6301"
+    "control-panel.js": "7d6a377818d0b8403d1b0657837d9c1611b8ddfad9fc0581f0057f28f6fe5714",
+    "control-panel.css": "73c20591af8fcc7623d39ead43e74ca10d4a2e0b2469ef13d976cd2689d6df09"
   },
   "externalImports": [
     "/notification-area-properties.js",
@@ -40,7 +40,7 @@
     "network-troubleshoot"
   ],
   "sourceFreeze": {
-    "network": "00761dede1127a5928647e42721c64822e0449930cbde9a3d85666d8bac8c952",
+    "network": "130562b5857de469a9a846417bf08b9f7c7f133c949d53e78d52049f5b0c9ece",
     "systemJS": "27bef33d6bd2467257559eebed35a995c89efe1efcde313c9d1e1faf18a24e1d"
   },
   "assetTransforms": "Original logo1050 and explicit32bit16px UAC embedded unchanged as data URLs; no new requests"

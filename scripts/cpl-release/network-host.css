@@ -12,3 +12,10 @@ dialog.network-status-window::backdrop{background:transparent}
 .network-details-window .cp-network-details-table th,.network-details-window .cp-network-details-table td{overflow-wrap:anywhere;word-break:normal}
 .cp-network-adapters .cp-network-adapter-tile{padding:1px 4px;gap:6px}
 .cp-network-adapters .cp-network-adapter-icon,.cp-network-adapters .cp-network-adapter-icon img{width:48px;height:48px;flex:none}
+
+/* Native339px viewport inside the real359px desktop client. */
+.network-details-window .cp-network-adapter-details{padding-left:11px;padding-right:9px;padding-top:10px}
+
+/* Native status content: full360px client, no nested scrollbar. */
+dialog.network-status-window:not(.network-details-window)>.network-status-buttons{height:36px;min-height:36px}
+dialog.network-status-window:not(.network-details-window) .cp-network-adapter-status{height:100%;min-height:0;overflow:hidden;padding:8px 7px 0}
