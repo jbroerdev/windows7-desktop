@@ -1,10 +1,12 @@
 # Windows-7-Webdesktop: Ausbauplan
 
-Stand: 4. November 2026. Ziel: ein in Aussehen und Bedienung möglichst originalgetreuer Windows-7-Desktop. Dies ist ein Webdesktop; Win32-Programme, Treiber und ein Windows-Kernel sind damit nicht automatisch vorhanden. Keine erfundenen Ergebnisse für fehlende Funktionen anzeigen.
+Stand: 5. November 2026. Ziel: ein in Aussehen und Bedienung möglichst originalgetreuer Windows-7-Desktop. Dies ist ein Webdesktop; Win32-Programme, Treiber und ein Windows-Kernel sind damit nicht automatisch vorhanden. Keine erfundenen Ergebnisse für fehlende Funktionen anzeigen.
 
 Diese Liste bei jeder Windows-Erweiterung aktualisieren. Im Abschluss jeweils nennen: umgesetzt, geprüft, als Nächstes geplant. Offene Aufgaben nicht als erledigt darstellen.
 
 ## Verifizierter Stand und nächste Arbeit
+
+Aktueller veröffentlichter Code: Main7a20077572251a343d0978ebd920c17331d3bd53 über PR6; Website-Assets14/14 bytegleich, Github-Quellen44/44 bytegleich, lokaler Gesamtbaum339Tests/338bestanden/1Plattformskip/0Fehler. Push-, PR- und Main-/Image-CI156/157/158 bestanden. Start/Verlauf mit Sessionguards, Traypositionen,40px-Arbeitsbereich/Himmel, Kategorien sowie enge Editor-/Gruppenfokus-/Suchkeyboardkorrekturen sind veröffentlicht. Unabhängige Livegrenzen und verbleibende Aufgaben: RELEASE-ADDENDUM-2026-11-05.md. Die älteren datierten Paketbeschreibungen darunter bleiben historische Nachweise und ersetzen diesen Stand nicht. Weiter offen sind insbesondere Preview-Lifecycle, native Miniaturen/Peek und die übrigen Hauptlistenpunkte; kein Gesamtabschluss.
 
 Stand 4. November 2026, 21:20 MEZ. Maßgeblich sind die aktuellen Nachweise; ältere Abschnitte darunter beschreiben teilweise frühere Paketstände.
 

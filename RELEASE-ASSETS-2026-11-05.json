@@ -1,0 +1,76 @@
+{
+  "codeCommit": "7a20077572251a343d0978ebd920c17331d3bd53",
+  "checkedAt": "2026-11-05T08:36:13.390Z",
+  "assets": [
+    {
+      "file": "public/app.js",
+      "status": 200,
+      "sha256": "fe1dd1fd429e5bb1d8f4b674fa46eb071ad762d3dc316fddb700279cad2d6277"
+    },
+    {
+      "file": "public/desktop-shell.js",
+      "status": 200,
+      "sha256": "dea21db2dc0b9db01b75d02127782bb2af649ca15aa51c2a9ba36191eb338c17"
+    },
+    {
+      "file": "public/office-window.js",
+      "status": 200,
+      "sha256": "e005cc9c7fc47ac8fe7914d572a456ffb0c481595af2afb34a760d53f8e92174"
+    },
+    {
+      "file": "public/style.css",
+      "status": 200,
+      "sha256": "66f523067a4997b7abd0662ea063463fc971b17d1a5d6d01abc302f38078663f"
+    },
+    {
+      "file": "public/taskbar-properties.js",
+      "status": 200,
+      "sha256": "72e14891101795221306424a4f515aa7803a12e1ead4100501cf5b7f51b36f65"
+    },
+    {
+      "file": "public/start-menu-state.js",
+      "status": 200,
+      "sha256": "99fcb5638b7dd42c14799dda3d52e2b820cbeb0a307048b880071c68db6bf85f"
+    },
+    {
+      "file": "public/recent-activity.js",
+      "status": 200,
+      "sha256": "70074476f6b26ffc593eaca14459f710b601523553aee6c03782c870d46c374b"
+    },
+    {
+      "file": "public/taskbar-layout.js",
+      "status": 200,
+      "sha256": "b1985653203b25d480427cb9e16da4dcb019e7451f39c5c61a424170101bc0ce"
+    },
+    {
+      "file": "public/taskbar-state.js",
+      "status": 200,
+      "sha256": "e2591a710a9f727d5d0bdab919ed4aae909646af5def6475188190f8ee51278b"
+    },
+    {
+      "file": "public/aero.css",
+      "status": 200,
+      "sha256": "37cf13531166340cdf9f4952a64d5504f6395dae1fa7a6f95427f4e131be37e5"
+    },
+    {
+      "file": "public/control-panel.js",
+      "status": 200,
+      "sha256": "163735454633af775441abbd9c918e378be99095f84c0541efa16b8c6965c2c4"
+    },
+    {
+      "file": "public/control-panel.css",
+      "status": 200,
+      "sha256": "da7e8c9a7a39ec04c3ee28b85f5d73f9fc44c1756a2b3a68e086cfe5648e6389"
+    },
+    {
+      "file": "public/appearance.js",
+      "status": 200,
+      "sha256": "0cad88514462636314987b3f5c809c3ea7853366908109b567b630b85ab52a3d"
+    },
+    {
+      "file": "public/window-manager.js",
+      "status": 200,
+      "sha256": "1f254c60b759be82907b2590ef53da7f1303122901106d65885775c45621fea1"
+    }
+  ]
+}
