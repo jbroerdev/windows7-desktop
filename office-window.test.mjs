@@ -46,3 +46,30 @@ test('Office-Speichern wartet auf die ausdrücklich angeforderte Collabora-Rück
   }finally{dialog?.close();globalThis.document=previous.document;globalThis.window=previous.window;}
  });
 });
+
+test('Office reports the original document once after trusted loading and skips the restored opening',async()=>{
+ const previous={document:globalThis.document,window:globalThis.window},listeners=new Map(),dialogs=[],reported=[];let frame;
+ const origin='https://office.example.org';
+ class Element{
+  constructor(tag){this.tag=tag;this.children=[];this.events=new Map();if(tag==='iframe'){frame=this;this.contentWindow={postMessage(){}};}}
+  append(...nodes){this.children.push(...nodes);}replaceChildren(...nodes){this.children=[...nodes];}setAttribute(){}submit(){}remove(){}
+  addEventListener(name,callback){this.events.set(name,callback);}close(){this.events.get('close')?.();}
+ }
+ globalThis.document={createElement:tag=>new Element(tag),body:new Element('body')};
+ globalThis.window={addEventListener:(name,callback)=>listeners.set(name,callback),removeEventListener:name=>listeners.delete(name)};
+ const loaded=async(messageOrigin=origin,source=frame.contentWindow)=>{await listeners.get('message')?.({source,origin:messageOrigin,data:{MessageId:'App_LoadingStatus',Values:{Status:'Document_Loaded'}}});};
+ try{
+  const app=createOfficeWindows({desktop:{register:dialog=>dialogs.push(dialog),show(){},unregister(){}},getState:()=>({officeEnabled:true,authenticated:true}),reload:async()=>{},getNode:()=>null,toast:()=>{},onOpened:event=>reported.push(event),chooseFile:async()=>({node:{id:'second',name:'Second.odt'}}),api:async(route,data)=>{
+   if(route==='/api/office-edit')return{id:'working-'+data.id,sourceId:data.id,name:'Working.odt',workingCopy:true};
+   if(route==='/api/office-open')return{url:origin+'/editor',origin,writable:true,accessToken:'test',accessTokenTtl:123};
+   return{};
+  }});
+  app.open({id:'original',name:'Original.odt'},'text',{recentProfile:'alice'});await settle();
+  assert.equal(reported.length,0);await loaded('https://untrusted.example');assert.equal(reported.length,0);
+  await loaded();await loaded();assert.deepEqual(reported,[{id:'original',kind:'text',profile:'alice'}]);
+  dialogs[0].close();
+  const restored=app.open({id:'restored-working',sourceId:'original',workingCopy:true,name:'Original.odt'},'text',{noRecent:true,recentProfile:'alice'});await settle();await loaded();assert.equal(reported.length,1);
+  const menu=restored.children[1],items=menu.children[0].children[1],open=items.children.find(item=>item.textContent==='Öffnen …');open.onclick();await settle();await loaded();
+  assert.deepEqual(reported[1],{id:'second',kind:'text',profile:'alice'});
+ }finally{for(const dialog of dialogs)dialog.close();globalThis.document=previous.document;globalThis.window=previous.window;}
+});
